@@ -54,6 +54,47 @@
     .yt-demo:hover, .yt-demo:focus-visible { background: #fecaca; transform: scale(1.08); outline: none; }
     .yt-demo svg { width: 13px; height: 13px; }
 
+    /* In-page YouTube demo modal (avoids jumping to YouTube app) */
+    .yt-modal {
+      position: fixed; inset: 0; z-index: 80;
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem; box-sizing: border-box;
+    }
+    .yt-modal[hidden] { display: none !important; }
+    .yt-modal-backdrop {
+      position: absolute; inset: 0; background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(4px);
+    }
+    .yt-modal-dialog {
+      position: relative; z-index: 1; width: min(100%, 360px);
+      background: #0f172a; border-radius: 16px; overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.45);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .yt-modal-header {
+      display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+      padding: 0.75rem 0.85rem 0.65rem 1rem;
+    }
+    .yt-modal-header h3 {
+      margin: 0; color: #f8fafc; font-size: 0.9rem; font-weight: 700;
+      line-height: 1.3; min-width: 0;
+    }
+    .yt-modal-close {
+      flex-shrink: 0; width: 36px; height: 36px; border: none; border-radius: 10px;
+      background: rgba(255,255,255,0.08); color: #e2e8f0; font-size: 1.35rem; line-height: 1;
+      cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .yt-modal-close:hover { background: rgba(255,255,255,0.16); }
+    .yt-modal-frame-wrap {
+      position: relative; width: 100%;
+      aspect-ratio: 9 / 16; max-height: min(72vh, 640px);
+      background: #000;
+    }
+    .yt-modal-frame-wrap iframe {
+      position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
+    }
+    body.yt-modal-open { overflow: hidden; }
+
     /* Mobile: hide Notes column so exercise rows stay readable */
     @media (max-width: 639px) {
       #tab-exercise table th:nth-child(4),
@@ -929,6 +970,32 @@
 
   const YT_DEMO_ICON = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>`;
 
+  function openExerciseDemo(name, url) {
+    const id = getVideoId(url);
+    if (!id) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    const modal = document.getElementById('yt-modal');
+    const iframe = document.getElementById('yt-modal-iframe');
+    const title = document.getElementById('yt-modal-title');
+    title.textContent = name + ' — form demo';
+    // Embed keeps playback on this page (no YouTube app handoff on most mobile browsers)
+    iframe.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+    modal.hidden = false;
+    document.body.classList.add('yt-modal-open');
+    document.getElementById('yt-modal-close').focus();
+  }
+
+  function closeExerciseDemo() {
+    const modal = document.getElementById('yt-modal');
+    const iframe = document.getElementById('yt-modal-iframe');
+    if (!modal || modal.hidden) return;
+    modal.hidden = true;
+    iframe.src = ''; // stop playback
+    document.body.classList.remove('yt-modal-open');
+  }
+
   function wireExerciseDemos() {
     document.querySelectorAll('#tab-exercise table tbody tr td:first-child').forEach(td => {
       if (td.querySelector('.yt-demo')) return;
@@ -942,17 +1009,28 @@
       label.className = 'min-w-0';
       label.textContent = name;
       wrap.appendChild(label);
-      const link = document.createElement('a');
-      link.href = url;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      link.className = 'yt-demo';
-      link.title = 'Watch form demo on YouTube';
-      link.setAttribute('aria-label', 'Watch ' + name + ' form demo');
-      link.innerHTML = YT_DEMO_ICON;
-      link.addEventListener('click', (e) => e.stopPropagation());
-      wrap.appendChild(link);
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'yt-demo';
+      btn.title = 'Watch form demo here';
+      btn.setAttribute('aria-label', 'Watch ' + name + ' form demo');
+      btn.innerHTML = YT_DEMO_ICON;
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openExerciseDemo(name, url);
+      });
+      wrap.appendChild(btn);
       td.appendChild(wrap);
+    });
+
+    const modal = document.getElementById('yt-modal');
+    const closeBtn = document.getElementById('yt-modal-close');
+    const backdrop = modal && modal.querySelector('.yt-modal-backdrop');
+    if (closeBtn) closeBtn.addEventListener('click', closeExerciseDemo);
+    if (backdrop) backdrop.addEventListener('click', closeExerciseDemo);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeExerciseDemo();
     });
   }
 
@@ -1093,5 +1171,19 @@
     }
   });
   </script>
+  <!-- In-page YouTube Shorts player -->
+  <div id="yt-modal" class="yt-modal" hidden role="dialog" aria-modal="true" aria-labelledby="yt-modal-title">
+    <div class="yt-modal-backdrop" aria-hidden="true"></div>
+    <div class="yt-modal-dialog">
+      <div class="yt-modal-header">
+        <h3 id="yt-modal-title">Form demo</h3>
+        <button type="button" class="yt-modal-close" id="yt-modal-close" aria-label="Close video">×</button>
+      </div>
+      <div class="yt-modal-frame-wrap">
+        <iframe id="yt-modal-iframe" title="Exercise form demo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen playsinline></iframe>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
