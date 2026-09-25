@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manas — Health Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+    body { font-family: 'Inter', system-ui, sans-serif; }
+
+    .accordion-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease-out, opacity 0.3s ease;
+      opacity: 0;
+    }
+    .accordion-body.open { max-height: 3000px; opacity: 1; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .accordion-icon { transition: transform 0.3s ease; display: inline-block; }
+    .accordion-icon.rotated { transform: rotate(180deg); }
+
+    /* Metric bars */
+    .metric-bar { transition: width 0.8s cubic-bezier(.4,0,.2,1); }
+
+    /* Sidebar gradient */
+    #sidebar {
+      background: linear-gradient(160deg, #0f172a 0%, #1e293b 60%, #0f2027 100%);
+    }
+
+    /* Card hover */
+    .hover-lift { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+    .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.10); }
+
+    /* YouTube card thumbnail */
+    .yt-thumb { position: relative; overflow: hidden; border-radius: 10px; }
+    .yt-thumb img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; transition: transform 0.3s ease; }
+    .yt-thumb:hover img { transform: scale(1.03); }
+    .yt-play-btn {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.25); transition: background 0.2s;
+    }
+    .yt-thumb:hover .yt-play-btn { background: rgba(0,0,0,0.42); }
+    .yt-play-btn svg { filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)); }
+
+    /* Category filter pill */
+    .cat-pill { cursor: pointer; transition: all 0.15s; }
+    .cat-pill.active { background: #16a34a; color: #fff; }
+
+    /* Scrollbar slim */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+
+    /* Tab bar */
+    .tab-btn { transition: all 0.2s ease; position: relative; overflow: hidden; }
+    .tab-btn::after {
+      content: ''; position: absolute; bottom: 0; left: 50%; right: 50%;
+      height: 2px; background: #16a34a; transition: all 0.2s;
+    }
+    .tab-btn.active-tab::after { left: 12px; right: 12px; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen">
+
+  <!-- ── TOP HEADER ── -->
+  <header class="bg-slate-900 border-b border-slate-700 px-6 py-3.5 flex items-center justify-between sticky top-0 z-20 shadow-lg">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-white text-lg shadow-md">🏋️</div>
+      <div>
+        <h1 class="font-black text-white text-base leading-tight tracking-tight">Health Dashboard</h1>
+        <p class="text-xs text-slate-400">Manas Behera · v3.4 · Started 18 Sep 2025</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="hidden sm:flex items-center gap-2 bg-slate-800 rounded-full px-4 py-1.5 border border-slate-700">
+        <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+        <span class="text-xs font-semibold text-green-400">Active Program</span>
+      </div>
+      <div class="text-right hidden md:block">
+        <p class="text-xs text-slate-400">~24-Month Fat-Loss Journey</p>
+        <p class="text-xs font-semibold text-slate-300">InBody 260 · 18 Sep 2025</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── MAIN TWO-COLUMN LAYOUT ── -->
+  <div class="flex min-h-[calc(100vh-56px)]">
+
+    <!-- ════════════════════════════
+         LEFT PANEL — PROFILE (dark)
+         ════════════════════════════ -->
+    <aside id="sidebar" class="w-72 flex-shrink-0 p-5 overflow-y-auto sticky top-14 h-[calc(100vh-56px)]">
+
+      <!-- Avatar + Name -->
+      <div class="text-center mb-5">
+        <div class="relative inline-block">
+          <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-green-400 to-teal-500 mx-auto flex items-center justify-center text-white text-4xl font-black mb-3 shadow-2xl ring-4 ring-white/10">M</div>
+          <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-green-400 ring-2 ring-slate-900 flex items-center justify-center">
+            <svg class="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          </div>
+        </div>
+        <h2 class="font-bold text-xl text-white">Manas Behera</h2>
+        <p class="text-slate-300 text-sm">Age 45 · 158 cm · Lacto-Veg</p>
+        <p class="text-slate-500 text-xs mt-0.5">Independent AI Consultant</p>
+      </div>
+
+      <!-- Journey Progress -->
+      <div class="mb-5 bg-white/5 rounded-xl p-4 border border-white/10 backdrop-blur">
+        <div class="flex justify-between text-xs mb-2">
+          <span class="font-semibold text-slate-300">Journey Progress</span>
+          <span class="text-green-400 font-bold">Month 0 / 24</span>
+        </div>
+        <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+          <div class="h-full bg-gradient-to-r from-green-400 to-teal-400 rounded-full metric-bar" style="width: 2%"></div>
+        </div>
+        <div class="flex justify-between text-xs mt-2">
+          <span class="text-slate-400">80.7 kg (start)</span>
+          <span class="text-green-400 font-semibold">→ 58.8 kg goal</span>
+        </div>
+        <p class="text-xs text-slate-500 mt-1.5 text-center">21.9 kg · ~1.0–1.5 kg/month</p>
+      </div>
+
+      <!-- Health Parameters -->
+      <p class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-3">Health Parameters</p>
+
+      <!-- Weight -->
+      <div class="mb-2 bg-white/5 hover:bg-white/8 rounded-xl p-3.5 border border-white/10 hover-lift cursor-default">
+        <div class="flex justify-between items-center mb-1.5">
+          <span class="text-sm font-medium text-slate-200">Weight</span>
+          <span class="text-xs bg-orange-500/20 text-orange-300 px-2 py-0.5 rounded-full font-medium border border-orange-400/20">High</span>
+        </div>
+        <div class="flex items-baseline gap-1.5 mb-2">
+          <span class="text-2xl font-black text-white">80.7</span>
+          <span class="text-slate-400 text-sm">kg</span>
+          <span class="ml-auto text-xs text-green-400 font-medium">→ 58.8 kg</span>
+        </div>
+        <div class="h-1.5 bg-white/10 rounded-full overflow-hidden">
+          <div class="h-full bg-orange-400 rounded-full metric-bar" style="width: 100%"></div>
+        </div>
+      </div>
+
+      <!-- Body Fat -->
+      <div class="mb-2 bg-white/5 hover:bg-white/8 rounded-xl p-3.5 border border-white/10 hover-lift cursor-default">
+        <div class="flex justify-between items-center mb-1.5">
+          <span class="text-sm font-medium text-slate-200">Body Fat %</span>
+          <span class="text-xs bg-red-500/20 text-red-300 px-2 py-0.5 rounded-full font-medium border border-red-400/20">Very High</span>
+        </div>
+        <div class="flex items-baseline gap-1.5 mb-2">
+          <span class="text-2xl font-black text-white">38%</span>
+          <span class="ml-auto text-xs text-green-400 font-medium">→ ~15%</span>
+        </div>
+        <div class="h-1.5 bg-white/10 rounded-full overflow-hidden">
+          <div class="h-full bg-red-400 rounded-full metric-bar" style="width: 92%"></div>
+        </div>
+      </div>
+
+      <!-- Visceral Fat -->
+      <div class="mb-2 bg-white/5 hover:bg-white/8 rounded-xl p-3.5 border border-white/10 hover-lift cursor-default">
+        <div class="flex justify-between items-center mb-1.5">
+          <span class="text-sm font-medium text-slate-200">Visceral Fat</span>
+          <span class="text-xs bg-orange-500/20 text-orange-300 px-2 py-0.5 rounded-full font-medium border border-orange-400/20">Elevated</span>
+        </div>
+        <div class="flex items-baseline gap-1.5 mb-2">
+          <span class="text-2xl font-black text-white">14</span>
+          <span class="ml-auto text-xs text-green-400 font-medium">→ ≤10</span>
+        </div>
+        <div class="h-1.5 bg-white/10 rounded-full overflow-hidden">
+          <div class="h-full bg-orange-400 rounded-full metric-bar" style="width: 70%"></div>
+        </div>
+      </div>
+
+      <!-- WHR -->
+      <div class="mb-2 bg-white/5 hover:bg-white/8 rounded-xl p-3.5 border border-white/10 hover-lift cursor-default">
+        <div class="flex justify-between items-center mb-1.5">
+          <span class="text-sm font-medium text-slate-200">Waist–Hip Ratio</span>
+          <span class="text-xs bg-orange-500/20 text-orange-300 px-2 py-0.5 rounded-full font-medium border border-orange-400/20">Elevated</span>
+        </div>
+        <div class="flex items-baseline gap-1.5 mb-2">
+          <span class="text-2xl font-black text-white">0.97</span>
+          <span class="ml-auto text-xs text-green-400 font-medium">→ 0.80–0.90</span>
+        </div>
+        <div class="h-1.5 bg-white/10 rounded-full overflow-hidden">
+          <div class="h-full bg-orange-400 rounded-full metric-bar" style="width: 80%"></div>
+        </div>
+      </div>
+
+      <!-- SMM -->
+      <div class="mb-2 bg-white/5 hover:bg-white/8 rounded-xl p-3.5 border border-green-500/20 hover-lift cursor-default">
+        <div class="flex justify-between items-center mb-1.5">
+          <span class="text-sm font-medium text-slate-200">Skeletal Muscle</span>
+          <span class="text-xs bg-green-500/20 text-green-300 px-2 py-0.5 rounded-full font-medium border border-green-400/20">Good ✓</span>
+        </div>
+        <div class="flex items-baseline gap-1.5">
+          <span class="text-2xl font-black text-white">28.1</span>
+          <span class="text-slate-400 text-sm">kg</span>
+          <span class="ml-auto text-xs text-green-400 font-medium">Preserve!</span>
+        </div>
+      </div>
+
+      <!-- BMI -->
+      <div class="mb-5 bg-white/5 hover:bg-white/8 rounded-xl p-3.5 border border-white/10 hover-lift cursor-default">
+        <div class="flex justify-between items-center mb-1.5">
+          <span class="text-sm font-medium text-slate-200">BMI</span>
+          <span class="text-xs bg-red-500/20 text-red-300 px-2 py-0.5 rounded-full font-medium border border-red-400/20">Obese</span>
+        </div>
+        <div class="flex items-baseline gap-1.5">
+          <span class="text-2xl font-black text-white">32.3</span>
+          <span class="ml-auto text-xs text-slate-500">Ideal: 18.5–23</span>
+        </div>
+      </div>
+
+      <!-- Daily Targets -->
+      <p class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-3">Daily Targets</p>
+      <div class="grid grid-cols-2 gap-2 mb-5">
+        <div class="bg-blue-500/10 rounded-xl p-3 text-center border border-blue-400/20">
+          <div class="text-lg font-black text-blue-300">1,700</div>
+          <div class="text-xs text-blue-400/80">Min kcal</div>
+        </div>
+        <div class="bg-blue-500/10 rounded-xl p-3 text-center border border-blue-400/20">
+          <div class="text-lg font-black text-blue-300">1,900</div>
+          <div class="text-xs text-blue-400/80">Max kcal</div>
+        </div>
+        <div class="bg-purple-500/10 rounded-xl p-3 text-center border border-purple-400/20">
+          <div class="text-lg font-black text-purple-300">100g</div>
+          <div class="text-xs text-purple-400/80">Min Protein</div>
+        </div>
+        <div class="bg-purple-500/10 rounded-xl p-3 text-center border border-purple-400/20">
+          <div class="text-lg font-black text-purple-300">120g</div>
+          <div class="text-xs text-purple-400/80">Max Protein</div>
+        </div>
+        <div class="col-span-2 bg-teal-500/10 rounded-xl p-3 text-center border border-teal-400/20">
+          <div class="text-lg font-black text-teal-300">3–4 L</div>
+          <div class="text-xs text-teal-400/80">Water / day</div>
+        </div>
+      </div>
+
+      <!-- InBody Score -->
+      <div class="bg-gradient-to-br from-green-900/60 to-emerald-900/60 rounded-xl p-4 text-center border border-green-500/20 shadow-inner">
+        <div class="text-5xl font-black text-white mb-1">61</div>
+        <div class="text-slate-300 text-sm font-medium">InBody Score / 100</div>
+        <div class="text-slate-400 text-xs mt-1">High fat · Good muscle &amp; hydration</div>
+        <div class="mt-3 bg-black/20 rounded-lg p-2 text-xs text-slate-300">BMR: 1,450 kcal/day (measured)</div>
+      </div>
+    </aside>
+
+    <!-- ════════════════════════════
+         RIGHT PANEL — CONTENT
+         ════════════════════════════ -->
+    <main class="flex-1 p-6 overflow-y-auto min-w-0">
+
+      <!-- Category Tab Bar -->
+      <div class="flex gap-1 mb-6 bg-white rounded-2xl p-1.5 shadow-sm border border-slate-200 w-fit flex-wrap" id="tab-bar">
+        <button onclick="showTab('exercise', this)" class="tab-btn active-tab px-5 py-2.5 rounded-xl text-sm font-semibold bg-green-600 text-white shadow-sm transition-all">💪 Exercise</button>
+        <button onclick="showTab('diet', this)" class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-500 hover:bg-slate-50 transition-all">🥗 Diet</button>
+        <button onclick="showTab('supplements', this)" class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-500 hover:bg-slate-50 transition-all">💊 Supplements</button>
+        <button onclick="showTab('goodtoknow', this)" class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-500 hover:bg-slate-50 transition-all">💡 Good to Know</button>
+      </div>
+
+      <!-- ═══════ EXERCISE ═══════ -->
+      <div id="tab-exercise" class="tab-panel active">
+
+        <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+          <div>
+            <h2 class="font-black text-2xl text-slate-900">Weekly Exercise Split</h2>
+            <p class="text-sm text-slate-400 mt-0.5">5-day strength training · ~60–75 min/session · Click any day to expand</p>
+          </div>
+          <div class="bg-green-50 rounded-xl px-4 py-2 text-center border border-green-200">
+            <div class="text-xs text-green-600 font-medium">Cardio Target</div>
+            <div class="text-sm font-black text-green-700">150 min/week</div>
+          </div>
+        </div>
+
+        <!-- MONDAY -->
+        <div class="accordion mb-3 rounded-2xl overflow-hidden shadow-sm border border-slate-200 hover-lift">
+          <button onclick="toggleAccordion(this)" class="w-full bg-white p-4 flex items-center gap-3 hover:bg-blue-50/50 transition text-left">
+            <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-black text-xs flex-shrink-0">MON</div>
+            <div class="flex-1">
+              <div class="font-bold text-slate-900">Monday — Push Day</div>
+              <div class="text-xs text-slate-400 mt-0.5">Chest · Shoulders · Triceps · 6 exercises</div>
+            </div>
+            <div class="flex gap-2 items-center">
+              <span class="text-xs bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-semibold">Push</span>
+              <span class="accordion-icon text-slate-300 text-lg">▼</span>
+            </div>
+          </button>
+          <div class="accordion-body bg-white border-t border-slate-100">
+            <div class="p-5">
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead><tr class="text-left text-xs text-slate-400 border-b border-slate-100">
+                    <th class="pb-2 pr-4">Exercise</th><th class="pb-2 pr-4">Sets × Reps</th><th class="pb-2 pr-4">Rest</th><th class="pb-2">Notes</th>
+                  </tr></thead>
+                  <tbody class="divide-y divide-slate-50">
+                    <tr><td class="py-2.5 pr-4 font-medium">Flat Bench Press</td><td class="pr-4 font-mono text-green-700 font-bold">4 × 6–8</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">First compound · 2–3 ramp sets first</td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Incline DB Press</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">Upper chest focus</td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Shoulder Press</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td></td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Lateral Raise</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 12–15</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td class="text-slate-400 text-xs">Replaces excess front-delt work</td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Rope Pushdown</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 12</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Overhead Extension</td><td class="pr-4 font-mono text-green-700 font-bold">2 × 12</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="mt-4 p-3 bg-blue-50 rounded-xl text-xs text-blue-700 border border-blue-100">
+                💡 <strong>Substitution:</strong> Rope Pushdown unavailable → Diamond Push-up
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TUESDAY -->
+        <div class="accordion mb-3 rounded-2xl overflow-hidden shadow-sm border border-slate-200 hover-lift">
+          <button onclick="toggleAccordion(this)" class="w-full bg-white p-4 flex items-center gap-3 hover:bg-purple-50/50 transition text-left">
+            <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-black text-xs flex-shrink-0">TUE</div>
+            <div class="flex-1">
+              <div class="font-bold text-slate-900">Tuesday — Pull Day</div>
+              <div class="text-xs text-slate-400 mt-0.5">Back · Biceps · Rear Delts · 6 exercises</div>
+            </div>
+            <div class="flex gap-2 items-center">
+              <span class="text-xs bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full font-semibold">Pull</span>
+              <span class="accordion-icon text-slate-300 text-lg">▼</span>
+            </div>
+          </button>
+          <div class="accordion-body bg-white border-t border-slate-100">
+            <div class="p-5">
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead><tr class="text-left text-xs text-slate-400 border-b border-slate-100">
+                    <th class="pb-2 pr-4">Exercise</th><th class="pb-2 pr-4">Sets × Reps</th><th class="pb-2 pr-4">Rest</th><th class="pb-2">Notes</th>
+                  </tr></thead>
+                  <tbody class="divide-y divide-slate-50">
+                    <tr><td class="py-2.5 pr-4 font-medium">Lat Pulldown</td><td class="pr-4 font-mono text-green-700 font-bold">4 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">First compound · ramp sets</td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Chest Supported Row</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td></td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Romanian Deadlift</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">Hamstring + lower back</td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Rear Delt Fly</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 15</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Face Pull</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 15</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td class="text-slate-400 text-xs">Shoulder health — do Tue + Fri</td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Curl</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 10–12</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="mt-4 p-3 bg-purple-50 rounded-xl text-xs text-purple-700 border border-purple-100">
+                🧘 <strong>Mobility (non-negotiable, age 45+):</strong> Face pulls, hip mobility, thoracic rotations, shoulder external rotations after session.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WEDNESDAY -->
+        <div class="accordion mb-3 rounded-2xl overflow-hidden shadow-sm border border-slate-200 hover-lift">
+          <button onclick="toggleAccordion(this)" class="w-full bg-white p-4 flex items-center gap-3 hover:bg-orange-50/50 transition text-left">
+            <div class="w-12 h-12 rounded-xl bg-orange-100 text-orange-700 flex items-center justify-center font-black text-xs flex-shrink-0">WED</div>
+            <div class="flex-1">
+              <div class="font-bold text-slate-900">Wednesday — Lower Day</div>
+              <div class="text-xs text-slate-400 mt-0.5">Quads · Hamstrings · Calves · Core · 6 exercises</div>
+            </div>
+            <div class="flex gap-2 items-center">
+              <span class="text-xs bg-orange-100 text-orange-700 px-2.5 py-1 rounded-full font-semibold">Lower</span>
+              <span class="accordion-icon text-slate-300 text-lg">▼</span>
+            </div>
+          </button>
+          <div class="accordion-body bg-white border-t border-slate-100">
+            <div class="p-5">
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead><tr class="text-left text-xs text-slate-400 border-b border-slate-100">
+                    <th class="pb-2 pr-4">Exercise</th><th class="pb-2 pr-4">Sets × Reps</th><th class="pb-2 pr-4">Rest</th><th class="pb-2">Notes</th>
+                  </tr></thead>
+                  <tbody class="divide-y divide-slate-50">
+                    <tr><td class="py-2.5 pr-4 font-medium">Leg Press</td><td class="pr-4 font-mono text-green-700 font-bold">4 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">First · safer for beginners</td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Hamstring Curl</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 10–12</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Leg Extension</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 12–15</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Bulgarian Split Squat</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 10–12/leg</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Standing Calf Raise</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 15</td><td class="pr-4 text-slate-400 text-xs">60 s</td><td></td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Plank + Side Plank</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 30–45s</td><td class="pr-4 text-slate-400 text-xs">45 s</td><td class="text-slate-400 text-xs">Side plank 20–30s/side</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="mt-4 p-3 bg-orange-50 rounded-xl text-xs text-orange-700 border border-orange-100">
+                💡 <strong>Squat note:</strong> If experienced, replace Leg Press with Back Squat 3×6–8 as first exercise.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- THURSDAY -->
+        <div class="accordion mb-3 rounded-2xl overflow-hidden shadow-sm border border-slate-200 hover-lift">
+          <button onclick="toggleAccordion(this)" class="w-full bg-white p-4 flex items-center gap-3 hover:bg-green-50/50 transition text-left">
+            <div class="w-12 h-12 rounded-xl bg-green-100 text-green-700 flex items-center justify-center font-black text-xs flex-shrink-0">THU</div>
+            <div class="flex-1">
+              <div class="font-bold text-slate-900">Thursday — Recovery Day</div>
+              <div class="text-xs text-slate-400 mt-0.5">Active Recovery · No lifting · ~30 min</div>
+            </div>
+            <div class="flex gap-2 items-center">
+              <span class="text-xs bg-green-100 text-green-700 px-2.5 py-1 rounded-full font-semibold">Recovery</span>
+              <span class="accordion-icon text-slate-300 text-lg">▼</span>
+            </div>
+          </button>
+          <div class="accordion-body bg-white border-t border-slate-100">
+            <div class="p-5 space-y-3">
+              <div class="flex gap-4 p-3.5 bg-green-50 rounded-xl border border-green-100">
+                <span class="text-2xl">🚶</span>
+                <div>
+                  <p class="font-semibold text-green-900 text-sm">30-min Recovery Walk</p>
+                  <p class="text-xs text-green-700 mt-0.5">Zone-2 pace — conversational. ~60–70% max HR. Counts toward 150 min/week cardio.</p>
+                </div>
+              </div>
+              <div class="flex gap-4 p-3.5 bg-teal-50 rounded-xl border border-teal-100">
+                <span class="text-2xl">🧘</span>
+                <div>
+                  <p class="font-semibold text-teal-900 text-sm">Mobility Work</p>
+                  <p class="text-xs text-teal-700 mt-0.5">Hip mobility · Thoracic rotations · Shoulder external rotations. 10–15 min.</p>
+                </div>
+              </div>
+              <div class="p-3 bg-amber-50 rounded-xl border border-amber-100 text-xs text-amber-800">
+                🍌 Pre-workout banana optional today. Shift whey to morning or post-walk. Reduce roti/rice by ~½ serving.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FRIDAY -->
+        <div class="accordion mb-3 rounded-2xl overflow-hidden shadow-sm border border-slate-200 hover-lift">
+          <button onclick="toggleAccordion(this)" class="w-full bg-white p-4 flex items-center gap-3 hover:bg-blue-50/50 transition text-left">
+            <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-black text-xs flex-shrink-0">FRI</div>
+            <div class="flex-1">
+              <div class="font-bold text-slate-900">Friday — Upper Day</div>
+              <div class="text-xs text-slate-400 mt-0.5">Balanced Push/Pull Upper Body · 6 exercises</div>
+            </div>
+            <div class="flex gap-2 items-center">
+              <span class="text-xs bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-full font-semibold">Upper</span>
+              <span class="accordion-icon text-slate-300 text-lg">▼</span>
+            </div>
+          </button>
+          <div class="accordion-body bg-white border-t border-slate-100">
+            <div class="p-5">
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead><tr class="text-left text-xs text-slate-400 border-b border-slate-100">
+                    <th class="pb-2 pr-4">Exercise</th><th class="pb-2 pr-4">Sets × Reps</th><th class="pb-2 pr-4">Rest</th><th class="pb-2">Notes</th>
+                  </tr></thead>
+                  <tbody class="divide-y divide-slate-50">
+                    <tr><td class="py-2.5 pr-4 font-medium">Incline DB Press</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">Push movement</td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Seated Cable Row</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">Horizontal pull</td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Arnold Press</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 10–12</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td></td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Lat Pulldown (wide)</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 10–12</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">Vertical pull</td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Lateral Raise</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 12–15</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Face Pull</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 15</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td class="text-slate-400 text-xs">Shoulder health — do Tue + Fri</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SATURDAY -->
+        <div class="accordion mb-3 rounded-2xl overflow-hidden shadow-sm border border-slate-200 hover-lift">
+          <button onclick="toggleAccordion(this)" class="w-full bg-white p-4 flex items-center gap-3 hover:bg-red-50/50 transition text-left">
+            <div class="w-12 h-12 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-black text-xs flex-shrink-0">SAT</div>
+            <div class="flex-1">
+              <div class="font-bold text-slate-900">Saturday — Lower + Core</div>
+              <div class="text-xs text-slate-400 mt-0.5">Hamstrings · Legs · Core · 6 exercises</div>
+            </div>
+            <div class="flex gap-2 items-center">
+              <span class="text-xs bg-red-100 text-red-700 px-2.5 py-1 rounded-full font-semibold">Lower+Core</span>
+              <span class="accordion-icon text-slate-300 text-lg">▼</span>
+            </div>
+          </button>
+          <div class="accordion-body bg-white border-t border-slate-100">
+            <div class="p-5">
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead><tr class="text-left text-xs text-slate-400 border-b border-slate-100">
+                    <th class="pb-2 pr-4">Exercise</th><th class="pb-2 pr-4">Sets × Reps</th><th class="pb-2 pr-4">Rest</th><th class="pb-2">Notes</th>
+                  </tr></thead>
+                  <tbody class="divide-y divide-slate-50">
+                    <tr><td class="py-2.5 pr-4 font-medium">Romanian Deadlift</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">First compound · ramp sets</td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Leg Press</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 10–12</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td></td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Bulgarian Split Squat</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 10–12/leg</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Hamstring Curl</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 12–15</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Standing Calf Raise</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 15</td><td class="pr-4 text-slate-400 text-xs">60 s</td><td></td></tr>
+                    <tr><td class="py-2.5 pr-4 font-medium">Dead Bug + Plank</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 12/side</td><td class="pr-4 text-slate-400 text-xs">45 s</td><td class="text-slate-400 text-xs">Plank 3 × 30–45s after</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUNDAY -->
+        <div class="mb-5 bg-white rounded-2xl p-4 flex items-center gap-4 border border-slate-200 shadow-sm">
+          <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center font-black text-xs flex-shrink-0">SUN</div>
+          <div class="flex-1">
+            <div class="font-bold text-slate-400">Sunday — Complete Rest</div>
+            <div class="text-xs text-slate-400">No training · Sleep well · Focus on nutrition &amp; recovery</div>
+          </div>
+          <span class="text-3xl">😴</span>
+        </div>
+
+        <!-- Cardio + Substitutions -->
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-gradient-to-br from-blue-50 to-teal-50 rounded-2xl p-4 border border-blue-100">
+            <h4 class="font-bold text-blue-800 mb-2 text-sm">📍 Cardio Protocol</h4>
+            <ul class="text-sm text-blue-700 space-y-1.5">
+              <li>150 min/week Zone-2 (conversational pace)</li>
+              <li>OR 20–30 min walk after 3 lifting sessions</li>
+              <li>Daily steps: 8,000–10,000</li>
+              <li>Thursday walk <strong>counts</strong> toward weekly total</li>
+            </ul>
+          </div>
+          <div class="bg-white rounded-2xl p-4 border border-slate-200">
+            <h4 class="font-bold text-slate-800 mb-2 text-sm">🔄 Equipment Substitutions</h4>
+            <div class="text-xs text-slate-600 space-y-1.5">
+              <div><strong>Lat Pulldown →</strong> Assisted or underhand pull-up</div>
+              <div><strong>Cable Row →</strong> Single-arm or chest-supported DB row</div>
+              <div><strong>Leg Press →</strong> Goblet squat or walking lunge</div>
+              <div><strong>Rope Pushdown →</strong> Diamond push-up</div>
+              <div><strong>Face Pull →</strong> Band pull-apart</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════ DIET ═══════ -->
+      <div id="tab-diet" class="tab-panel">
+        <h2 class="font-black text-2xl text-slate-900 mb-1">Day-wise Diet Plan</h2>
+        <p class="text-sm text-slate-400 mb-5">100% Vegetarian (Lacto) · ~127–130g protein/day · ~1,700–1,900 kcal · 15–20% deficit</p>
+
+        <div class="bg-white rounded-2xl shadow-sm p-5 mb-4 border border-slate-200">
+          <h3 class="font-bold text-slate-900 mb-3">Daily Protein Anchors — Every Day</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead><tr class="text-left text-xs text-slate-400 border-b border-slate-100">
+                <th class="pb-2 pr-4">Food</th><th class="pb-2 pr-4">Quantity</th><th class="pb-2 pr-4">Protein</th><th class="pb-2">When</th>
+              </tr></thead>
+              <tbody class="divide-y divide-slate-50">
+                <tr><td class="py-2.5 pr-4 font-medium">Yogabar High Protein Oats</td><td class="pr-4 text-slate-600">70g</td><td class="pr-4 font-bold text-green-700">~20g</td><td class="text-slate-500 text-xs">Breakfast 7:30–8:30 AM</td></tr>
+                <tr><td class="py-2.5 pr-4 font-medium">Milk</td><td class="pr-4 text-slate-600">250ml</td><td class="pr-4 font-bold text-green-700">~8g</td><td class="text-slate-500 text-xs">With breakfast or bedtime</td></tr>
+                <tr><td class="py-2.5 pr-4 font-medium">Roasted Chana</td><td class="pr-4 text-slate-600">100g</td><td class="pr-4 font-bold text-green-700">~20–22g</td><td class="text-slate-500 text-xs">Mid-morning snack 10:30 AM</td></tr>
+                <tr><td class="py-2.5 pr-4 font-medium">Mixed Sprouts</td><td class="pr-4 text-slate-600">100g</td><td class="pr-4 font-bold text-green-700">~9g</td><td class="text-slate-500 text-xs">Afternoon snack 4:00 PM</td></tr>
+                <tr><td class="py-2.5 pr-4 font-medium">Whey Protein (1 scoop)</td><td class="pr-4 text-slate-600">1 scoop</td><td class="pr-4 font-bold text-green-700">~24–25g</td><td class="text-slate-500 text-xs">Post-workout within 30 min</td></tr>
+                <tr><td class="py-2.5 pr-4 font-medium">Paneer OR Soya Chunks</td><td class="pr-4 text-slate-600">100g / 50g</td><td class="pr-4 font-bold text-green-700">~20–26g</td><td class="text-slate-500 text-xs">Lunch + Dinner (alternating)</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-4 bg-green-50 rounded-xl p-3 flex items-center justify-between border border-green-100">
+            <span class="text-sm text-green-800 font-medium">Total daily protein</span>
+            <span class="text-xl font-black text-green-700">~127–130g</span>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm p-5 mb-4 border border-slate-200">
+          <h3 class="font-bold text-slate-900 mb-1">Daily Meal Timing Template</h3>
+          <p class="text-xs text-slate-400 mb-4">Assumes training 6:00–7:00 PM. Shift all blocks if training at a different time.</p>
+          <div class="space-y-0">
+            <div class="flex gap-4 py-2.5 border-b border-slate-50 items-start">
+              <span class="w-28 text-slate-400 text-xs font-mono pt-0.5 flex-shrink-0">On waking</span>
+              <p class="text-sm">💧 Lukewarm water + ½ lemon + ½ tsp cinnamon</p>
+            </div>
+            <div class="flex gap-4 py-2.5 border-b border-slate-50 items-start">
+              <span class="w-28 text-slate-400 text-xs font-mono pt-0.5 flex-shrink-0">7:30–8:30</span>
+              <p class="text-sm">🥣 Yogabar Oats in milk + seasonal fruit + soaked nuts</p>
+            </div>
+            <div class="flex gap-4 py-2.5 border-b border-slate-50 items-start">
+              <span class="w-28 text-slate-400 text-xs font-mono pt-0.5 flex-shrink-0">10:30–11:00</span>
+              <p class="text-sm">🫘 Roasted Chana (100g)</p>
+            </div>
+            <div class="flex gap-4 py-2.5 border-b border-slate-50 items-start">
+              <span class="w-28 text-slate-400 text-xs font-mono pt-0.5 flex-shrink-0">1:00–2:00 PM</span>
+              <p class="text-sm">🍱 2 roti or 1 cup rice + dal + sabzi + paneer/soya + salad/curd</p>
+            </div>
+            <div class="flex gap-4 py-2.5 border-b border-slate-50 items-start">
+              <span class="w-28 text-slate-400 text-xs font-mono pt-0.5 flex-shrink-0">4:00–4:30</span>
+              <p class="text-sm">🌱 Mixed Sprouts salad (100g) — lemon, onion, tomato</p>
+            </div>
+            <div class="flex gap-4 py-2.5 border-b border-slate-50 items-start bg-amber-50 rounded-xl px-2 -mx-2">
+              <span class="w-28 text-slate-400 text-xs font-mono pt-0.5 flex-shrink-0">5:15–5:45</span>
+              <p class="text-sm font-medium">🍌 Pre-workout: Banana + 5–6 soaked almonds (training days only)</p>
+            </div>
+            <div class="flex gap-4 py-2.5 border-b border-slate-50 items-start bg-green-50 rounded-xl px-2 -mx-2">
+              <span class="w-28 text-slate-400 text-xs font-mono pt-0.5 flex-shrink-0">6:00–7:00</span>
+              <p class="text-sm font-bold text-green-800">🏋️ Training Session</p>
+            </div>
+            <div class="flex gap-4 py-2.5 border-b border-slate-50 items-start bg-blue-50 rounded-xl px-2 -mx-2">
+              <span class="w-28 text-slate-400 text-xs font-mono pt-0.5 flex-shrink-0">Within 30 min</span>
+              <p class="text-sm text-blue-800">🥤 Post-workout: Whey shake + 1 banana or 2 dates</p>
+            </div>
+            <div class="flex gap-4 py-2.5 border-b border-slate-50 items-start">
+              <span class="w-28 text-slate-400 text-xs font-mono pt-0.5 flex-shrink-0">8:00–9:00</span>
+              <p class="text-sm">🍛 Dinner: 2 roti/quinoa + sabzi + soya/paneer + salad</p>
+            </div>
+            <div class="flex gap-4 py-2.5 items-start opacity-60">
+              <span class="w-28 text-slate-400 text-xs font-mono pt-0.5 flex-shrink-0">9:30 (opt.)</span>
+              <p class="text-sm">🥛 Warm milk with turmeric (if not used at breakfast)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
+          <h3 class="font-bold text-slate-900 mb-3">7-Day Weekly Rotation</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm min-w-[600px]">
+              <thead><tr class="text-left text-xs text-slate-400 border-b border-slate-100">
+                <th class="pb-2 pr-3">Day</th><th class="pb-2 pr-3">Training</th><th class="pb-2 pr-3">Lunch Protein</th><th class="pb-2 pr-3">Dinner Protein</th><th class="pb-2 pr-3">Dal</th><th class="pb-2 pr-3">Sabzi</th><th class="pb-2">Fruit</th>
+              </tr></thead>
+              <tbody class="divide-y divide-slate-50 text-xs">
+                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Mon</td><td class="pr-3"><span class="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">Push</span></td><td class="pr-3">Paneer Curry</td><td class="pr-3">Soya Chunks</td><td class="pr-3">Moong Dal</td><td class="pr-3">Bhindi Masala</td><td>Apple 🍎</td></tr>
+                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Tue</td><td class="pr-3"><span class="bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium">Pull</span></td><td class="pr-3">Soya Chunks</td><td class="pr-3">Paneer Curry</td><td class="pr-3">Chana Dal</td><td class="pr-3">Palak Sabzi</td><td>Banana 🍌</td></tr>
+                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Wed</td><td class="pr-3"><span class="bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded font-medium">Lower</span></td><td class="pr-3">Paneer Curry</td><td class="pr-3">Soya Chunks</td><td class="pr-3">Toor Dal</td><td class="pr-3">Mixed Veg Curry</td><td>Guava 🍈</td></tr>
+                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Thu</td><td class="pr-3"><span class="bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">Recovery</span></td><td class="pr-3">Soya Chunks</td><td class="pr-3">Paneer Curry</td><td class="pr-3">Masoor Dal</td><td class="pr-3">Lauki Sabzi</td><td>Orange 🍊</td></tr>
+                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Fri</td><td class="pr-3"><span class="bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded font-medium">Upper</span></td><td class="pr-3">Paneer Curry</td><td class="pr-3">Soya Chunks</td><td class="pr-3">Rajma</td><td class="pr-3">Cauliflower-Peas</td><td>Papaya 🍈</td></tr>
+                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Sat</td><td class="pr-3"><span class="bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-medium">Lower+Core</span></td><td class="pr-3">Soya Chunks</td><td class="pr-3">Paneer Curry</td><td class="pr-3">Chole</td><td class="pr-3">Baingan Bharta</td><td>Pomegranate 🍑</td></tr>
+                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Sun</td><td class="pr-3"><span class="bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-medium">Rest</span></td><td class="pr-3">Paneer Curry</td><td class="pr-3">Soya Chunks</td><td class="pr-3">Mixed Dal</td><td class="pr-3">Seasonal Veg</td><td>Seasonal 🍇</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-4 p-3 bg-amber-50 rounded-xl text-xs text-amber-800 border border-amber-100">
+            📝 Rotate dal, sabzi, and fruit for variety. Add 1 tsp ghee/oil to dal. Add 100–150g curd for probiotics (+5g protein). Aim for ~80% adherence.
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════ SUPPLEMENTS ═══════ -->
+      <div id="tab-supplements" class="tab-panel">
+        <h2 class="font-black text-2xl text-slate-900 mb-1">Supplement Protocol</h2>
+        <p class="text-sm text-slate-400 mb-5">Check with your physician before starting, especially with existing medications.</p>
+
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+          <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
+            <h3 class="font-bold text-slate-900 mb-4 flex items-center gap-2">
+              <span class="w-7 h-7 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs font-black">C</span>
+              Core Supplements
+            </h3>
+            <div class="space-y-4">
+              <div class="border-l-4 border-green-500 pl-4">
+                <p class="font-bold text-sm">Whey Protein</p>
+                <p class="text-xs text-slate-500 mt-0.5">1 scoop post-workout · Already part of the daily plan</p>
+                <span class="text-xs text-green-600 font-semibold">✓ Already in plan</span>
+              </div>
+              <div class="border-l-4 border-green-500 pl-4">
+                <p class="font-bold text-sm">Creatine Monohydrate ⭐</p>
+                <p class="text-xs text-slate-500 mt-0.5">3–5g/day, any time, taken consistently. Best-evidenced supplement for preserving muscle in calorie deficit.</p>
+                <span class="text-xs text-orange-600 font-semibold">→ Worth adding now</span>
+              </div>
+              <div class="border-l-4 border-yellow-400 pl-4">
+                <p class="font-bold text-sm">Vitamin D</p>
+                <p class="text-xs text-slate-500 mt-0.5">Only if blood panel shows deficiency</p>
+                <span class="text-xs text-slate-400 font-semibold">→ Blood test first</span>
+              </div>
+              <div class="border-l-4 border-yellow-400 pl-4">
+                <p class="font-bold text-sm">Vitamin B12</p>
+                <p class="text-xs text-slate-500 mt-0.5">Limited in vegetarian diets. Supplement if blood test confirms low.</p>
+                <span class="text-xs text-slate-400 font-semibold">→ Blood test first</span>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
+            <h3 class="font-bold text-slate-900 mb-4 flex items-center gap-2">
+              <span class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs font-black">O</span>
+              Optional Supplements
+            </h3>
+            <div class="space-y-4">
+              <div class="border-l-4 border-slate-300 pl-4">
+                <p class="font-bold text-sm">Omega-3 (Algae-based)</p>
+                <p class="text-xs text-slate-500 mt-0.5">Vegetarian omega-3 source. Worth discussing with physician.</p>
+              </div>
+              <div class="border-l-4 border-slate-300 pl-4">
+                <p class="font-bold text-sm">Magnesium (Glycinate/Citrate)</p>
+                <p class="text-xs text-slate-500 mt-0.5">May help sleep quality. Well tolerated. Supports 7.5–9h sleep target.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
+          <h3 class="font-bold text-slate-900 mb-1">Annual Blood Panel</h3>
+          <p class="text-xs text-slate-400 mb-4">Discuss with your physician. <strong class="text-red-600">Priority: HbA1c + Lipid Profile first</strong> — elevated visceral fat (14) and WHR (0.97) make these urgent.</p>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-center text-sm">
+            <div class="bg-red-50 rounded-xl p-3 border border-red-100"><div class="font-bold text-red-700">HbA1c</div><div class="text-xs text-red-500">Blood sugar ⚠️ Priority</div></div>
+            <div class="bg-red-50 rounded-xl p-3 border border-red-100"><div class="font-bold text-red-700">Lipid Profile</div><div class="text-xs text-red-500">Cholesterol ⚠️ Priority</div></div>
+            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100"><div class="font-bold text-slate-700">CBC</div><div class="text-xs text-slate-500">Complete blood count</div></div>
+            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100"><div class="font-bold text-slate-700">Vitamin D</div><div class="text-xs text-slate-500">Deficiency check</div></div>
+            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100"><div class="font-bold text-slate-700">Vitamin B12</div><div class="text-xs text-slate-500">Veg diet risk</div></div>
+            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100"><div class="font-bold text-slate-700">TSH</div><div class="text-xs text-slate-500">Thyroid</div></div>
+            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100"><div class="font-bold text-slate-700">Liver Fn</div><div class="text-xs text-slate-500">If using creatine</div></div>
+            <div class="bg-slate-50 rounded-xl p-3 border border-slate-100"><div class="font-bold text-slate-700">Kidney Fn</div><div class="text-xs text-slate-500">High protein diet</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════ GOOD TO KNOW ═══════ -->
+      <div id="tab-goodtoknow" class="tab-panel">
+        <h2 class="font-black text-2xl text-slate-900 mb-1">Good to Know</h2>
+        <p class="text-sm text-slate-400 mb-5">Key principles, rules, and curated resources from your health program (v3.4)</p>
+
+        <div class="grid md:grid-cols-2 gap-4 mb-4">
+          <!-- Philosophy -->
+          <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200 hover-lift">
+            <h3 class="font-bold text-slate-900 mb-3">🎯 Training Philosophy</h3>
+            <ul class="space-y-2 text-sm text-slate-700">
+              <li class="flex gap-2"><span class="text-green-500 font-bold mt-0.5">✓</span>Train for consistency, not exhaustion</li>
+              <li class="flex gap-2"><span class="text-green-500 font-bold mt-0.5">✓</span>Technique before adding weight</li>
+              <li class="flex gap-2"><span class="text-green-500 font-bold mt-0.5">✓</span>Stop each set with 1–3 reps in reserve (RIR)</li>
+              <li class="flex gap-2"><span class="text-green-500 font-bold mt-0.5">✓</span>Log every workout (exercise · weight · reps · RIR)</li>
+              <li class="flex gap-2"><span class="text-green-500 font-bold mt-0.5">✓</span>~80% nutrition adherence is success</li>
+              <li class="flex gap-2"><span class="text-green-500 font-bold mt-0.5">✓</span>A missed session is a data point, not a failure</li>
+            </ul>
+          </div>
+
+          <!-- Age 45 -->
+          <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200 hover-lift">
+            <h3 class="font-bold text-slate-900 mb-3">🧓 Age 45+ Must-Dos</h3>
+            <ul class="space-y-2 text-sm text-slate-600">
+              <li class="flex gap-2"><span class="text-amber-500 mt-0.5">⚠</span>Warm-up ramp: 3–4 sets (not 2–3)</li>
+              <li class="flex gap-2"><span class="text-amber-500 mt-0.5">⚠</span>Tue/Fri mobility is <strong>non-negotiable</strong></li>
+              <li class="flex gap-2"><span class="text-amber-500 mt-0.5">⚠</span>Favor 12–15 reps if joint feels cranky</li>
+              <li class="flex gap-2"><span class="text-amber-500 mt-0.5">⚠</span>Add rest day if joint (not muscle) sore 48h later</li>
+              <li class="flex gap-2"><span class="text-amber-500 mt-0.5">⚠</span>Deload every 4–6 weeks (not 6–8)</li>
+            </ul>
+          </div>
+
+          <!-- Compliance -->
+          <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200 hover-lift">
+            <h3 class="font-bold text-slate-900 mb-3">📊 Weekly Compliance Score</h3>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between items-center py-1 border-b border-slate-50">
+                <span>Training — all 5 sessions</span>
+                <span class="font-black text-green-600 text-lg">30</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-b border-slate-50">
+                <span>Nutrition — protein + calories 6/7 days</span>
+                <span class="font-black text-green-600 text-lg">30</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-b border-slate-50">
+                <span>Sleep — 7.5–9h × 6/7 nights</span>
+                <span class="font-black text-blue-600 text-lg">20</span>
+              </div>
+              <div class="flex justify-between items-center py-1 border-b border-slate-50">
+                <span>Steps — 8k–10k × 6/7 days</span>
+                <span class="font-black text-orange-500 text-lg">10</span>
+              </div>
+              <div class="flex justify-between items-center py-1">
+                <span>Water — 3–4L × 6/7 days</span>
+                <span class="font-black text-orange-500 text-lg">10</span>
+              </div>
+              <div class="border-t-2 pt-2 mt-1 flex gap-2 text-xs flex-wrap">
+                <span class="bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">90+ Excellent</span>
+                <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">75–89 Solid</span>
+                <span class="bg-red-100 text-red-700 px-2 py-1 rounded-full font-medium">&lt;75 for 2+ weeks = stall cause</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Progression -->
+          <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200 hover-lift">
+            <h3 class="font-bold text-slate-900 mb-3">📈 Progression Rules</h3>
+            <div class="space-y-3 text-sm">
+              <div class="border-l-4 border-blue-400 pl-3">
+                <p class="font-bold">Load Increase</p>
+                <p class="text-xs text-slate-500 mt-0.5">When ALL sets hit top of rep range with good form: +2.5–5% upper body, +5–10% lower body</p>
+              </div>
+              <div class="border-l-4 border-orange-400 pl-3">
+                <p class="font-bold">Deload Timing</p>
+                <p class="text-xs text-slate-500 mt-0.5">Every 4–6 weeks (at age 45). Reduce sets ~40% AND drop load ~10%.</p>
+              </div>
+              <div class="border-l-4 border-red-400 pl-3">
+                <p class="font-bold">Strength Plateau Rule</p>
+                <p class="text-xs text-slate-500 mt-0.5">Lift fails to add a rep for 3 consecutive sessions (~3 weeks) → pull deload forward 1–2 weeks.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Milestone Targets -->
+        <div class="bg-white rounded-2xl shadow-sm p-5 mb-4 border border-slate-200">
+          <h3 class="font-bold text-slate-900 mb-3">🏁 Milestone Targets</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead><tr class="text-left text-xs text-slate-400 border-b border-slate-100">
+                <th class="pb-2 pr-4">Milestone</th><th class="pb-2 pr-4">Weight Range</th><th class="pb-2">Check-in Action</th>
+              </tr></thead>
+              <tbody class="divide-y divide-slate-50 text-xs">
+                <tr><td class="py-2 pr-4 font-bold">Month 1</td><td class="pr-4 text-slate-600">79–79.5 kg</td><td class="text-slate-500">Compliance score averaging 80+ before worrying about scale</td></tr>
+                <tr><td class="py-2 pr-4 font-bold">Month 3</td><td class="pr-4 text-slate-600">76–77 kg</td><td class="text-slate-500">First formal check against stalled-progress rule</td></tr>
+                <tr><td class="py-2 pr-4 font-bold">Month 6</td><td class="pr-4 text-slate-600">72.5–74 kg</td><td class="text-slate-500">Recalculate maintenance + protein; confirm strength not crashing</td></tr>
+                <tr><td class="py-2 pr-4 font-bold">Month 12</td><td class="pr-4 text-slate-600">66.5–68 kg</td><td class="text-slate-500">Re-scan InBody — halfway point, not finish line</td></tr>
+                <tr><td class="py-2 pr-4 font-bold">Month 18</td><td class="pr-4 text-slate-600">61.5–63.5 kg</td><td class="text-slate-500">Consider 1–2 week diet break if energy/strength flagging</td></tr>
+                <tr><td class="py-2 pr-4 font-bold text-green-700">Month 24</td><td class="pr-4 text-green-600 font-bold">58–59.5 kg 🎯</td><td class="text-slate-500">Goal reached — transition to maintenance plan</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ════ VIDEO RESOURCES — DATABASE ════ -->
+        <div class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
+          <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+            <div>
+              <h3 class="font-bold text-slate-900 text-lg">📺 Video Resources</h3>
+              <p class="text-xs text-slate-400 mt-0.5">Curated videos by category · Add more in <code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">LINKS_DB</code> inside the &lt;script&gt;</p>
+            </div>
+            <!-- Category filter -->
+            <div class="flex gap-2 flex-wrap" id="cat-filters">
+              <button onclick="filterLinks('all', this)" class="cat-pill active text-xs px-3 py-1.5 rounded-full border border-slate-200 font-medium text-slate-600 hover:border-green-500">All</button>
+              <button onclick="filterLinks('exercise', this)" class="cat-pill text-xs px-3 py-1.5 rounded-full border border-slate-200 font-medium text-slate-600 hover:border-green-500">💪 Exercise</button>
+              <button onclick="filterLinks('diet', this)" class="cat-pill text-xs px-3 py-1.5 rounded-full border border-slate-200 font-medium text-slate-600 hover:border-green-500">🥗 Diet</button>
+              <button onclick="filterLinks('supplements', this)" class="cat-pill text-xs px-3 py-1.5 rounded-full border border-slate-200 font-medium text-slate-600 hover:border-green-500">💊 Supplements</button>
+              <button onclick="filterLinks('mindset', this)" class="cat-pill text-xs px-3 py-1.5 rounded-full border border-slate-200 font-medium text-slate-600 hover:border-green-500">🧠 Mindset</button>
+              <button onclick="filterLinks('general', this)" class="cat-pill text-xs px-3 py-1.5 rounded-full border border-slate-200 font-medium text-slate-600 hover:border-green-500">📌 General</button>
+            </div>
+          </div>
+
+          <!-- Video cards rendered here -->
+          <div id="links-container" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+          <div id="links-empty" class="hidden text-center py-12 text-slate-400 text-sm">No videos in this category yet.</div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       📺 LINKS DATABASE
+       ─────────────────────────────────────
+       Add more YouTube links here!
+       Each entry:
+         id        → unique number (increment)
+         url       → full YouTube URL
+         title     → what the video is about
+         category  → "exercise" | "diet" | "supplements" | "mindset" | "general"
+         tags      → array of short labels shown on card
+         note      → optional one-line note (shown below title)
+         addedDate → "YYYY-MM-DD"
+  ══════════════════════════════════════ -->
+  <script>
+  const LINKS_DB = [
+    {
+      id: 1,
+      url: "https://youtube.com/shorts/q2-Y2NEzHTw?si=PyqimJ9DAquGEgAH",
+      title: "Quick Fitness Tip",
+      category: "exercise",
+      tags: ["shorts", "tips"],
+      note: "",
+      addedDate: "2026-09-24"
+    },
+    // ─── ADD NEW ENTRIES BELOW THIS LINE ───────────────────────────────────
+    // {
+    //   id: 2,
+    //   url: "https://youtube.com/watch?v=...",
+    //   title: "Your title here",
+    //   category: "diet",          // exercise | diet | supplements | mindset | general
+    //   tags: ["protein", "meal prep"],
+    //   note: "Optional note",
+    //   addedDate: "2026-09-24"
+    // },
+  ];
+
+  // ─── Helpers ────────────────────────────────────────────────────────────
+  function getVideoId(url) {
+    // Handles: youtu.be/ID, youtube.com/shorts/ID, youtube.com/watch?v=ID
+    const patterns = [
+      /youtu\.be\/([^?&#]+)/,
+      /youtube\.com\/shorts\/([^?&#]+)/,
+      /[?&]v=([^&#]+)/,
+      /youtube\.com\/embed\/([^?&#]+)/
+    ];
+    for (const p of patterns) {
+      const m = url.match(p);
+      if (m) return m[1];
+    }
+    return null;
+  }
+
+  function getCategoryMeta(cat) {
+    return {
+      exercise:    { label: '💪 Exercise',    bg: 'bg-blue-100',   text: 'text-blue-700'   },
+      diet:        { label: '🥗 Diet',         bg: 'bg-green-100',  text: 'text-green-700'  },
+      supplements: { label: '💊 Supplements',  bg: 'bg-yellow-100', text: 'text-yellow-700' },
+      mindset:     { label: '🧠 Mindset',      bg: 'bg-purple-100', text: 'text-purple-700' },
+      general:     { label: '📌 General',      bg: 'bg-slate-100',  text: 'text-slate-600'  },
+    }[cat] || { label: cat, bg: 'bg-slate-100', text: 'text-slate-600' };
+  }
+
+  function buildCard(link) {
+    const vid = getVideoId(link.url);
+    const thumb = vid ? `https://img.youtube.com/vi/${vid}/mqdefault.jpg` : '';
+    const meta = getCategoryMeta(link.category);
+    const tags = (link.tags || []).map(t => `<span class="text-xs bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">${t}</span>`).join('');
+    return `
+      <a href="${link.url}" target="_blank" rel="noopener noreferrer"
+         class="group block rounded-xl border border-slate-200 overflow-hidden hover:border-green-400 hover:shadow-lg transition-all duration-200"
+         data-category="${link.category}">
+        ${thumb ? `
+        <div class="yt-thumb">
+          <img src="${thumb}" alt="${link.title}" loading="lazy" onerror="this.parentElement.style.display='none'"/>
+          <div class="yt-play-btn">
+            <svg width="40" height="40" viewBox="0 0 68 48" fill="none">
+              <rect width="68" height="48" rx="10" fill="rgba(255,0,0,0.85)"/>
+              <path d="M27 16 L50 24 L27 32 Z" fill="white"/>
+            </svg>
+          </div>
+        </div>` : `<div class="h-28 bg-slate-100 flex items-center justify-center text-4xl">▶️</div>`}
+        <div class="p-3">
+          <div class="flex items-start justify-between gap-2 mb-1.5">
+            <p class="text-sm font-semibold text-slate-900 leading-tight group-hover:text-green-700 transition-colors">${link.title}</p>
+            <span class="text-xs ${meta.bg} ${meta.text} px-2 py-0.5 rounded-full font-medium whitespace-nowrap flex-shrink-0">${meta.label}</span>
+          </div>
+          ${link.note ? `<p class="text-xs text-slate-500 mb-1.5">${link.note}</p>` : ''}
+          <div class="flex items-center justify-between">
+            <div class="flex gap-1 flex-wrap">${tags}</div>
+            <span class="text-xs text-slate-400 ml-2 flex-shrink-0">${link.addedDate}</span>
+          </div>
+        </div>
+      </a>`;
+  }
+
+  let activeFilter = 'all';
+
+  function renderLinks(filter) {
+    filter = filter || activeFilter;
+    const container = document.getElementById('links-container');
+    const empty = document.getElementById('links-empty');
+    const filtered = filter === 'all' ? LINKS_DB : LINKS_DB.filter(l => l.category === filter);
+    if (!filtered.length) {
+      container.innerHTML = '';
+      empty.classList.remove('hidden');
+    } else {
+      empty.classList.add('hidden');
+      container.innerHTML = filtered.map(buildCard).join('');
+    }
+  }
+
+  function filterLinks(category, btn) {
+    activeFilter = category;
+    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    renderLinks(category);
+  }
+
+  // ─── Tab switching ───────────────────────────────────────────────────────
+  function showTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('bg-green-600', 'text-white', 'shadow-sm', 'active-tab');
+      b.classList.add('text-slate-500');
+    });
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('bg-green-600', 'text-white', 'shadow-sm', 'active-tab');
+    btn.classList.remove('text-slate-500');
+    // Render links when Good to Know tab opens
+    if (name === 'goodtoknow') renderLinks();
+  }
+
+  // ─── Accordion ──────────────────────────────────────────────────────────
+  function toggleAccordion(btn) {
+    const body = btn.nextElementSibling;
+    const icon = btn.querySelector('.accordion-icon');
+    const isOpen = body.classList.contains('open');
+    document.querySelectorAll('.accordion-body.open').forEach(b => {
+      b.classList.remove('open');
+      const i = b.previousElementSibling.querySelector('.accordion-icon');
+      if (i) i.classList.remove('rotated');
+    });
+    if (!isOpen) { body.classList.add('open'); icon.classList.add('rotated'); }
+  }
+
+  // Initial render
+  renderLinks();
+  </script>
+</body>
+</html>
