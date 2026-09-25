@@ -54,7 +54,7 @@
     .yt-demo:hover, .yt-demo:focus-visible { background: #fecaca; transform: scale(1.08); outline: none; }
     .yt-demo svg { width: 13px; height: 13px; }
 
-    /* Floating PiP YouTube player (default = small corner popup) */
+    /* Floating PiP YouTube player — controls ABOVE iframe (iframe steals overlay taps) */
     .yt-modal {
       position: fixed; inset: 0; z-index: 9999;
       pointer-events: none;
@@ -73,7 +73,7 @@
       position: absolute;
       top: max(0.65rem, env(safe-area-inset-top));
       left: 0.65rem;
-      width: min(46vw, 200px);
+      width: min(52vw, 220px);
       display: flex; flex-direction: column;
       background: #0b1220;
       border-radius: 14px;
@@ -82,68 +82,59 @@
       border: 1px solid rgba(255,255,255,0.14);
     }
     @media (min-width: 640px) {
-      .yt-modal-dialog { width: 240px; top: 1rem; left: 1rem; }
+      .yt-modal-dialog { width: 260px; top: 1rem; left: 1rem; }
     }
-    .yt-pip-controls {
-      position: absolute; top: 6px; left: 6px; right: 6px; z-index: 6;
-      display: flex; align-items: flex-start; justify-content: space-between;
-      pointer-events: none;
+    /* Chrome bar is OUTSIDE the iframe — always tappable */
+    .yt-modal-chrome {
+      position: relative; z-index: 20;
+      display: flex; align-items: center; gap: 0.35rem;
+      padding: 0.4rem 0.4rem;
+      background: #0f172a;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      flex-shrink: 0;
     }
-    .yt-pip-controls .yt-modal-btn { pointer-events: auto; }
+    .yt-modal-chrome #yt-modal-title {
+      flex: 1; min-width: 0;
+      color: #e2e8f0; font-size: 0.68rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      line-height: 1.2;
+    }
     .yt-modal-btn {
-      width: 34px; height: 34px; border: none; border-radius: 999px;
-      background: rgba(0,0,0,0.62); color: #fff;
+      flex-shrink: 0; width: 40px; height: 40px; border: none; border-radius: 10px;
+      background: rgba(255,255,255,0.12); color: #fff;
       cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
       touch-action: manipulation; -webkit-tap-highlight-color: transparent;
       user-select: none; -webkit-user-select: none;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+      position: relative; z-index: 21;
     }
-    .yt-modal-btn svg { width: 15px; height: 15px; pointer-events: none; }
-    .yt-modal-btn:active { transform: scale(0.94); background: rgba(0,0,0,0.8); }
-    .yt-modal-btn-close { background: rgba(220, 38, 38, 0.92); }
+    .yt-modal-btn svg { width: 16px; height: 16px; pointer-events: none; }
+    .yt-modal-btn:active { transform: scale(0.94); background: rgba(255,255,255,0.22); }
+    .yt-modal-btn-close { background: #dc2626; }
     .yt-modal-btn-close:active { background: #b91c1c; }
-    .yt-modal-title-bar {
-      display: none;
-      padding: 0.55rem 0.75rem;
-      background: #0f172a;
-      color: #f8fafc;
-      font-size: 0.82rem; font-weight: 700;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
     .yt-modal-frame-wrap {
-      position: relative; width: 100%;
+      position: relative; z-index: 1; width: 100%;
       aspect-ratio: 9 / 16;
-      max-height: 34vh;
+      max-height: 32vh;
       background: #000;
     }
     .yt-modal-frame-wrap iframe {
       position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
+      z-index: 1;
     }
-    /* Expanded / maximized */
+    /* Expanded */
     .yt-modal.is-maximized { pointer-events: auto; }
     .yt-modal.is-maximized .yt-modal-backdrop { display: block; }
     .yt-modal.is-maximized .yt-modal-dialog {
-      top: 50%; left: 50%; right: auto; bottom: auto;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       width: min(92vw, 380px);
       max-height: calc(100dvh - 1.5rem);
     }
-    .yt-modal.is-maximized .yt-modal-title-bar { display: block; }
+    .yt-modal.is-maximized .yt-modal-chrome #yt-modal-title { font-size: 0.85rem; }
     .yt-modal.is-maximized .yt-modal-frame-wrap {
-      aspect-ratio: 9 / 16;
-      max-height: min(70vh, 560px);
-      height: auto;
+      max-height: min(68vh, 560px);
     }
-    .yt-modal.is-maximized .yt-pip-controls {
-      top: 0.45rem; left: auto; right: 0.45rem; width: auto; gap: 0.35rem;
-      justify-content: flex-end;
-    }
-    .yt-modal.is-maximized .yt-modal-btn {
-      width: 40px; height: 40px; border-radius: 12px;
-      background: rgba(255,255,255,0.12);
-    }
-    .yt-modal.is-maximized .yt-modal-btn-close { background: #dc2626; }
+    .yt-modal.is-maximized .yt-modal-btn { width: 44px; height: 44px; }
     body.yt-modal-maximized { overflow: hidden; overscroll-behavior: none; }
 
     /* Mobile: hide Notes column so exercise rows stay readable */
@@ -1023,26 +1014,6 @@
 
   let ytModalMode = 'pip'; // pip | maximized
 
-  function bindTap(el, handler) {
-    if (!el) return;
-    let touched = false;
-    el.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      touched = true;
-      handler(e);
-    }, { passive: false });
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (touched) {
-        touched = false;
-        return;
-      }
-      handler(e);
-    });
-  }
-
   function setYtModalMode(mode) {
     const modal = document.getElementById('yt-modal');
     if (!modal) return;
@@ -1066,24 +1037,32 @@
     const modal = document.getElementById('yt-modal');
     const iframe = document.getElementById('yt-modal-iframe');
     const title = document.getElementById('yt-modal-title');
-    title.textContent = name + ' — form demo';
+    if (title) title.textContent = name;
     iframe.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
     modal.hidden = false;
     setYtModalMode('pip');
   }
 
-  function closeExerciseDemo() {
+  function closeExerciseDemo(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     const modal = document.getElementById('yt-modal');
     const iframe = document.getElementById('yt-modal-iframe');
     if (!modal || modal.hidden) return;
     modal.hidden = true;
-    iframe.src = '';
+    if (iframe) iframe.src = '';
     modal.classList.remove('is-maximized');
     document.body.classList.remove('yt-modal-maximized');
     ytModalMode = 'pip';
   }
 
-  function toggleYtMaximize() {
+  function toggleYtMaximize(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     setYtModalMode(ytModalMode === 'maximized' ? 'pip' : 'maximized');
   }
 
@@ -1115,18 +1094,21 @@
       td.appendChild(wrap);
     });
 
-    const modal = document.getElementById('yt-modal');
-    bindTap(document.getElementById('yt-modal-close'), closeExerciseDemo);
-    bindTap(document.getElementById('yt-modal-max'), toggleYtMaximize);
-    const backdrop = modal && modal.querySelector('.yt-modal-backdrop');
-    bindTap(backdrop, () => {
-      if (ytModalMode === 'maximized') setYtModalMode('pip');
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
+    // Direct handlers on chrome bar (outside iframe — taps can’t be stolen)
+    const closeBtn = document.getElementById('yt-modal-close');
+    const maxBtn = document.getElementById('yt-modal-max');
+    const backdrop = document.querySelector('#yt-modal .yt-modal-backdrop');
+    if (closeBtn) closeBtn.addEventListener('click', closeExerciseDemo);
+    if (maxBtn) maxBtn.addEventListener('click', toggleYtMaximize);
+    if (backdrop) {
+      backdrop.addEventListener('click', function () {
         if (ytModalMode === 'maximized') setYtModalMode('pip');
-        else closeExerciseDemo();
-      }
+      });
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      if (ytModalMode === 'maximized') setYtModalMode('pip');
+      else closeExerciseDemo();
     });
   }
 
@@ -1267,20 +1249,20 @@
     }
   });
   </script>
-  <!-- Floating PiP YouTube player -->
+  <!-- Floating PiP YouTube player — chrome bar sits ABOVE the iframe -->
   <div id="yt-modal" class="yt-modal" hidden role="dialog" aria-modal="true" aria-labelledby="yt-modal-title">
     <div class="yt-modal-backdrop" aria-hidden="true"></div>
     <div class="yt-modal-dialog">
-      <div class="yt-modal-title-bar" id="yt-modal-title">Form demo</div>
+      <div class="yt-modal-chrome">
+        <button type="button" class="yt-modal-btn yt-modal-btn-close" id="yt-modal-close" title="Close" aria-label="Close video">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <span id="yt-modal-title">Form demo</span>
+        <button type="button" class="yt-modal-btn" id="yt-modal-max" title="Expand" aria-label="Expand player">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 3H3v6M15 3h6v6M9 21H3v-6M21 15v6h-6"/><path d="M3 3l7 7M21 3l-7 7M3 21l7-7M21 21l-7-7"/></svg>
+        </button>
+      </div>
       <div class="yt-modal-frame-wrap">
-        <div class="yt-pip-controls">
-          <button type="button" class="yt-modal-btn yt-modal-btn-close" id="yt-modal-close" title="Close" aria-label="Close video">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-          </button>
-          <button type="button" class="yt-modal-btn" id="yt-modal-max" title="Expand" aria-label="Expand player">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 3H3v6M15 3h6v6M9 21H3v-6M21 15v6h-6"/><path d="M3 3l7 7M21 3l-7 7M3 21l7-7M21 21l-7-7"/></svg>
-          </button>
-        </div>
         <iframe id="yt-modal-iframe" title="Exercise form demo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen playsinline></iframe>
       </div>
     </div>
