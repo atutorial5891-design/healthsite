@@ -44,9 +44,14 @@
     .yt-thumb:hover .yt-play-btn { background: rgba(0,0,0,0.42); }
     .yt-play-btn svg { filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)); }
 
-    /* Category filter pill */
-    .cat-pill { cursor: pointer; transition: all 0.15s; }
-    .cat-pill.active { background: #16a34a; color: #fff; }
+    /* YouTube demo link next to exercise names */
+    .yt-demo {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: 6px; flex-shrink: 0;
+      background: #fee2e2; color: #dc2626; transition: background 0.15s, transform 0.15s;
+    }
+    .yt-demo:hover { background: #fecaca; transform: scale(1.08); }
+    .yt-demo svg { width: 12px; height: 12px; }
 
     /* Scrollbar slim */
     ::-webkit-scrollbar { width: 4px; }
@@ -882,6 +887,58 @@
     // },
   ];
 
+  // ─── Exercise form demos (YouTube Shorts) ────────────────────────────────
+  // Name must match the table text exactly. Prefer popular form tutorials.
+  const EXERCISE_DEMOS = {
+    "Flat Bench Press":       "https://www.youtube.com/shorts/8laBBEpDgac",
+    "Incline DB Press":       "https://www.youtube.com/shorts/8fXfwG4ftaQ",
+    "Shoulder Press":         "https://www.youtube.com/shorts/bQPhGIJJ-jQ",
+    "Lateral Raise":          "https://www.youtube.com/shorts/Myim1WH6Qec",
+    "Rope Pushdown":          "https://www.youtube.com/shorts/NvZKjiZ8NYc",
+    "Overhead Extension":     "https://www.youtube.com/shorts/NZAVsAk-Vgc",
+    "Lat Pulldown":           "https://www.youtube.com/shorts/z-lxcsIN4T4",
+    "Lat Pulldown (wide)":    "https://www.youtube.com/shorts/z-lxcsIN4T4",
+    "Chest Supported Row":    "https://www.youtube.com/shorts/tahGpBijHkY",
+    "Seated Cable Row":       "https://www.youtube.com/shorts/PeMw-NWlNY8",
+    "Romanian Deadlift":      "https://www.youtube.com/shorts/Fsve8fkMGcY",
+    "Rear Delt Fly":          "https://www.youtube.com/shorts/vGIY3D9digk",
+    "Face Pull":              "https://www.youtube.com/shorts/MChHOiaCR7s",
+    "Curl":                   "https://www.youtube.com/shorts/SGolzLoGutg",
+    "Arnold Press":           "https://www.youtube.com/shorts/wRlIuexTowA",
+    "Leg Press":              "https://www.youtube.com/shorts/jA9tsYbA7Ms",
+    "Hamstring Curl":         "https://www.youtube.com/shorts/JFfSf-UkZ1w",
+    "Leg Extension":          "https://www.youtube.com/shorts/ztNBgrGy6FQ",
+    "Bulgarian Split Squat":  "https://www.youtube.com/shorts/Cow3ESXmrTU",
+    "Standing Calf Raise":    "https://www.youtube.com/shorts/8sT7Ne3Kzwc",
+    "Plank + Side Plank":     "https://www.youtube.com/shorts/YNGatHkcLLo",
+    "Dead Bug + Plank":       "https://www.youtube.com/shorts/Aoipu_fl3HA",
+  };
+
+  const YT_DEMO_ICON = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>`;
+
+  function wireExerciseDemos() {
+    document.querySelectorAll('#tab-exercise table tbody tr td:first-child').forEach(td => {
+      if (td.querySelector('.yt-demo')) return;
+      const name = td.textContent.trim();
+      const url = EXERCISE_DEMOS[name];
+      if (!url) return;
+      td.innerHTML = '';
+      const wrap = document.createElement('span');
+      wrap.className = 'inline-flex items-center gap-2';
+      wrap.appendChild(document.createTextNode(name));
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.className = 'yt-demo';
+      link.title = 'Watch form demo';
+      link.setAttribute('aria-label', 'Watch ' + name + ' demo');
+      link.innerHTML = YT_DEMO_ICON;
+      wrap.appendChild(link);
+      td.appendChild(wrap);
+    });
+  }
+
   // ─── Helpers ────────────────────────────────────────────────────────────
   function getVideoId(url) {
     // Handles: youtu.be/ID, youtube.com/shorts/ID, youtube.com/watch?v=ID
@@ -1006,6 +1063,7 @@
 
   // Initial render
   renderLinks();
+  wireExerciseDemos();
 
   // If user resizes to desktop while Profile tab was open, restore Exercise content
   window.addEventListener('resize', () => {
