@@ -47,11 +47,24 @@
     /* YouTube demo link next to exercise names */
     .yt-demo {
       display: inline-flex; align-items: center; justify-content: center;
-      width: 22px; height: 22px; border-radius: 6px; flex-shrink: 0;
+      width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
       background: #fee2e2; color: #dc2626; transition: background 0.15s, transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
     }
-    .yt-demo:hover { background: #fecaca; transform: scale(1.08); }
-    .yt-demo svg { width: 12px; height: 12px; }
+    .yt-demo:hover, .yt-demo:focus-visible { background: #fecaca; transform: scale(1.08); outline: none; }
+    .yt-demo svg { width: 13px; height: 13px; }
+
+    /* Mobile: hide Notes column so exercise rows stay readable */
+    @media (max-width: 639px) {
+      #tab-exercise table th:nth-child(4),
+      #tab-exercise table td:nth-child(4) {
+        display: none;
+      }
+      #tab-exercise table th,
+      #tab-exercise table td {
+        padding-right: 0.5rem;
+      }
+    }
 
     /* Scrollbar slim */
     ::-webkit-scrollbar { width: 4px; }
@@ -903,14 +916,14 @@
     "Romanian Deadlift":      "https://www.youtube.com/shorts/Fsve8fkMGcY",
     "Rear Delt Fly":          "https://www.youtube.com/shorts/vGIY3D9digk",
     "Face Pull":              "https://www.youtube.com/shorts/MChHOiaCR7s",
-    "Curl":                   "https://www.youtube.com/shorts/SGolzLoGutg",
+    "Curl":                   "https://www.youtube.com/shorts/sAq_ocpRh_I",
     "Arnold Press":           "https://www.youtube.com/shorts/wRlIuexTowA",
     "Leg Press":              "https://www.youtube.com/shorts/jA9tsYbA7Ms",
-    "Hamstring Curl":         "https://www.youtube.com/shorts/JFfSf-UkZ1w",
+    "Hamstring Curl":         "https://www.youtube.com/shorts/bgfHeL6eR9Q",
     "Leg Extension":          "https://www.youtube.com/shorts/ztNBgrGy6FQ",
     "Bulgarian Split Squat":  "https://www.youtube.com/shorts/Cow3ESXmrTU",
     "Standing Calf Raise":    "https://www.youtube.com/shorts/8sT7Ne3Kzwc",
-    "Plank + Side Plank":     "https://www.youtube.com/shorts/YNGatHkcLLo",
+    "Plank + Side Plank":     "https://www.youtube.com/shorts/K2VljzCC16g",
     "Dead Bug + Plank":       "https://www.youtube.com/shorts/Aoipu_fl3HA",
   };
 
@@ -924,16 +937,20 @@
       if (!url) return;
       td.innerHTML = '';
       const wrap = document.createElement('span');
-      wrap.className = 'inline-flex items-center gap-2';
-      wrap.appendChild(document.createTextNode(name));
+      wrap.className = 'inline-flex items-center gap-2 min-w-0';
+      const label = document.createElement('span');
+      label.className = 'min-w-0';
+      label.textContent = name;
+      wrap.appendChild(label);
       const link = document.createElement('a');
       link.href = url;
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
       link.className = 'yt-demo';
-      link.title = 'Watch form demo';
-      link.setAttribute('aria-label', 'Watch ' + name + ' demo');
+      link.title = 'Watch form demo on YouTube';
+      link.setAttribute('aria-label', 'Watch ' + name + ' form demo');
       link.innerHTML = YT_DEMO_ICON;
+      link.addEventListener('click', (e) => e.stopPropagation());
       wrap.appendChild(link);
       td.appendChild(wrap);
     });
