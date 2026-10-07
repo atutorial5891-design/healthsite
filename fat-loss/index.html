@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Belly Fat Loss Videos — Health Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap');
+    body { font-family: 'DM Sans', system-ui, sans-serif; }
+
+    .hover-lift { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+    .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.10); }
+
+    .yt-modal {
+      position: fixed; inset: 0; z-index: 9999;
+      pointer-events: none;
+      touch-action: manipulation;
+    }
+    .yt-modal[hidden] { display: none !important; }
+    .yt-modal-backdrop {
+      display: none;
+      position: absolute; inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      pointer-events: auto;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .yt-modal-dialog {
+      pointer-events: auto;
+      position: absolute;
+      top: max(0.65rem, env(safe-area-inset-top));
+      left: 0.65rem;
+      width: min(52vw, 220px);
+      display: flex; flex-direction: column;
+      background: #0b1220;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+    @media (min-width: 640px) {
+      .yt-modal-dialog { width: 260px; top: 1rem; left: 1rem; }
+    }
+    .yt-modal-chrome {
+      position: relative; z-index: 20;
+      display: flex; align-items: center; gap: 0.35rem;
+      padding: 0.4rem 0.4rem;
+      background: #0f172a;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      flex-shrink: 0;
+    }
+    .yt-modal-chrome #yt-modal-title {
+      flex: 1; min-width: 0;
+      color: #e2e8f0; font-size: 0.68rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      line-height: 1.2;
+    }
+    .yt-modal-btn {
+      flex-shrink: 0; width: 40px; height: 40px; border: none; border-radius: 10px;
+      background: rgba(255,255,255,0.12); color: #fff;
+      cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+      touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+      user-select: none; -webkit-user-select: none;
+      position: relative; z-index: 21;
+    }
+    .yt-modal-btn svg { width: 16px; height: 16px; pointer-events: none; }
+    .yt-modal-btn:active { transform: scale(0.94); background: rgba(255,255,255,0.22); }
+    .yt-modal-btn:focus-visible { outline: 2px solid #fda4af; outline-offset: 2px; }
+    .yt-modal-btn-close { background: #dc2626; }
+    .yt-modal-btn-close:active { background: #b91c1c; }
+    .yt-modal-frame-wrap {
+      position: relative; z-index: 1; width: 100%;
+      aspect-ratio: 9 / 16;
+      max-height: 32vh;
+      background: #000;
+    }
+    .yt-modal-frame-wrap.is-landscape {
+      aspect-ratio: 16 / 9;
+      max-height: 28vh;
+    }
+    .yt-modal-frame-wrap iframe {
+      position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
+      z-index: 1;
+    }
+    .yt-modal.is-maximized { pointer-events: auto; }
+    .yt-modal.is-maximized .yt-modal-backdrop { display: block; }
+    .yt-modal.is-maximized .yt-modal-dialog {
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(92vw, 380px);
+      max-height: calc(100dvh - 1.5rem);
+    }
+    .yt-modal.is-maximized .yt-modal-dialog.is-landscape-dialog {
+      width: min(94vw, 640px);
+    }
+    .yt-modal.is-maximized .yt-modal-chrome #yt-modal-title { font-size: 0.85rem; }
+    .yt-modal.is-maximized .yt-modal-frame-wrap { max-height: min(68vh, 560px); }
+    .yt-modal.is-maximized .yt-modal-frame-wrap.is-landscape { max-height: min(56vh, 420px); }
+    .yt-modal.is-maximized .yt-modal-btn { width: 44px; height: 44px; }
+    body.yt-modal-maximized { overflow: hidden; overscroll-behavior: none; }
+
+    .video-thumb {
+      position: relative; overflow: hidden;
+      aspect-ratio: 16 / 9; background: #0f172a;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .video-thumb:focus-visible { outline: 2px solid #e11d48; outline-offset: 2px; }
+    .video-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s ease; }
+    .video-card:hover .video-thumb img { transform: scale(1.04); }
+    .video-play {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      background: rgba(15, 23, 42, 0.35); transition: background 0.2s;
+      pointer-events: none;
+    }
+    .video-card:hover .video-play { background: rgba(15, 23, 42, 0.5); }
+    .video-play-btn {
+      width: 52px; height: 52px; border-radius: 9999px;
+      background: #dc2626; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 24px rgba(220, 38, 38, 0.45);
+    }
+    .video-play-btn svg { width: 22px; height: 22px; margin-left: 2px; }
+
+    .play-here-btn:focus-visible {
+      outline: 2px solid #be123c;
+      outline-offset: 2px;
+    }
+
+    .chip {
+      display: inline-flex; align-items: center;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.02em;
+      padding: 0.2rem 0.55rem; border-radius: 9999px;
+      background: #fff1f2; color: #be123c; border: 1px solid #fecdd3;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen overflow-x-hidden">
+
+  <header class="bg-slate-900 border-b border-slate-700 px-4 sm:px-6 py-3.5 flex items-center justify-between sticky top-0 z-20 shadow-lg">
+    <div class="flex items-center gap-2.5 min-w-0">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-rose-500 to-orange-500 flex items-center justify-center text-white text-lg shadow-md flex-shrink-0">🔥</div>
+      <div class="min-w-0">
+        <h1 class="font-black text-white text-sm sm:text-base leading-tight tracking-tight truncate">Belly Fat Loss Videos</h1>
+        <p class="text-[10px] sm:text-xs text-slate-400 truncate">5–10 min · Standing core · Closable player</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <a href="../daily-plan/" class="text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full px-3 py-1.5 transition-all hidden sm:inline-flex">3-Day Plan</a>
+      <a href="../index.html" class="text-xs sm:text-sm font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full px-3 sm:px-4 py-1.5 transition-all">← Dashboard</a>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto p-4 sm:p-6 space-y-5">
+
+    <section class="relative overflow-hidden rounded-2xl border border-rose-200 bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50 p-5 sm:p-6">
+      <div class="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-rose-200/40 blur-2xl pointer-events-none" aria-hidden="true"></div>
+      <div class="absolute -left-10 bottom-0 w-36 h-36 rounded-full bg-amber-200/40 blur-2xl pointer-events-none" aria-hidden="true"></div>
+      <div class="relative">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-rose-600 mb-1">Quick add-ons</p>
+        <h2 class="font-black text-2xl sm:text-3xl text-slate-900 tracking-tight">Core &amp; midsection finishers</h2>
+        <p class="mt-2 text-sm text-slate-600 max-w-2xl leading-relaxed">
+          Short standing videos for belly and side (oblique) work — great on rest days or after lifting.
+          Tap <strong>Play here</strong> to open the same closable corner player used on the gym plans.
+        </p>
+        <p class="mt-3 text-xs text-slate-500 max-w-2xl leading-relaxed">
+          Spot reduction is limited: these raise heart rate and train the waist, but fat loss still comes from your calorie deficit, protein, steps, and the main lift plan.
+          Aim for <strong>3–5× / week · 5–10 min</strong> — consistency beats intensity.
+        </p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <span class="chip">Standing / low floor</span>
+          <span class="chip">No equipment</span>
+          <span class="chip">5–10 minutes</span>
+          <span class="chip">Pairs with 3-day / 5-day plan</span>
+        </div>
+      </div>
+    </section>
+
+    <div id="video-grid" class="grid sm:grid-cols-2 gap-4"></div>
+
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 text-xs text-slate-600 space-y-2">
+      <h3 class="font-bold text-slate-900 text-sm">How to use</h3>
+      <ul class="list-disc pl-4 space-y-1.5">
+        <li><strong>Recommended first:</strong> the starred short (~5–10 min) for belly + side waist.</li>
+        <li>On gym days: finish after lifting instead of scrolling. On rest days: pair with a Zone-2 walk.</li>
+        <li>Close the pop-up with the red ✕, Escape, or shrink from full-screen first if expanded.</li>
+        <li>Need strength days? See the <a href="../daily-plan/" class="text-rose-700 font-semibold hover:underline">3-Day Gym Plan</a> or the <a href="../index.html" class="text-rose-700 font-semibold hover:underline">main dashboard</a>.</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <!-- Modal must exist before script wires close handlers -->
+  <div id="yt-modal" class="yt-modal" hidden role="dialog" aria-modal="true" aria-labelledby="yt-modal-title">
+    <div class="yt-modal-backdrop" aria-hidden="true"></div>
+    <div class="yt-modal-dialog" id="yt-modal-dialog">
+      <div class="yt-modal-chrome">
+        <button type="button" class="yt-modal-btn yt-modal-btn-close" id="yt-modal-close" title="Close" aria-label="Close video">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <span id="yt-modal-title">Fat-loss video</span>
+        <button type="button" class="yt-modal-btn" id="yt-modal-max" title="Expand" aria-label="Expand player">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 3H3v6M15 3h6v6M9 21H3v-6M21 15v6h-6"/><path d="M3 3l7 7M21 3l-7 7M3 21l7-7M21 21l-7-7"/></svg>
+        </button>
+      </div>
+      <div class="yt-modal-frame-wrap" id="yt-modal-frame-wrap">
+        <iframe id="yt-modal-iframe" title="Belly fat loss workout" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen playsinline></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  const FAT_LOSS_VIDEOS = [
+    {
+      id: 't_nzXINaV9E',
+      url: 'https://youtube.com/shorts/t_nzXINaV9E',
+      title: 'Belly fat melting workout',
+      duration: '5–10 min',
+      focus: 'Belly · Side waist',
+      description: 'Your pick — a short, high-energy finisher aimed at the midsection and love-handle area. Easy to stack after a lift or on a rest day.',
+      featured: true,
+      why: 'Recommended starter'
+    },
+    {
+      id: 'EbsAvujBVNE',
+      url: 'https://www.youtube.com/watch?v=EbsAvujBVNE',
+      title: '10 Minute Lose Belly Fat — Standing Abs',
+      duration: '10 min',
+      focus: 'Cardio abs · Obliques',
+      description: 'Non-stop standing cardio-abs: knee drives, punches, and rotational moves to raise heart rate while hitting the waist.',
+      why: 'Popular standing burner'
+    },
+    {
+      id: '8IiZzONS20w',
+      url: 'https://www.youtube.com/watch?v=8IiZzONS20w',
+      title: '5 Min Easy Belly Fat Exercises (No Floor)',
+      duration: '5 min',
+      focus: 'Beginner · Standing',
+      description: 'Natasha Mohan — floor-free, crunch-free standing moves. Ideal when joints need a gentler day or you only have five minutes.',
+      why: 'Highly viewed · beginner-friendly'
+    },
+    {
+      id: 'DNqkPbglnjU',
+      url: 'https://www.youtube.com/watch?v=DNqkPbglnjU',
+      title: '10 Min Standing Abs (No Equipment)',
+      duration: '10 min',
+      focus: 'Core · Obliques',
+      description: 'No-repeat standing abs sequence — star reaches, oblique crunches, and controlled core work without getting on the floor.',
+      why: 'Strong reviews · no equipment'
+    },
+    {
+      id: 'PBowpHl3c2Y',
+      url: 'https://www.youtube.com/watch?v=PBowpHl3c2Y',
+      title: 'Belly Fat & Love Handles — Standing Only',
+      duration: '~10 min',
+      focus: 'Love handles · Waist',
+      description: 'Standing-only, no-floor routine focused on love handles and the side waist — pairs well with your weekly Zone-2 walks.',
+      why: 'Love-handle focus'
+    },
+    {
+      id: '-5Y0Xr-PHFk',
+      url: 'https://www.youtube.com/watch?v=-5Y0Xr-PHFk',
+      title: '10 Min Standing Abs to Lose Belly Fat',
+      duration: '10 min',
+      focus: 'No crunches · No floor',
+      description: 'Another well-followed standing abs session — useful variety so the finisher does not feel repetitive week to week.',
+      why: 'Well-followed standing abs'
+    }
+  ];
+
+  const PLAY_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+
+  let ytModalMode = 'pip';
+  let lastFocusEl = null;
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function getVideoId(url) {
+    const patterns = [
+      /youtu\.be\/([^?&#]+)/,
+      /youtube\.com\/shorts\/([^?&#]+)/,
+      /[?&]v=([^&#]+)/,
+      /youtube\.com\/embed\/([^?&#]+)/
+    ];
+    for (const p of patterns) {
+      const m = url.match(p);
+      if (m) return m[1];
+    }
+    return null;
+  }
+
+  function thumbUrl(id) {
+    return 'https://img.youtube.com/vi/' + encodeURIComponent(id) + '/mqdefault.jpg';
+  }
+
+  function sortedVideos() {
+    return FAT_LOSS_VIDEOS.slice().sort((a, b) => Number(!!b.featured) - Number(!!a.featured));
+  }
+
+  function setYtModalMode(mode) {
+    const modal = document.getElementById('yt-modal');
+    if (!modal) return;
+    ytModalMode = mode;
+    modal.classList.toggle('is-maximized', mode === 'maximized');
+    document.body.classList.toggle('yt-modal-maximized', mode === 'maximized');
+    const maxBtn = document.getElementById('yt-modal-max');
+    if (maxBtn) {
+      const expanded = mode === 'maximized';
+      maxBtn.setAttribute('aria-label', expanded ? 'Shrink to corner' : 'Expand player');
+      maxBtn.title = expanded ? 'Shrink' : 'Expand';
+    }
+  }
+
+  function openVideo(name, url) {
+    if (!url) return;
+    const id = getVideoId(url);
+    if (!id) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    const modal = document.getElementById('yt-modal');
+    const dialog = document.getElementById('yt-modal-dialog');
+    const frameWrap = document.getElementById('yt-modal-frame-wrap');
+    const iframe = document.getElementById('yt-modal-iframe');
+    const title = document.getElementById('yt-modal-title');
+    const closeBtn = document.getElementById('yt-modal-close');
+    if (!modal || !iframe) return;
+
+    lastFocusEl = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    const landscape = !/\/shorts\//i.test(url);
+    if (frameWrap) frameWrap.classList.toggle('is-landscape', landscape);
+    if (dialog) dialog.classList.toggle('is-landscape-dialog', landscape);
+
+    if (title) title.textContent = name;
+    iframe.title = name;
+    iframe.src = 'https://www.youtube.com/embed/' + encodeURIComponent(id) + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+    modal.hidden = false;
+    setYtModalMode('pip');
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function closeVideo(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    const modal = document.getElementById('yt-modal');
+    const iframe = document.getElementById('yt-modal-iframe');
+    if (!modal || modal.hidden) return;
+    modal.hidden = true;
+    if (iframe) {
+      iframe.src = '';
+      iframe.title = 'Belly fat loss workout';
+    }
+    modal.classList.remove('is-maximized');
+    document.body.classList.remove('yt-modal-maximized');
+    ytModalMode = 'pip';
+    if (lastFocusEl && typeof lastFocusEl.focus === 'function') {
+      try { lastFocusEl.focus(); } catch (_) {}
+    }
+    lastFocusEl = null;
+  }
+
+  function toggleYtMaximize(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    setYtModalMode(ytModalMode === 'maximized' ? 'pip' : 'maximized');
+  }
+
+  function renderVideos() {
+    const grid = document.getElementById('video-grid');
+    if (!grid) return;
+    const videos = sortedVideos();
+    grid.innerHTML = videos.map((v, i) => {
+      const border = v.featured ? 'border-rose-300 ring-1 ring-rose-200' : 'border-slate-200';
+      const badge = v.featured
+        ? '<span class="absolute top-2 left-2 z-10 text-[10px] font-bold uppercase tracking-wide bg-rose-600 text-white px-2 py-0.5 rounded-full shadow">★ Starter</span>'
+        : '';
+      const safeTitle = escapeHtml(v.title);
+      const playLabel = escapeHtml('Play ' + v.title);
+      return `
+        <article class="video-card bg-white rounded-2xl border ${border} shadow-sm overflow-hidden hover-lift flex flex-col">
+          <button type="button" class="video-thumb w-full text-left border-0 p-0 cursor-pointer" data-video-index="${i}" aria-label="${playLabel}">
+            ${badge}
+            <img src="${thumbUrl(v.id)}" alt="" loading="lazy" onerror="this.style.opacity='0.3'" />
+            <div class="video-play"><span class="video-play-btn">${PLAY_SVG}</span></div>
+          </button>
+          <div class="p-4 flex flex-col flex-1 gap-2">
+            <div class="flex flex-wrap gap-1.5">
+              <span class="chip">${escapeHtml(v.duration)}</span>
+              <span class="chip">${escapeHtml(v.focus)}</span>
+            </div>
+            <h3 class="font-bold text-slate-900 text-sm leading-snug">${safeTitle}</h3>
+            <p class="text-xs text-slate-500 leading-relaxed flex-1">${escapeHtml(v.description)}</p>
+            <p class="text-[11px] font-semibold text-rose-700">${escapeHtml(v.why)}</p>
+            <div class="flex gap-2 mt-1">
+              <button type="button" class="play-here-btn flex-1 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl py-2.5 transition-colors" data-video-index="${i}" aria-label="${playLabel}">
+                ▶ Play here
+              </button>
+              <a href="${escapeHtml(v.url)}" target="_blank" rel="noopener noreferrer" class="flex-shrink-0 px-3 py-2.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors" aria-label="Open ${safeTitle} on YouTube">
+                YouTube ↗
+              </a>
+            </div>
+          </div>
+        </article>`;
+    }).join('');
+
+    grid.querySelectorAll('[data-video-index]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        if (el.tagName === 'A') return;
+        e.preventDefault();
+        const v = videos[Number(el.getAttribute('data-video-index'))];
+        if (v) openVideo(v.title, v.url);
+      });
+    });
+  }
+
+  function wireModal() {
+    const closeBtn = document.getElementById('yt-modal-close');
+    const maxBtn = document.getElementById('yt-modal-max');
+    const backdrop = document.querySelector('#yt-modal .yt-modal-backdrop');
+    if (closeBtn) closeBtn.addEventListener('click', closeVideo);
+    if (maxBtn) maxBtn.addEventListener('click', toggleYtMaximize);
+    if (backdrop) {
+      backdrop.addEventListener('click', function () {
+        if (ytModalMode === 'maximized') setYtModalMode('pip');
+      });
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const modal = document.getElementById('yt-modal');
+      if (!modal || modal.hidden) return;
+      if (ytModalMode === 'maximized') setYtModalMode('pip');
+      else closeVideo();
+    });
+  }
+
+  renderVideos();
+  wireModal();
+  </script>
+
+</body>
+</html>
