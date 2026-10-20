@@ -111,8 +111,8 @@
         <h3 class="font-bold text-slate-900">This week's gym days</h3>
         <span class="text-xs text-slate-400">Tap a day to show only that session</span>
       </div>
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5" id="week-strip"></div>
-      <p class="text-xs text-slate-400 mt-3">Tue rest · Sat easy run + optional light upper (e.g. <button class="swap-link" data-jump="face-pull">Face Pull</button>, <button class="swap-link" data-jump="reverse-fly">Reverse Fly</button>, <button class="swap-link" data-jump="push-up">Push-up</button> — 2 easy sets each, skip if tired) · Sun long run, no heavy legs after. If fatigue builds, drop Thursday's upper session first.</p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5" id="week-strip"></div>
+      <p class="text-xs text-slate-400 mt-3">Tue = light home hip/waist trio (no gym) · Sat easy run + optional light upper (e.g. <button class="swap-link" data-jump="face-pull">Face Pull</button>, <button class="swap-link" data-jump="reverse-fly">Reverse Fly</button>, <button class="swap-link" data-jump="push-up">Push-up</button> — 2 easy sets each, skip if tired) · Sun long run, no heavy legs after. If fatigue builds, drop Thursday's upper session first — keep the hip trio if hips feel good.</p>
     </section>
 
     <!-- FILTERS -->
@@ -293,6 +293,13 @@
     { name: 'Bulgarian Split Squat', group: 'glutes', diff: 'hard', equip: 'free', kit: 'Bench + dumbbells', tier: 'good',
       cue: 'Rear foot on bench, drop straight down. Very effective but demanding — add after step-ups feel easy.',
       video: 'https://www.youtube.com/shorts/Cow3ESXmrTU' },
+    { name: 'Standing Hip & Waist Trio', group: 'glutes', diff: 'easy', equip: 'free', kit: 'Bodyweight', tier: 'required',
+      days: [
+        { d: 'tue', sets: '3 moves · 3 × 20' },
+        { d: 'thu', sets: '3 moves · 3 × 20' }
+      ],
+      cue: 'Standing circuit for hips, glutes and waist: (1) reverse leg raise + arm swing, (2) side leg raise each side, (3) step-back arm swing. Brace the core; 20 reps × 3 per move. Home-friendly — do Tue and Thu.',
+      video: 'https://www.youtube.com/shorts/5YLmdfxXEfs' },
 
     // ── 7. CALVES, ANKLES & FEET ──
     { name: 'Standing Calf Raise', group: 'calves', diff: 'easy', equip: 'either', kit: 'Machine or step edge', tier: 'required',
@@ -358,8 +365,9 @@
 
   const DAYS = [
     { d: 'mon', label: 'Mon', title: 'Upper — full strength', time: '45–55 min' },
+    { d: 'tue', label: 'Tue', title: 'Home hip & waist finisher', time: '8–12 min' },
     { d: 'wed', label: 'Wed', title: 'Legs, hips & core', time: '45–55 min' },
-    { d: 'thu', label: 'Thu', title: 'Easy run + short upper', time: '30–45 min' },
+    { d: 'thu', label: 'Thu', title: 'Easy run + short upper + hips', time: '35–50 min' },
     { d: 'fri', label: 'Fri', title: 'Knee, ankle & hip stability', time: '20–25 min' },
   ];
 
