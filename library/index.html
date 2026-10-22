@@ -87,19 +87,35 @@
       <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-400 to-emerald-600 flex items-center justify-center text-white text-lg shadow-md flex-shrink-0">📚</div>
       <div class="min-w-0">
         <h1 class="font-black text-white text-sm sm:text-base leading-tight tracking-tight truncate">Exercise Library</h1>
-        <p class="text-[10px] sm:text-xs text-slate-400 truncate">9 functional groups · half-marathon friendly · Shorts demos</p>
+        <p class="text-[10px] sm:text-xs text-slate-400 truncate"><span id="n-focus-a">24</span> target muscles · 9 functional groups · half-marathon friendly · Shorts demos</p>
       </div>
     </div>
     <a href="../index.html" class="text-xs sm:text-sm font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full px-3 sm:px-4 py-1.5 transition-all flex-shrink-0">← Dashboard</a>
   </header>
+
+  <!-- ── SITE NAV (grouped: Home · Train · Eat) ── -->
+  <nav aria-label="Site pages" class="bg-slate-800 border-b border-slate-700 px-4 sm:px-6 py-2 flex items-center gap-x-2 sm:gap-x-3 overflow-x-auto whitespace-nowrap text-xs">
+    <span class="text-[10px] font-bold uppercase tracking-wide text-slate-500 flex-shrink-0">Home</span>
+    <a href="../index.html" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">🏠 Dashboard</a>
+    <span class="text-slate-600 flex-shrink-0" aria-hidden="true">|</span>
+    <span class="text-[10px] font-bold uppercase tracking-wide text-slate-500 flex-shrink-0">Train</span>
+    <a href="../library/" aria-current="page" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors bg-emerald-600 text-white">📚 Exercise Library</a>
+    <a href="../daily-plan/" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">💪 3-Day Gym Plan</a>
+    <a href="../fat-loss/" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">🔥 Belly Fat Videos</a>
+    <span class="text-slate-600 flex-shrink-0" aria-hidden="true">|</span>
+    <span class="text-[10px] font-bold uppercase tracking-wide text-slate-500 flex-shrink-0">Eat</span>
+    <a href="../kichdi-plan.html" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">🍲 Kichdi Plan</a>
+  </nav>
+
 
   <main class="max-w-5xl mx-auto p-4 sm:p-6 space-y-5">
 
     <!-- INTRO -->
     <section class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
       <h2 class="font-black text-xl sm:text-2xl text-slate-900 mb-1">Your exercise library</h2>
+      <p class="text-sm text-slate-500 mb-2">The <strong class="text-slate-700">Muscle focus list</strong> at the top ranks <span id="n-focus-b">24</span> specific muscles (forearms first), grouped upper body, lower body and core. Each has its own <strong class="text-slate-700">Videos</strong> list, showing <em>NA</em> until a good video is added. Below it, the nine functional groups hold the full exercise menu.</p>
       <p class="text-sm text-slate-500">You don't need to isolate every muscle. Train these nine functional groups, with extra attention to running muscles and joints. <strong class="text-slate-700">Required</strong> = in your current weekly plan. <strong class="text-slate-700">Good to have</strong> = proven swaps and progressions for when equipment is busy or you want variety.</p>
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4" id="stats"></div>
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mt-4" id="stats"></div>
       <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
         <strong>Difficulty</strong> is rated for a returning lifter at 45: <span class="tag t-easy">Easy</span> stable, low-skill, safe to start · <span class="tag t-medium">Medium</span> needs balance or technique · <span class="tag t-hard">Hard</span> high skill or load — add only after 8–12 weeks of consistent training. Stop any movement that causes knee pain.
       </div>
@@ -171,6 +187,7 @@
   //  swap  → name of a no-machine (or easier) alternative in this library
   // ════════════════════════════════════════════════════════════
   const GROUPS = [
+    { id: 'focus',     icon: '🎯', name: 'Muscle focus list',             why: 'Specific muscles in priority order. Each card lists the exact muscles it covers, links to related exercises already in this library, and has its own Videos list. "NA" means no video added yet: tap "Find more", pick a good one, and add it to that muscle\'s videos list.' },
     { id: 'chest',     icon: '🫁', name: 'Chest',                         why: 'Pushing strength, posture and upper-body balance.' },
     { id: 'back',      icon: '🔙', name: 'Back',                          why: 'Upper-back endurance and posture during long runs.' },
     { id: 'shoulders', icon: '🏋️', name: 'Shoulders',                     why: 'Shoulder stability and balanced upper-body strength.' },
@@ -182,7 +199,165 @@
     { id: 'stability', icon: '🛡️', name: 'Hip stabilizers & knee support', why: 'Abductors, adductors and the muscles that control your knees on one leg.' },
   ];
 
+  //  Muscle focus entries (group:'focus') also use:
+  //    muscles → the specific muscles this one video should cover
+  //    see     → related exercises already in this library
+  //    find    → YouTube search text used while video is still missing
+  //  Order of the focus entries below = the priority number shown on the card.
   const LIBRARY = [
+    // ── 0. MUSCLE FOCUS LIST (ranked; each muscle gets its own VIDEOS list) ──
+    //    To add videos later, put them inside that muscle's  videos: [ ]  like:
+    //      videos: [ { url: 'https://www.youtube.com/shorts/XXXX', title: 'Short title', by: 'Channel' } ]
+    //    Empty list = shows "NA" on the card.
+    { name: 'Forearms', group: 'focus', region: 'Upper body', diff: 'medium', equip: 'free', kit: 'Dumbbells / bodyweight', tier: 'good',
+      muscles: 'Wrist flexors, wrist extensors, brachioradialis, grip',
+      cue: 'One short routine that covers every forearm muscle. Control each rep, no swinging.',
+      see: ["Farmer's Carry", 'Hammer Curl'],
+      find: 'forearm workout wrist flexors extensors grip shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/6eAuMx5M0ho', title: 'Forearm builder (all forearm muscles)', by: '' },
+      ] },
+    { name: 'Triceps', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'either', kit: 'Cable rope or one dumbbell', tier: 'good',
+      muscles: 'Long head, lateral head, medial head',
+      cue: 'Pick videos that hit all three heads: overhead work for the long head, pushdown or kickback for lateral and medial. Elbows stay fixed.',
+      see: ['Triceps Pushdown', 'Overhead DB Triceps Extension', 'Diamond Push-up'],
+      find: 'triceps workout all three heads shorts',
+      videos: [] },
+    { name: 'Biceps', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'free', kit: 'Dumbbells', tier: 'good',
+      muscles: 'Biceps brachii (long and short head), brachialis',
+      cue: 'Look for curl variations that change grip and angle (supinated, hammer, incline) so both heads and the brachialis get work.',
+      see: ['Biceps Curl', 'Hammer Curl'],
+      find: 'biceps workout both heads brachialis dumbbells shorts',
+      videos: [] },
+    { name: 'Glutes', group: 'focus', region: 'Lower body', diff: 'medium', equip: 'free', kit: 'Bodyweight, mini band, dumbbell', tier: 'good',
+      muscles: 'Gluteus maximus (main hip extensor)',
+      cue: 'Hip-extension work: bridges, thrusts, hinges. Squeeze at the top, ribs down, no lower-back arching. Side-hip work is its own entry: Glute medius.',
+      see: ['Glute Bridge', 'Hip Thrust', 'Romanian Deadlift (DB)'],
+      find: 'glute max workout hip thrust bridge at home shorts',
+      videos: [] },
+    { name: 'Chest', group: 'focus', region: 'Upper body', diff: 'medium', equip: 'free', kit: 'Dumbbells / bodyweight', tier: 'good',
+      muscles: 'Pectoralis major (upper, mid, lower fibres), pectoralis minor',
+      cue: 'Look for incline + flat + fly angles. Shoulder blades pinned back, elbows ~45 degrees from the body.',
+      see: ['Incline DB Press', 'Push-up', 'Machine Chest Press', 'Cable Chest Fly'],
+      find: 'chest workout upper mid lower dumbbells shorts',
+      videos: [] },
+    { name: 'Serratus anterior', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'free', kit: 'Bodyweight / light dumbbells', tier: 'good',
+      muscles: 'Serratus anterior (the muscle that holds the shoulder blade to the ribs)',
+      cue: 'Keeps shoulders healthy and stable under presses and push-ups. Look for push-up plus, wall slides or serratus punches. Gentle, no shrugging.',
+      see: ['Push-up'],
+      find: 'serratus anterior exercises push up plus wall slide shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/WSqc-58sBCw', title: 'Serratus anterior strengthening exercises', by: '' },
+      ] },
+    { name: 'Lats', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'either', kit: 'Pulldown machine or band', tier: 'good',
+      muscles: 'Latissimus dorsi, teres major',
+      cue: 'Drive elbows down toward your hips, not your hands. Chest tall, no leaning back to cheat.',
+      see: ['Lat Pulldown', 'Band Lat Pulldown', 'Straight-Arm Pulldown'],
+      find: 'lat workout pulldown form shorts',
+      videos: [] },
+    { name: 'Upper back (rhomboids & mid-traps)', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'either', kit: 'Cable row or dumbbells + bench', tier: 'good',
+      muscles: 'Rhomboids, middle trapezius, lower trapezius',
+      cue: 'Squeeze shoulder blades together at the end of every row. Key for posture on long runs and at a desk.',
+      see: ['Seated Cable Row', 'Chest-Supported Row'],
+      find: 'upper back rhomboids mid traps workout shorts',
+      videos: [] },
+    { name: 'Shoulders (delts)', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'free', kit: 'Light dumbbells', tier: 'good',
+      muscles: 'Front deltoid, side deltoid, rear deltoid',
+      cue: 'Light weight, slow reps. Make sure the video trains all three heads, especially side and rear.',
+      see: ['DB Lateral Raise', 'Reverse Fly', 'DB Shoulder Press'],
+      find: 'shoulder workout front side rear delts dumbbells shorts',
+      videos: [] },
+    { name: 'Rotator cuff & shoulder stabilisers', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'free', kit: 'Light band', tier: 'good',
+      muscles: 'Supraspinatus, infraspinatus, teres minor, subscapularis',
+      cue: 'Shoulder-health work for returning lifters: band external/internal rotation, light and controlled. Never push through pain.',
+      see: ['Face Pull'],
+      find: 'rotator cuff exercises band shoulder health shorts',
+      videos: [] },
+    { name: 'Upper traps', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'free', kit: 'Dumbbells', tier: 'good',
+      muscles: 'Upper trapezius, levator scapulae',
+      cue: 'Shrug straight up and down, no rolling. Heavy carries train this too.',
+      see: ["Farmer's Carry"],
+      find: 'trap workout dumbbell shrug form shorts',
+      videos: [] },
+    { name: 'Neck & deep neck flexors', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'free', kit: 'Bodyweight / towel', tier: 'good',
+      muscles: 'Deep neck flexors, sternocleidomastoid, upper neck extensors',
+      cue: 'Desk-posture fix: chin tucks and gentle isometric holds. Very light effort, no neck cranking or heavy loading.',
+      see: [],
+      find: 'chin tuck deep neck flexor exercise posture shorts',
+      videos: [] },
+    { name: 'Quads', group: 'focus', region: 'Lower body', diff: 'easy', equip: 'either', kit: 'Leg press / box / dumbbell', tier: 'good',
+      muscles: 'Rectus femoris, vastus lateralis, vastus medialis, vastus intermedius',
+      cue: 'Knees track over toes, pain-free depth only. Good quad strength protects your knees when running.',
+      see: ['Leg Press', 'Box Squat', 'Goblet Squat', 'Leg Extension'],
+      find: 'quad workout knee friendly shorts',
+      videos: [] },
+    { name: 'Hamstrings', group: 'focus', region: 'Lower body', diff: 'medium', equip: 'either', kit: 'Curl machine or dumbbells', tier: 'good',
+      muscles: 'Biceps femoris, semitendinosus, semimembranosus',
+      cue: 'Cover both the hip-hinge (RDL) and knee-curl actions. Control the lowering phase.',
+      see: ['Seated Hamstring Curl', 'Romanian Deadlift (DB)'],
+      find: 'hamstring workout RDL curl form shorts',
+      videos: [] },
+    { name: 'Glute medius (side hips)', group: 'focus', region: 'Lower body', diff: 'easy', equip: 'free', kit: 'Mini band / mat', tier: 'good',
+      muscles: 'Gluteus medius, gluteus minimus, tensor fasciae latae',
+      cue: "The runner's knee-and-pelvis stabiliser. Side-lying and standing abduction, band walks. Hips stay stacked, no leaning.",
+      see: ['Band Lateral Walk', 'Clamshell', 'Hip Abduction Machine', 'Standing Hip & Waist Trio'],
+      find: 'glute medius exercises runners hip stability shorts',
+      videos: [] },
+    { name: 'Hip rotators (deep glutes)', group: 'focus', region: 'Lower body', diff: 'easy', equip: 'free', kit: 'Mat / mini band', tier: 'good',
+      muscles: 'Piriformis, gemelli, obturators, quadratus femoris',
+      cue: 'Small deep muscles that turn the thigh and steady the hip joint. Look for 90/90 holds, seated banded external rotation or figure-4 strengthening. Gentle, no pinching at the front of the hip.',
+      see: ['Clamshell'],
+      find: 'hip external rotators strengthening piriformis 90 90 shorts',
+      videos: [] },
+    { name: 'Adductors (inner thigh)', group: 'focus', region: 'Lower body', diff: 'easy', equip: 'either', kit: 'Machine, bench or band', tier: 'good',
+      muscles: 'Adductor magnus, longus, brevis, gracilis',
+      cue: 'Inner-thigh strength steadies the knee and pelvis on one leg. Start light and avoid groin pain.',
+      see: ['Hip Adduction Machine', 'Copenhagen Plank (short lever)'],
+      find: 'adductor strengthening exercises inner thigh shorts',
+      videos: [] },
+    { name: 'Hip flexors', group: 'focus', region: 'Lower body', diff: 'easy', equip: 'free', kit: 'Mat / bodyweight', tier: 'good',
+      muscles: 'Psoas, iliacus, rectus femoris',
+      cue: 'Runners and desk workers get tight here. Look for a strengthen + stretch combo (marching lifts, lunge stretch).',
+      see: [],
+      find: 'hip flexor strengthening and stretching runners shorts',
+      videos: [] },
+    { name: 'Calves', group: 'focus', region: 'Lower body', diff: 'easy', equip: 'either', kit: 'Step edge or machine', tier: 'good',
+      muscles: 'Gastrocnemius, soleus',
+      cue: 'Straight-knee raises hit the gastrocnemius; bent-knee (seated) raises hit the soleus. Full stretch at the bottom.',
+      see: ['Standing Calf Raise', 'Seated Calf Raise', 'Single-Leg Calf Raise'],
+      find: 'calf workout gastrocnemius soleus shorts',
+      videos: [] },
+    { name: 'Shins (tibialis anterior)', group: 'focus', region: 'Lower body', diff: 'easy', equip: 'free', kit: 'Wall', tier: 'good',
+      muscles: 'Tibialis anterior, ankle dorsiflexors',
+      cue: 'Helps prevent shin splints and improves ankle control for runners.',
+      see: ['Tibialis Raise'],
+      find: 'tibialis anterior raise shin splints shorts',
+      videos: [] },
+    { name: 'Ankle & foot stabilisers', group: 'focus', region: 'Lower body', diff: 'easy', equip: 'free', kit: 'Bodyweight / mini band', tier: 'good',
+      muscles: 'Peroneals (fibularis), tibialis posterior, intrinsic foot muscles',
+      cue: 'Ankle-sprain protection and foot arch strength for running: short-foot exercise, band eversion, single-leg balance.',
+      see: ['Single-Leg Balance', 'Single-Leg Calf Raise'],
+      find: 'ankle stability peroneals short foot exercise runners shorts',
+      videos: [] },
+    { name: 'Abs (rectus & deep core)', group: 'focus', region: 'Core', diff: 'easy', equip: 'free', kit: 'Mat', tier: 'good',
+      muscles: 'Rectus abdominis, transverse abdominis',
+      cue: 'Ribs down, belly braced, slow reps. Quality beats quantity.',
+      see: ['Dead Bug', 'Plank'],
+      find: 'abs workout rectus transverse abdominis beginner shorts',
+      videos: [] },
+    { name: 'Obliques & side core', group: 'focus', region: 'Core', diff: 'medium', equip: 'either', kit: 'Mat, cable or band', tier: 'good',
+      muscles: 'Internal and external obliques, quadratus lumborum',
+      cue: 'Anti-rotation and side-bend work. Keep hips stacked and avoid twisting through the lower back.',
+      see: ['Side Plank', 'Pallof Press'],
+      find: 'obliques side core workout anti rotation shorts',
+      videos: [] },
+    { name: 'Lower back', group: 'focus', region: 'Core', diff: 'easy', equip: 'free', kit: 'Mat / bodyweight', tier: 'good',
+      muscles: 'Erector spinae, multifidus',
+      cue: 'Gentle, controlled work (bird dog, back extension). Stop on any sharp pain.',
+      see: ['Bird Dog', 'Romanian Deadlift (DB)'],
+      find: 'lower back strengthening erector spinae safe shorts',
+      videos: [] },
+
     // ── 1. CHEST ──
     { name: 'Machine Chest Press', group: 'chest', diff: 'easy', equip: 'machine', kit: 'Chest press machine', tier: 'required',
       days: [{ d: 'mon', sets: '3 × 8–12' }], cue: 'Handles at mid-chest, shoulder blades pinned back, press without locking elbows.',
@@ -356,7 +531,7 @@
   const REMOVED = [
     ['Front Raise', 'front delts already get plenty from every press.'],
     ['Arnold Press', 'duplicates DB Shoulder Press with more shoulder strain.'],
-    ['Wrist Curl / Reverse Wrist Curl', "Hammer Curl and Farmer's Carry cover forearms and grip."],
+    ['Wrist Curl / Reverse Wrist Curl', "the Forearms video in the Muscle focus list, Hammer Curl and Farmer's Carry cover forearms and grip."],
     ['Dumbbell Shrug', 'Farmer\'s Carry trains traps in a more useful way.'],
     ['Cable Crunch', 'Dead Bug, Pallof Press and planks give runners better trunk stability.'],
     ['Back Squat', 'high skill and spinal load; Leg Press / Box Squat / Goblet Squat do the job with less risk while running mileage.'],
@@ -371,6 +546,12 @@
     { d: 'fri', label: 'Fri', title: 'Knee, ankle & hip stability', time: '20–25 min' },
   ];
 
+  const FOCUS_ORDER = LIBRARY.filter(e => e.group === 'focus').map(e => e.name);
+  // All videos for an exercise: the single `video` (if any) + the `videos` list.
+  const videosOf = ex => [
+    ...(ex.video ? [{ url: ex.video, title: 'Main video', by: ex.by || '' }] : []),
+    ...(ex.videos || []).filter(v => v && v.url).map(v => ({ url: v.url, title: v.title || 'Video', by: v.by || '' })),
+  ];
   const DIFF_LABEL = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
   const EQUIP_LABEL = { machine: '⚙️ Machine', free: '🙌 No machine', either: '⚙️/🙌 Either' };
   const PLAY = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
@@ -403,7 +584,7 @@
     if (state.group !== 'all' && ex.group !== state.group) return false;
     if (state.day !== 'all' && !(ex.days || []).some(x => x.d === state.day)) return false;
     if (state.q) {
-      const hay = (ex.name + ' ' + ex.kit + ' ' + ex.cue + ' ' + GROUPS.find(g => g.id === ex.group).name).toLowerCase();
+      const hay = (ex.name + ' ' + ex.kit + ' ' + ex.cue + ' ' + (ex.muscles || '') + ' ' + GROUPS.find(g => g.id === ex.group).name).toLowerCase();
       if (!hay.includes(state.q)) return false;
     }
     return true;
@@ -412,23 +593,51 @@
   function card(ex) {
     const dayTags = (ex.days || []).map(x => `<span class="tag t-day">${x.d.toUpperCase()} · ${esc(x.sets)}</span>`).join('');
     const swap = ex.swap ? `<button class="swap-link" data-jump="${slug(ex.swap)}">↪ No-machine / easier swap: ${esc(ex.swap)}</button>` : '';
+    const isFocus = ex.group === 'focus';
+    const rank = isFocus ? FOCUS_ORDER.indexOf(ex.name) + 1 : 0;
+    const tierTag = isFocus
+      ? '<span class="tag t-req">🎯 Target muscle</span>'
+      : `<span class="tag ${ex.tier === 'required' ? 't-req' : 't-good'}">${ex.tier === 'required' ? '★ Required' : 'Good to have'}</span>`;
+    const muscles = ex.muscles ? `<p class="text-xs text-slate-700"><span class="font-semibold">Muscles:</span> ${esc(ex.muscles)}</p>` : '';
+    const see = (ex.see || []).length
+      ? `<div class="flex flex-wrap gap-x-3 gap-y-1"><span class="text-[11px] text-slate-400">Related:</span>${ex.see.map(n => `<button class="swap-link" data-jump="${slug(n)}">${esc(n)}</button>`).join('')}</div>` : '';
+    const findUrl = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(ex.find || ex.name + ' exercise shorts');
+    const vids = videosOf(ex);
+    // Focus cards: a dedicated VIDEOS list (shows NA when empty). Other cards: single Watch button.
+    const videoBox = isFocus ? `<div class="rounded-xl bg-slate-50 border border-slate-200 p-2.5">
+        <div class="flex items-center justify-between gap-2 mb-1.5">
+          <span class="text-[11px] font-bold uppercase tracking-wide text-slate-500">Videos (${vids.length})</span>
+          <a class="swap-link" href="${findUrl}" target="_blank" rel="noopener noreferrer">🔍 Find more ↗</a>
+        </div>
+        ${vids.length
+          ? `<div class="flex flex-col gap-1.5">${vids.map(v => `<button class="play-btn w-full" style="justify-content:flex-start" data-vurl="${esc(v.url)}" data-vtitle="${esc(ex.name + ' — ' + v.title)}">${PLAY} <span class="truncate">${esc(v.title)}</span>${v.by ? `<span class="ml-auto pl-2 text-[10px] font-medium opacity-70 truncate">${esc(v.by)}</span>` : ''}</button>`).join('')}</div>`
+          : '<p class="text-xs font-semibold text-slate-400">NA — no video added yet</p>'}
+      </div>` : '';
+    const action = ex.video
+      ? `<button class="play-btn" data-play="${esc(ex.name)}">${PLAY} ${/\/shorts\//.test(ex.video) ? 'Watch short' : 'Watch video'}</button>`
+      : `<a class="play-btn" href="${findUrl}" target="_blank" rel="noopener noreferrer">🔍 Find a video</a>`;
+    const footer = isFocus ? '' : `<div class="mt-auto pt-1 flex items-center justify-between gap-2">
+        ${action}
+        ${ex.by ? `<span class="text-[10px] text-slate-400 truncate">${esc(ex.by)}</span>` : ''}
+      </div>`;
     return `<article id="ex-${slug(ex.name)}" class="ex-card bg-white rounded-2xl border border-slate-200 p-4 flex flex-col gap-2.5">
       <div class="flex items-start justify-between gap-2">
-        <h4 class="font-bold text-slate-900 leading-snug">${esc(ex.name)}</h4>
-        <span class="tag ${ex.tier === 'required' ? 't-req' : 't-good'}">${ex.tier === 'required' ? '★ Required' : 'Good to have'}</span>
+        <h4 class="font-bold text-slate-900 leading-snug">${rank ? `<span class="text-emerald-600">#${rank}</span> ` : ''}${esc(ex.name)}</h4>
+        ${tierTag}
       </div>
       <div class="flex flex-wrap gap-1.5">
+        ${ex.region ? `<span class="tag t-either">${esc(ex.region)}</span>` : ''}
         <span class="tag t-${ex.diff}">${DIFF_LABEL[ex.diff]}</span>
         <span class="tag t-${ex.equip}">${EQUIP_LABEL[ex.equip]}</span>
         ${dayTags}
       </div>
       <p class="text-xs text-slate-500"><span class="font-semibold text-slate-600">Kit:</span> ${esc(ex.kit)}</p>
+      ${muscles}
       <p class="text-xs text-slate-600 leading-relaxed">${esc(ex.cue)}</p>
       ${swap}
-      <div class="mt-auto pt-1 flex items-center justify-between gap-2">
-        <button class="play-btn" data-play="${esc(ex.name)}">${PLAY} ${/\/shorts\//.test(ex.video) ? 'Watch short' : 'Watch video'}</button>
-        ${ex.by ? `<span class="text-[10px] text-slate-400 truncate">${esc(ex.by)}</span>` : ''}
-      </div>
+      ${see}
+      ${videoBox}
+      ${footer}
     </article>`;
   }
 
@@ -437,27 +646,31 @@
     const lib = document.getElementById('library');
     let shown = 0;
     lib.innerHTML = GROUPS.map((g, i) => {
-      const items = LIBRARY.filter(ex => ex.group === g.id && matches(ex))
-        .sort((a, b) => (a.tier === b.tier ? 0 : a.tier === 'required' ? -1 : 1) || ['easy', 'medium', 'hard'].indexOf(a.diff) - ['easy', 'medium', 'hard'].indexOf(b.diff));
+      const items = LIBRARY.filter(ex => ex.group === g.id && matches(ex));
+      if (g.id !== 'focus') items.sort((a, b) => (a.tier === b.tier ? 0 : a.tier === 'required' ? -1 : 1) || ['easy', 'medium', 'hard'].indexOf(a.diff) - ['easy', 'medium', 'hard'].indexOf(b.diff));
       if (!items.length) return '';
       shown += items.length;
       return `<section id="${g.id}">
         <div class="flex items-baseline gap-2 mb-2.5 px-1">
-          <h3 class="font-black text-lg text-slate-900">${i + 1}. ${g.icon} ${g.name}</h3>
-          <span class="text-xs text-slate-400">${items.length}</span>
+          <h3 class="font-black text-lg text-slate-900">${g.id === 'focus' ? '' : i + '. '}${g.icon} ${g.name}</h3>
+          <span class="text-xs text-slate-400">${items.length}${g.id === 'focus' ? ' muscles · ' + items.filter(x => videosOf(x).length).length + ' with video · ' + items.filter(x => !videosOf(x).length).length + ' NA' : ''}</span>
         </div>
         <p class="text-xs text-slate-500 mb-3 px-1">${g.why}</p>
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">${items.map(card).join('')}</div>
       </section>`;
     }).join('');
     document.getElementById('empty').classList.toggle('hidden', shown > 0);
-    document.getElementById('count').textContent = `Showing ${shown} of ${LIBRARY.length} exercises`;
+    document.getElementById('count').textContent = `Showing ${shown} of ${LIBRARY.length} cards (${FOCUS_ORDER.length} muscles + ${LIBRARY.length - FOCUS_ORDER.length} exercises)`;
   }
 
   function renderStatic() {
-    const n = f => LIBRARY.filter(f).length;
+    const n = f => LIBRARY.filter(e => e.group !== 'focus').filter(f).length; // real exercises only
+    const nf = FOCUS_ORDER.length;
+    document.getElementById('n-focus-a').textContent = nf;
+    document.getElementById('n-focus-b').textContent = nf;
     const stats = [
-      ['Exercises', LIBRARY.length, 'bg-slate-50 text-slate-900'],
+      ['Target muscles', nf, 'bg-amber-50 text-amber-800'],
+      ['Exercises', n(() => true), 'bg-slate-50 text-slate-900'],
       ['★ Required', n(e => e.tier === 'required'), 'bg-emerald-50 text-emerald-800'],
       ['⚙️ Can use machine', n(e => e.equip !== 'free'), 'bg-indigo-50 text-indigo-800'],
       ['🙌 Doable without machine', n(e => e.equip !== 'machine'), 'bg-teal-50 text-teal-800'],
@@ -524,7 +737,9 @@
       document.getElementById('library').scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
-    const play = e.target.closest('[data-play]');
+    const vbtn = e.target.closest('button[data-vurl]');
+    if (vbtn) { openExerciseDemo(vbtn.dataset.vtitle, vbtn.dataset.vurl); return; }
+    const play = e.target.closest('button[data-play]');
     if (play) { const ex = LIBRARY.find(x => x.name === play.dataset.play); openExerciseDemo(ex.name, ex.video); return; }
     const jump = e.target.closest('[data-jump]');
     if (jump) {
