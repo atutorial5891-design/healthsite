@@ -9,17 +9,8 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
     body { font-family: 'Inter', system-ui, sans-serif; }
 
-    .accordion-body {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.4s ease-out, opacity 0.3s ease;
-      opacity: 0;
-    }
-    .accordion-body.open { max-height: 3000px; opacity: 1; }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
-    .accordion-icon { transition: transform 0.3s ease; display: inline-block; }
-    .accordion-icon.rotated { transform: rotate(180deg); }
 
     /* Metric bars */
     .metric-bar { transition: width 0.8s cubic-bezier(.4,0,.2,1); }
@@ -43,111 +34,6 @@
     }
     .yt-thumb:hover .yt-play-btn { background: rgba(0,0,0,0.42); }
     .yt-play-btn svg { filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)); }
-
-    /* YouTube demo link next to exercise names */
-    .yt-demo {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
-      background: #fee2e2; color: #dc2626; transition: background 0.15s, transform 0.15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .yt-demo:hover, .yt-demo:focus-visible { background: #fecaca; transform: scale(1.08); outline: none; }
-    .yt-demo svg { width: 13px; height: 13px; }
-
-    /* Floating PiP YouTube player — controls ABOVE iframe (iframe steals overlay taps) */
-    .yt-modal {
-      position: fixed; inset: 0; z-index: 9999;
-      pointer-events: none;
-      touch-action: manipulation;
-    }
-    .yt-modal[hidden] { display: none !important; }
-    .yt-modal-backdrop {
-      display: none;
-      position: absolute; inset: 0;
-      background: rgba(15, 23, 42, 0.55);
-      pointer-events: auto;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .yt-modal-dialog {
-      pointer-events: auto;
-      position: absolute;
-      top: max(0.65rem, env(safe-area-inset-top));
-      left: 0.65rem;
-      width: min(52vw, 220px);
-      display: flex; flex-direction: column;
-      background: #0b1220;
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.45);
-      border: 1px solid rgba(255,255,255,0.14);
-    }
-    @media (min-width: 640px) {
-      .yt-modal-dialog { width: 260px; top: 1rem; left: 1rem; }
-    }
-    /* Chrome bar is OUTSIDE the iframe — always tappable */
-    .yt-modal-chrome {
-      position: relative; z-index: 20;
-      display: flex; align-items: center; gap: 0.35rem;
-      padding: 0.4rem 0.4rem;
-      background: #0f172a;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      flex-shrink: 0;
-    }
-    .yt-modal-chrome #yt-modal-title {
-      flex: 1; min-width: 0;
-      color: #e2e8f0; font-size: 0.68rem; font-weight: 700;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      line-height: 1.2;
-    }
-    .yt-modal-btn {
-      flex-shrink: 0; width: 40px; height: 40px; border: none; border-radius: 10px;
-      background: rgba(255,255,255,0.12); color: #fff;
-      cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
-      touch-action: manipulation; -webkit-tap-highlight-color: transparent;
-      user-select: none; -webkit-user-select: none;
-      position: relative; z-index: 21;
-    }
-    .yt-modal-btn svg { width: 16px; height: 16px; pointer-events: none; }
-    .yt-modal-btn:active { transform: scale(0.94); background: rgba(255,255,255,0.22); }
-    .yt-modal-btn-close { background: #dc2626; }
-    .yt-modal-btn-close:active { background: #b91c1c; }
-    .yt-modal-frame-wrap {
-      position: relative; z-index: 1; width: 100%;
-      aspect-ratio: 9 / 16;
-      max-height: 32vh;
-      background: #000;
-    }
-    .yt-modal-frame-wrap iframe {
-      position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
-      z-index: 1;
-    }
-    /* Expanded */
-    .yt-modal.is-maximized { pointer-events: auto; }
-    .yt-modal.is-maximized .yt-modal-backdrop { display: block; }
-    .yt-modal.is-maximized .yt-modal-dialog {
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: min(92vw, 380px);
-      max-height: calc(100dvh - 1.5rem);
-    }
-    .yt-modal.is-maximized .yt-modal-chrome #yt-modal-title { font-size: 0.85rem; }
-    .yt-modal.is-maximized .yt-modal-frame-wrap {
-      max-height: min(68vh, 560px);
-    }
-    .yt-modal.is-maximized .yt-modal-btn { width: 44px; height: 44px; }
-    body.yt-modal-maximized { overflow: hidden; overscroll-behavior: none; }
-
-    /* Mobile: hide Notes column so exercise rows stay readable */
-    @media (max-width: 639px) {
-      #tab-exercise table th:nth-child(4),
-      #tab-exercise table td:nth-child(4) {
-        display: none;
-      }
-      #tab-exercise table th,
-      #tab-exercise table td {
-        padding-right: 0.5rem;
-      }
-    }
 
     /* Scrollbar slim */
     ::-webkit-scrollbar { width: 4px; }
@@ -232,7 +118,6 @@
     <span class="text-slate-600 flex-shrink-0" aria-hidden="true">|</span>
     <span class="text-[10px] font-bold uppercase tracking-wide text-slate-500 flex-shrink-0">Train</span>
     <a href="library/" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">📚 Exercise Library</a>
-    <a href="daily-plan/" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">💪 3-Day Gym Plan</a>
     <a href="fat-loss/" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">🔥 Belly Fat Videos</a>
     <span class="text-slate-600 flex-shrink-0" aria-hidden="true">|</span>
     <span class="text-[10px] font-bold uppercase tracking-wide text-slate-500 flex-shrink-0">Eat</span>
@@ -419,17 +304,13 @@
 
         <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
           <div class="min-w-0">
-            <h2 class="font-black text-xl sm:text-2xl text-slate-900">Weekly Exercise Split</h2>
-            <p class="text-xs sm:text-sm text-slate-400 mt-0.5">Older 5-day split, kept for reference · ~60–75 min/session · Tap any day to expand</p>
+            <h2 class="font-black text-xl sm:text-2xl text-slate-900">Weekly Plan — 6 days</h2>
+            <p class="text-xs sm:text-sm text-slate-400 mt-0.5">Gym Mon · Wed · Fri · Run + light session Tue · Thu · Sat · Rest Sun · Tap a day for sets, cues and demos</p>
           </div>
           <div class="flex items-center gap-2 flex-shrink-0 flex-wrap justify-end">
             <a href="library/" class="bg-gradient-to-br from-indigo-500 to-violet-600 hover:from-indigo-400 hover:to-violet-500 text-white rounded-xl px-4 py-2 text-center shadow-sm transition-all">
               <div class="text-[10px] font-medium text-indigo-100">6-day plan · 24 muscles · 51 exercises</div>
               <div class="text-sm font-black">Exercise Library →</div>
-            </a>
-            <a href="daily-plan/" class="bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white rounded-xl px-4 py-2 text-center shadow-sm transition-all">
-              <div class="text-[10px] font-medium text-emerald-100">Shorter week?</div>
-              <div class="text-sm font-black">3-Day Gym Plan →</div>
             </a>
             <a href="fat-loss/" class="bg-gradient-to-br from-rose-500 to-orange-500 hover:from-rose-400 hover:to-orange-400 text-white rounded-xl px-4 py-2 text-center shadow-sm transition-all">
               <div class="text-[10px] font-medium text-rose-100">5–10 min</div>
@@ -442,244 +323,65 @@
           </div>
         </div>
 
-        <a href="library/" class="block mb-4 p-3.5 rounded-xl border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 transition text-sm text-emerald-900">
-          <strong>✅ Current plan: 6-day week →</strong> gym Mon / Wed / Fri, run + short light session Tue / Thu / Sat, rest Sun. Every one of the 24 muscles is covered. Open it in the Exercise Library.
-          <span class="block text-xs text-emerald-800/80 mt-0.5">The 5-day split below is your older plan, kept for reference — don't stack it on top of the 6-day plan.</span>
-        </a>
-
-        <!-- MONDAY -->
-        <div class="accordion mb-3 rounded-2xl overflow-hidden shadow-sm border border-slate-200 hover-lift">
-          <button onclick="toggleAccordion(this)" class="w-full bg-white p-4 flex items-center gap-3 hover:bg-blue-50/50 transition text-left">
+        <!-- 6-DAY PLAN (details, sets and demos live in library/) -->
+        <div class="space-y-2.5 mb-5">
+          <a href="library/?day=mon" class="flex items-start gap-3 bg-white rounded-2xl p-4 border border-slate-200 shadow-sm hover-lift hover:border-emerald-400 transition">
             <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-black text-xs flex-shrink-0">MON</div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2 flex-wrap"><span class="font-bold text-slate-900">Monday — Gym: legs, glutes &amp; core</span><span class="text-xs bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-semibold">🏋️ Gym · 50–60 min</span></div>
+              <div class="text-xs text-emerald-700 mt-1"><strong>Muscles:</strong> Quads · Hamstrings · Glutes · Adductors · Calves · Abs · Lower back · Hip flexors</div>
+              <div class="text-xs text-slate-500 mt-0.5">Leg Press (or Box Squat) · Romanian Deadlift · Seated Hamstring Curl · Low Step-up · Hip Adduction Machine · Standing Calf Raise · Dead Bug</div>
+            </div>
+          </a>
+          <a href="library/?day=tue" class="flex items-start gap-3 bg-white rounded-2xl p-4 border border-slate-200 shadow-sm hover-lift hover:border-emerald-400 transition">
+            <div class="w-12 h-12 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-black text-xs flex-shrink-0">TUE</div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2 flex-wrap"><span class="font-bold text-slate-900">Tuesday — Easy run + light upper posture &amp; hips</span><span class="text-xs bg-sky-100 text-sky-700 px-2.5 py-1 rounded-full font-semibold">🏃 Run · light 15–20 min</span></div>
+              <div class="text-xs text-emerald-700 mt-1"><strong>Muscles:</strong> Chest · Triceps · Serratus · Upper back · Shoulders · Rotator cuff · Neck · Glute medius</div>
+              <div class="text-xs text-slate-500 mt-0.5">Incline Push-up (+ push-up plus) · Reverse Fly · Band Face Pull · Chin Tuck · Standing Hip &amp; Waist Trio</div>
+            </div>
+          </a>
+          <a href="library/?day=wed" class="flex items-start gap-3 bg-white rounded-2xl p-4 border border-slate-200 shadow-sm hover-lift hover:border-emerald-400 transition">
+            <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-black text-xs flex-shrink-0">WED</div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2 flex-wrap"><span class="font-bold text-slate-900">Wednesday — Gym: upper A (machines)</span><span class="text-xs bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-full font-semibold">🏋️ Gym · 45–55 min</span></div>
+              <div class="text-xs text-emerald-700 mt-1"><strong>Muscles:</strong> Chest · Lats · Upper back · Shoulders · Biceps · Triceps · Obliques</div>
+              <div class="text-xs text-slate-500 mt-0.5">Machine Chest Press · Lat Pulldown · Seated Cable Row · DB Lateral Raise · Biceps Curl · Triceps Pushdown · Pallof Press</div>
+            </div>
+          </a>
+          <a href="library/?day=thu" class="flex items-start gap-3 bg-white rounded-2xl p-4 border border-slate-200 shadow-sm hover-lift hover:border-emerald-400 transition">
+            <div class="w-12 h-12 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-black text-xs flex-shrink-0">THU</div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2 flex-wrap"><span class="font-bold text-slate-900">Thursday — Run + knee, ankle, calf &amp; hip flexors</span><span class="text-xs bg-sky-100 text-sky-700 px-2.5 py-1 rounded-full font-semibold">🏃 Run · light 20 min</span></div>
+              <div class="text-xs text-emerald-700 mt-1"><strong>Muscles:</strong> Calves · Shins · Ankle &amp; foot · Glute medius · Hip flexors · Obliques</div>
+              <div class="text-xs text-slate-500 mt-0.5">Hip Flexor March &amp; Lunge Stretch · Seated Calf Raise · Tibialis Raise · Single-Leg Balance · Side Plank · Band Lateral Walk</div>
+            </div>
+          </a>
+          <a href="library/?day=fri" class="flex items-start gap-3 bg-white rounded-2xl p-4 border border-slate-200 shadow-sm hover-lift hover:border-emerald-400 transition">
+            <div class="w-12 h-12 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center font-black text-xs flex-shrink-0">FRI</div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2 flex-wrap"><span class="font-bold text-slate-900">Friday — Gym: upper B (dumbbells) + carry</span><span class="text-xs bg-violet-100 text-violet-700 px-2.5 py-1 rounded-full font-semibold">🏋️ Gym · 45–50 min</span></div>
+              <div class="text-xs text-emerald-700 mt-1"><strong>Muscles:</strong> Chest · Lats · Shoulders · Biceps · Triceps · Forearms · Upper traps · Neck</div>
+              <div class="text-xs text-slate-500 mt-0.5">Incline DB Press · Single-Arm DB Row · DB Shoulder Press · Hammer Curl · Overhead DB Triceps Extension · Farmer's Carry · Chin Tuck</div>
+            </div>
+          </a>
+          <a href="library/?day=sat" class="flex items-start gap-3 bg-white rounded-2xl p-4 border border-slate-200 shadow-sm hover-lift hover:border-emerald-400 transition">
+            <div class="w-12 h-12 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-black text-xs flex-shrink-0">SAT</div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between gap-2 flex-wrap"><span class="font-bold text-slate-900">Saturday — Run + core &amp; hip reset</span><span class="text-xs bg-sky-100 text-sky-700 px-2.5 py-1 rounded-full font-semibold">🏃 Run · light 20 min</span></div>
+              <div class="text-xs text-emerald-700 mt-1"><strong>Muscles:</strong> Glutes · Glute medius · Hip rotators · Hip flexors · Abs · Lower back</div>
+              <div class="text-xs text-slate-500 mt-0.5">Glute Bridge · Standing Hip &amp; Waist Trio · Hip Flexor March &amp; Lunge Stretch · Clamshell · Bird Dog · Plank</div>
+            </div>
+          </a>
+          <div class="bg-white rounded-2xl p-4 flex items-center gap-3 border border-slate-200 shadow-sm">
+            <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center font-black text-xs flex-shrink-0">SUN</div>
             <div class="flex-1">
-              <div class="font-bold text-slate-900">Monday — Push Day</div>
-              <div class="text-xs text-slate-400 mt-0.5">Chest · Shoulders · Triceps · 6 exercises</div>
+              <div class="font-bold text-slate-400">Sunday — Rest</div>
+              <div class="text-xs text-slate-400">No training · easy walk optional · sleep well · focus on nutrition &amp; recovery</div>
             </div>
-            <div class="flex gap-2 items-center">
-              <span class="text-xs bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-semibold">Push</span>
-              <span class="accordion-icon text-slate-300 text-lg">▼</span>
-            </div>
-          </button>
-          <div class="accordion-body bg-white border-t border-slate-100">
-            <div class="p-5">
-              <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                  <thead><tr class="text-left text-xs text-slate-400 border-b border-slate-100">
-                    <th class="pb-2 pr-4">Exercise</th><th class="pb-2 pr-4">Sets × Reps</th><th class="pb-2 pr-4">Rest</th><th class="pb-2">Notes</th>
-                  </tr></thead>
-                  <tbody class="divide-y divide-slate-50">
-                    <tr><td class="py-2.5 pr-4 font-medium">Flat Bench Press</td><td class="pr-4 font-mono text-green-700 font-bold">4 × 6–8</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">First compound · 2–3 ramp sets first</td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Incline DB Press</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">Upper chest focus</td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Shoulder Press</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td></td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Lateral Raise</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 12–15</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td class="text-slate-400 text-xs">Replaces excess front-delt work</td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Rope Pushdown</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 12</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Overhead Extension</td><td class="pr-4 font-mono text-green-700 font-bold">2 × 12</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="mt-4 p-3 bg-blue-50 rounded-xl text-xs text-blue-700 border border-blue-100">
-                💡 <strong>Substitution:</strong> Rope Pushdown unavailable → Diamond Push-up
-              </div>
-            </div>
+            <span class="text-3xl">😴</span>
           </div>
-        </div>
-
-        <!-- TUESDAY -->
-        <div class="accordion mb-3 rounded-2xl overflow-hidden shadow-sm border border-slate-200 hover-lift">
-          <button onclick="toggleAccordion(this)" class="w-full bg-white p-4 flex items-center gap-3 hover:bg-purple-50/50 transition text-left">
-            <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-black text-xs flex-shrink-0">TUE</div>
-            <div class="flex-1">
-              <div class="font-bold text-slate-900">Tuesday — Pull Day</div>
-              <div class="text-xs text-slate-400 mt-0.5">Back · Biceps · Rear Delts · Hip finisher · 7 exercises</div>
-            </div>
-            <div class="flex gap-2 items-center">
-              <span class="text-xs bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full font-semibold">Pull</span>
-              <span class="accordion-icon text-slate-300 text-lg">▼</span>
-            </div>
-          </button>
-          <div class="accordion-body bg-white border-t border-slate-100">
-            <div class="p-5">
-              <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                  <thead><tr class="text-left text-xs text-slate-400 border-b border-slate-100">
-                    <th class="pb-2 pr-4">Exercise</th><th class="pb-2 pr-4">Sets × Reps</th><th class="pb-2 pr-4">Rest</th><th class="pb-2">Notes</th>
-                  </tr></thead>
-                  <tbody class="divide-y divide-slate-50">
-                    <tr><td class="py-2.5 pr-4 font-medium">Lat Pulldown</td><td class="pr-4 font-mono text-green-700 font-bold">4 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">First compound · ramp sets</td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Chest Supported Row</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td></td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Romanian Deadlift</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">Hamstring + lower back</td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Rear Delt Fly</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 15</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Face Pull</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 15</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td class="text-slate-400 text-xs">Shoulder health — do Tue + Fri</td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Curl</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 10–12</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Standing Hip & Waist Trio</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 20 each</td><td class="pr-4 text-slate-400 text-xs">45–60 s</td><td class="text-slate-400 text-xs">Hip strength · also Thu · bodyweight</td></tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="mt-4 p-3 bg-purple-50 rounded-xl text-xs text-purple-700 border border-purple-100">
-                🧘 <strong>Mobility (non-negotiable, age 45+):</strong> Face pulls, hip mobility, thoracic rotations, shoulder external rotations after session. Finish with the Standing Hip &amp; Waist Trio (reverse leg raise → side leg raise → step-back swing).
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- WEDNESDAY -->
-        <div class="accordion mb-3 rounded-2xl overflow-hidden shadow-sm border border-slate-200 hover-lift">
-          <button onclick="toggleAccordion(this)" class="w-full bg-white p-4 flex items-center gap-3 hover:bg-orange-50/50 transition text-left">
-            <div class="w-12 h-12 rounded-xl bg-orange-100 text-orange-700 flex items-center justify-center font-black text-xs flex-shrink-0">WED</div>
-            <div class="flex-1">
-              <div class="font-bold text-slate-900">Wednesday — Lower Day</div>
-              <div class="text-xs text-slate-400 mt-0.5">Quads · Hamstrings · Calves · Core · 6 exercises</div>
-            </div>
-            <div class="flex gap-2 items-center">
-              <span class="text-xs bg-orange-100 text-orange-700 px-2.5 py-1 rounded-full font-semibold">Lower</span>
-              <span class="accordion-icon text-slate-300 text-lg">▼</span>
-            </div>
-          </button>
-          <div class="accordion-body bg-white border-t border-slate-100">
-            <div class="p-5">
-              <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                  <thead><tr class="text-left text-xs text-slate-400 border-b border-slate-100">
-                    <th class="pb-2 pr-4">Exercise</th><th class="pb-2 pr-4">Sets × Reps</th><th class="pb-2 pr-4">Rest</th><th class="pb-2">Notes</th>
-                  </tr></thead>
-                  <tbody class="divide-y divide-slate-50">
-                    <tr><td class="py-2.5 pr-4 font-medium">Leg Press</td><td class="pr-4 font-mono text-green-700 font-bold">4 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">First · safer for beginners</td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Hamstring Curl</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 10–12</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Leg Extension</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 12–15</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Bulgarian Split Squat</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 10–12/leg</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Standing Calf Raise</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 15</td><td class="pr-4 text-slate-400 text-xs">60 s</td><td></td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Plank + Side Plank</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 30–45s</td><td class="pr-4 text-slate-400 text-xs">45 s</td><td class="text-slate-400 text-xs">Side plank 20–30s/side</td></tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="mt-4 p-3 bg-orange-50 rounded-xl text-xs text-orange-700 border border-orange-100">
-                💡 <strong>Squat note:</strong> If experienced, replace Leg Press with Back Squat 3×6–8 as first exercise.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- THURSDAY -->
-        <div class="accordion mb-3 rounded-2xl overflow-hidden shadow-sm border border-slate-200 hover-lift">
-          <button onclick="toggleAccordion(this)" class="w-full bg-white p-4 flex items-center gap-3 hover:bg-green-50/50 transition text-left">
-            <div class="w-12 h-12 rounded-xl bg-green-100 text-green-700 flex items-center justify-center font-black text-xs flex-shrink-0">THU</div>
-            <div class="flex-1">
-              <div class="font-bold text-slate-900">Thursday — Recovery Day</div>
-              <div class="text-xs text-slate-400 mt-0.5">Active Recovery · Hip trio · ~35–40 min</div>
-            </div>
-            <div class="flex gap-2 items-center">
-              <span class="text-xs bg-green-100 text-green-700 px-2.5 py-1 rounded-full font-semibold">Recovery</span>
-              <span class="accordion-icon text-slate-300 text-lg">▼</span>
-            </div>
-          </button>
-          <div class="accordion-body bg-white border-t border-slate-100">
-            <div class="p-5 space-y-3">
-              <div class="flex gap-4 p-3.5 bg-green-50 rounded-xl border border-green-100">
-                <span class="text-2xl">🚶</span>
-                <div>
-                  <p class="font-semibold text-green-900 text-sm">30-min Recovery Walk</p>
-                  <p class="text-xs text-green-700 mt-0.5">Zone-2 pace — conversational. ~60–70% max HR. Counts toward 150 min/week cardio.</p>
-                </div>
-              </div>
-              <div class="flex gap-4 p-3.5 bg-orange-50 rounded-xl border border-orange-100">
-                <span class="text-2xl">🍑</span>
-                <div class="min-w-0 flex-1">
-                  <p class="font-semibold text-orange-900 text-sm inline-flex items-center gap-2 flex-wrap">Standing Hip &amp; Waist Trio <span class="text-[10px] font-normal text-orange-600">(Tue + Thu)</span>
-                    <button type="button" class="yt-demo" title="Watch form demo here" aria-label="Watch Standing Hip &amp; Waist Trio form demo" onclick="openExerciseDemo('Standing Hip & Waist Trio', EXERCISE_DEMOS['Standing Hip & Waist Trio'])"></button>
-                  </p>
-                  <p class="text-xs text-orange-700 mt-0.5">Bodyweight circuit: reverse leg raise + arm swing → side leg raise each side → step-back arm swing. <strong>3 × 20</strong> per move. Strengthens hips, glutes and waist without loading the back.</p>
-                </div>
-              </div>
-              <div class="flex gap-4 p-3.5 bg-teal-50 rounded-xl border border-teal-100">
-                <span class="text-2xl">🧘</span>
-                <div>
-                  <p class="font-semibold text-teal-900 text-sm">Mobility Work</p>
-                  <p class="text-xs text-teal-700 mt-0.5">Hip mobility · Thoracic rotations · Shoulder external rotations. 10–15 min.</p>
-                </div>
-              </div>
-              <div class="p-3 bg-amber-50 rounded-xl border border-amber-100 text-xs text-amber-800">
-                🍌 Pre-workout banana optional today. Shift whey to morning or post-walk. Reduce roti/rice by ~½ serving.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- FRIDAY -->
-        <div class="accordion mb-3 rounded-2xl overflow-hidden shadow-sm border border-slate-200 hover-lift">
-          <button onclick="toggleAccordion(this)" class="w-full bg-white p-4 flex items-center gap-3 hover:bg-blue-50/50 transition text-left">
-            <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-black text-xs flex-shrink-0">FRI</div>
-            <div class="flex-1">
-              <div class="font-bold text-slate-900">Friday — Upper Day</div>
-              <div class="text-xs text-slate-400 mt-0.5">Balanced Push/Pull Upper Body · 6 exercises</div>
-            </div>
-            <div class="flex gap-2 items-center">
-              <span class="text-xs bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-full font-semibold">Upper</span>
-              <span class="accordion-icon text-slate-300 text-lg">▼</span>
-            </div>
-          </button>
-          <div class="accordion-body bg-white border-t border-slate-100">
-            <div class="p-5">
-              <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                  <thead><tr class="text-left text-xs text-slate-400 border-b border-slate-100">
-                    <th class="pb-2 pr-4">Exercise</th><th class="pb-2 pr-4">Sets × Reps</th><th class="pb-2 pr-4">Rest</th><th class="pb-2">Notes</th>
-                  </tr></thead>
-                  <tbody class="divide-y divide-slate-50">
-                    <tr><td class="py-2.5 pr-4 font-medium">Incline DB Press</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">Push movement</td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Seated Cable Row</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">Horizontal pull</td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Arnold Press</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 10–12</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td></td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Lat Pulldown (wide)</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 10–12</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">Vertical pull</td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Lateral Raise</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 12–15</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Face Pull</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 15</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td class="text-slate-400 text-xs">Shoulder health — do Tue + Fri</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- SATURDAY -->
-        <div class="accordion mb-3 rounded-2xl overflow-hidden shadow-sm border border-slate-200 hover-lift">
-          <button onclick="toggleAccordion(this)" class="w-full bg-white p-4 flex items-center gap-3 hover:bg-red-50/50 transition text-left">
-            <div class="w-12 h-12 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-black text-xs flex-shrink-0">SAT</div>
-            <div class="flex-1">
-              <div class="font-bold text-slate-900">Saturday — Lower + Core</div>
-              <div class="text-xs text-slate-400 mt-0.5">Hamstrings · Legs · Core · 6 exercises</div>
-            </div>
-            <div class="flex gap-2 items-center">
-              <span class="text-xs bg-red-100 text-red-700 px-2.5 py-1 rounded-full font-semibold">Lower+Core</span>
-              <span class="accordion-icon text-slate-300 text-lg">▼</span>
-            </div>
-          </button>
-          <div class="accordion-body bg-white border-t border-slate-100">
-            <div class="p-5">
-              <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                  <thead><tr class="text-left text-xs text-slate-400 border-b border-slate-100">
-                    <th class="pb-2 pr-4">Exercise</th><th class="pb-2 pr-4">Sets × Reps</th><th class="pb-2 pr-4">Rest</th><th class="pb-2">Notes</th>
-                  </tr></thead>
-                  <tbody class="divide-y divide-slate-50">
-                    <tr><td class="py-2.5 pr-4 font-medium">Romanian Deadlift</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 8–10</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td class="text-slate-400 text-xs">First compound · ramp sets</td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Leg Press</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 10–12</td><td class="pr-4 text-slate-400 text-xs">2–3 min</td><td></td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Bulgarian Split Squat</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 10–12/leg</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Hamstring Curl</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 12–15</td><td class="pr-4 text-slate-400 text-xs">60–90 s</td><td></td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Standing Calf Raise</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 15</td><td class="pr-4 text-slate-400 text-xs">60 s</td><td></td></tr>
-                    <tr><td class="py-2.5 pr-4 font-medium">Dead Bug + Plank</td><td class="pr-4 font-mono text-green-700 font-bold">3 × 12/side</td><td class="pr-4 text-slate-400 text-xs">45 s</td><td class="text-slate-400 text-xs">Plank 3 × 30–45s after</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- SUNDAY -->
-        <div class="mb-5 bg-white rounded-2xl p-4 flex items-center gap-4 border border-slate-200 shadow-sm">
-          <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center font-black text-xs flex-shrink-0">SUN</div>
-          <div class="flex-1">
-            <div class="font-bold text-slate-400">Sunday — Complete Rest</div>
-            <div class="text-xs text-slate-400">No training · Sleep well · Focus on nutrition &amp; recovery</div>
-          </div>
-          <span class="text-3xl">😴</span>
+          <p class="text-xs text-slate-400 px-1">Sets, form cues, swaps and demo videos for every exercise are in the <a href="library/" class="text-emerald-700 font-semibold hover:underline">Exercise Library</a>, which also shows all 24 muscles and the days that train them.</p>
         </div>
 
         <!-- Cardio + Substitutions -->
@@ -687,21 +389,22 @@
           <div class="bg-gradient-to-br from-blue-50 to-teal-50 rounded-2xl p-4 border border-blue-100">
             <h4 class="font-bold text-blue-800 mb-2 text-sm">📍 Cardio Protocol</h4>
             <ul class="text-sm text-blue-700 space-y-1.5">
-              <li>150 min/week Zone-2 (conversational pace)</li>
-              <li>OR 20–30 min walk after 3 lifting sessions</li>
-              <li>Daily steps: 8,000–10,000</li>
-              <li>Thursday walk <strong>counts</strong> toward weekly total</li>
+              <li>3 runs a week — Tue · Thu · Sat — mostly Zone-2 (conversational pace)</li>
+              <li>Target 150 min/week Zone-2 — your runs <strong>count</strong> toward it</li>
+              <li>Keep Tuesday's run easy — it's the day after heavy legs</li>
+              <li>Daily steps: 8,000–10,000 · Sunday: rest or an easy walk</li>
               <li>Optional 5–10 min belly/side finisher: <a href="fat-loss/" class="font-semibold underline decoration-blue-300 hover:decoration-blue-600">Fat Loss Videos →</a></li>
             </ul>
           </div>
           <div class="bg-white rounded-2xl p-4 border border-slate-200">
             <h4 class="font-bold text-slate-800 mb-2 text-sm">🔄 Equipment Substitutions</h4>
             <div class="text-xs text-slate-600 space-y-1.5">
-              <div><strong>Lat Pulldown →</strong> Assisted or underhand pull-up</div>
-              <div><strong>Cable Row →</strong> Single-arm or chest-supported DB row</div>
-              <div><strong>Leg Press →</strong> Goblet squat or walking lunge</div>
-              <div><strong>Rope Pushdown →</strong> Diamond push-up</div>
-              <div><strong>Face Pull →</strong> Band pull-apart</div>
+              <div><strong>Lat Pulldown →</strong> Band lat pulldown</div>
+              <div><strong>Seated Cable Row →</strong> Single-arm or chest-supported DB row</div>
+              <div><strong>Leg Press →</strong> Box squat or goblet squat</div>
+              <div><strong>Triceps Pushdown →</strong> Overhead DB triceps extension</div>
+              <div><strong>Machine Chest Press →</strong> Push-up</div>
+              <div><strong>Hip Adduction Machine →</strong> Copenhagen plank (short lever)</div>
             </div>
           </div>
         </div>
@@ -790,12 +493,12 @@
                 <th class="pb-2 pr-3">Day</th><th class="pb-2 pr-3">Training</th><th class="pb-2 pr-3">Lunch Protein</th><th class="pb-2 pr-3">Dinner Protein</th><th class="pb-2 pr-3">Dal</th><th class="pb-2 pr-3">Sabzi</th><th class="pb-2">Fruit</th>
               </tr></thead>
               <tbody class="divide-y divide-slate-50 text-xs">
-                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Mon</td><td class="pr-3"><span class="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">Push</span></td><td class="pr-3">Paneer Curry</td><td class="pr-3">Soya Chunks</td><td class="pr-3">Moong Dal</td><td class="pr-3">Bhindi Masala</td><td>Apple 🍎</td></tr>
-                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Tue</td><td class="pr-3"><span class="bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium">Pull</span></td><td class="pr-3">Soya Chunks</td><td class="pr-3">Paneer Curry</td><td class="pr-3">Chana Dal</td><td class="pr-3">Palak Sabzi</td><td>Banana 🍌</td></tr>
-                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Wed</td><td class="pr-3"><span class="bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded font-medium">Lower</span></td><td class="pr-3">Paneer Curry</td><td class="pr-3">Soya Chunks</td><td class="pr-3">Toor Dal</td><td class="pr-3">Mixed Veg Curry</td><td>Guava 🍈</td></tr>
-                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Thu</td><td class="pr-3"><span class="bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">Recovery</span></td><td class="pr-3">Soya Chunks</td><td class="pr-3">Paneer Curry</td><td class="pr-3">Masoor Dal</td><td class="pr-3">Lauki Sabzi</td><td>Orange 🍊</td></tr>
-                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Fri</td><td class="pr-3"><span class="bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded font-medium">Upper</span></td><td class="pr-3">Paneer Curry</td><td class="pr-3">Soya Chunks</td><td class="pr-3">Rajma</td><td class="pr-3">Cauliflower-Peas</td><td>Papaya 🍈</td></tr>
-                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Sat</td><td class="pr-3"><span class="bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-medium">Lower+Core</span></td><td class="pr-3">Soya Chunks</td><td class="pr-3">Paneer Curry</td><td class="pr-3">Chole</td><td class="pr-3">Baingan Bharta</td><td>Pomegranate 🍑</td></tr>
+                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Mon</td><td class="pr-3"><span class="bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-medium">Gym · legs</span></td><td class="pr-3">Paneer Curry</td><td class="pr-3">Soya Chunks</td><td class="pr-3">Moong Dal</td><td class="pr-3">Bhindi Masala</td><td>Apple 🍎</td></tr>
+                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Tue</td><td class="pr-3"><span class="bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-medium">Run + light</span></td><td class="pr-3">Soya Chunks</td><td class="pr-3">Paneer Curry</td><td class="pr-3">Chana Dal</td><td class="pr-3">Palak Sabzi</td><td>Banana 🍌</td></tr>
+                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Wed</td><td class="pr-3"><span class="bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded font-medium">Gym · upper A</span></td><td class="pr-3">Paneer Curry</td><td class="pr-3">Soya Chunks</td><td class="pr-3">Toor Dal</td><td class="pr-3">Mixed Veg Curry</td><td>Guava 🍈</td></tr>
+                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Thu</td><td class="pr-3"><span class="bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-medium">Run + light</span></td><td class="pr-3">Soya Chunks</td><td class="pr-3">Paneer Curry</td><td class="pr-3">Masoor Dal</td><td class="pr-3">Lauki Sabzi</td><td>Orange 🍊</td></tr>
+                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Fri</td><td class="pr-3"><span class="bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded font-medium">Gym · upper B</span></td><td class="pr-3">Paneer Curry</td><td class="pr-3">Soya Chunks</td><td class="pr-3">Rajma</td><td class="pr-3">Cauliflower-Peas</td><td>Papaya 🍈</td></tr>
+                <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Sat</td><td class="pr-3"><span class="bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-medium">Run + light</span></td><td class="pr-3">Soya Chunks</td><td class="pr-3">Paneer Curry</td><td class="pr-3">Chole</td><td class="pr-3">Baingan Bharta</td><td>Pomegranate 🍑</td></tr>
                 <tr class="hover:bg-slate-50"><td class="py-2 pr-3 font-bold">Sun</td><td class="pr-3"><span class="bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded font-medium">Rest</span></td><td class="pr-3">Paneer Curry</td><td class="pr-3">Soya Chunks</td><td class="pr-3">Mixed Dal</td><td class="pr-3">Seasonal Veg</td><td>Seasonal 🍇</td></tr>
               </tbody>
             </table>
@@ -898,7 +601,7 @@
             <h3 class="font-bold text-slate-900 mb-3">🧓 Age 45+ Must-Dos</h3>
             <ul class="space-y-2 text-sm text-slate-600">
               <li class="flex gap-2"><span class="text-amber-500 mt-0.5">⚠</span>Warm-up ramp: 3–4 sets (not 2–3)</li>
-              <li class="flex gap-2"><span class="text-amber-500 mt-0.5">⚠</span>Tue/Fri mobility is <strong>non-negotiable</strong></li>
+              <li class="flex gap-2"><span class="text-amber-500 mt-0.5">⚠</span>Light session after each run (Tue/Thu/Sat) is <strong>non-negotiable</strong></li>
               <li class="flex gap-2"><span class="text-amber-500 mt-0.5">⚠</span>Favor 12–15 reps if joint feels cranky</li>
               <li class="flex gap-2"><span class="text-amber-500 mt-0.5">⚠</span>Add rest day if joint (not muscle) sore 48h later</li>
               <li class="flex gap-2"><span class="text-amber-500 mt-0.5">⚠</span>Deload every 4–6 weeks (not 6–8)</li>
@@ -910,7 +613,7 @@
             <h3 class="font-bold text-slate-900 mb-3">📊 Weekly Compliance Score</h3>
             <div class="space-y-2 text-sm">
               <div class="flex justify-between items-center py-1 border-b border-slate-50">
-                <span>Training — all 5 sessions</span>
+                <span>Training — all 6 days (3 gym + 3 run)</span>
                 <span class="font-black text-green-600 text-lg">30</span>
               </div>
               <div class="flex justify-between items-center py-1 border-b border-slate-50">
@@ -1017,25 +720,6 @@
          note      → optional one-line note (shown below title)
          addedDate → "YYYY-MM-DD"
   ══════════════════════════════════════ -->
-  <!-- Floating PiP YouTube player — must be in DOM before the script wires close/max handlers -->
-  <div id="yt-modal" class="yt-modal" hidden role="dialog" aria-modal="true" aria-labelledby="yt-modal-title">
-    <div class="yt-modal-backdrop" aria-hidden="true"></div>
-    <div class="yt-modal-dialog">
-      <div class="yt-modal-chrome">
-        <button type="button" class="yt-modal-btn yt-modal-btn-close" id="yt-modal-close" title="Close" aria-label="Close video">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-        </button>
-        <span id="yt-modal-title">Form demo</span>
-        <button type="button" class="yt-modal-btn" id="yt-modal-max" title="Expand" aria-label="Expand player">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 3H3v6M15 3h6v6M9 21H3v-6M21 15v6h-6"/><path d="M3 3l7 7M21 3l-7 7M3 21l7-7M21 21l-7-7"/></svg>
-        </button>
-      </div>
-      <div class="yt-modal-frame-wrap">
-        <iframe id="yt-modal-iframe" title="Exercise form demo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen playsinline></iframe>
-      </div>
-    </div>
-  </div>
-
   <script>
   const LINKS_DB = [
     {
@@ -1058,140 +742,6 @@
     //   addedDate: "2026-09-24"
     // },
   ];
-
-  // ─── Exercise form demos (YouTube Shorts) ────────────────────────────────
-  // Name must match the table text exactly. Prefer popular form tutorials.
-  const EXERCISE_DEMOS = {
-    "Flat Bench Press":       "https://www.youtube.com/shorts/8laBBEpDgac",
-    "Incline DB Press":       "https://www.youtube.com/shorts/8fXfwG4ftaQ",
-    "Shoulder Press":         "https://www.youtube.com/shorts/bQPhGIJJ-jQ",
-    "Lateral Raise":          "https://www.youtube.com/shorts/Myim1WH6Qec",
-    "Rope Pushdown":          "https://www.youtube.com/shorts/NvZKjiZ8NYc",
-    "Overhead Extension":     "https://www.youtube.com/shorts/NZAVsAk-Vgc",
-    "Lat Pulldown":           "https://www.youtube.com/shorts/z-lxcsIN4T4",
-    "Lat Pulldown (wide)":    "https://www.youtube.com/shorts/z-lxcsIN4T4",
-    "Chest Supported Row":    "https://www.youtube.com/shorts/tahGpBijHkY",
-    "Seated Cable Row":       "https://www.youtube.com/shorts/PeMw-NWlNY8",
-    "Romanian Deadlift":      "https://www.youtube.com/shorts/Fsve8fkMGcY",
-    "Rear Delt Fly":          "https://www.youtube.com/shorts/vGIY3D9digk",
-    "Face Pull":              "https://www.youtube.com/shorts/MChHOiaCR7s",
-    "Curl":                   "https://www.youtube.com/shorts/sAq_ocpRh_I",
-    "Arnold Press":           "https://www.youtube.com/shorts/wRlIuexTowA",
-    "Leg Press":              "https://www.youtube.com/shorts/jA9tsYbA7Ms",
-    "Hamstring Curl":         "https://www.youtube.com/shorts/bgfHeL6eR9Q",
-    "Leg Extension":          "https://www.youtube.com/shorts/ztNBgrGy6FQ",
-    "Bulgarian Split Squat":  "https://www.youtube.com/shorts/Cow3ESXmrTU",
-    "Standing Calf Raise":    "https://www.youtube.com/shorts/8sT7Ne3Kzwc",
-    "Plank + Side Plank":     "https://www.youtube.com/shorts/K2VljzCC16g",
-    "Dead Bug + Plank":       "https://www.youtube.com/shorts/Aoipu_fl3HA",
-    "Standing Hip & Waist Trio": "https://www.youtube.com/shorts/5YLmdfxXEfs",
-  };
-
-  const YT_DEMO_ICON = `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>`;
-
-  let ytModalMode = 'pip'; // pip | maximized
-
-  function setYtModalMode(mode) {
-    const modal = document.getElementById('yt-modal');
-    if (!modal) return;
-    ytModalMode = mode;
-    modal.classList.toggle('is-maximized', mode === 'maximized');
-    document.body.classList.toggle('yt-modal-maximized', mode === 'maximized');
-    const maxBtn = document.getElementById('yt-modal-max');
-    if (maxBtn) {
-      const expanded = mode === 'maximized';
-      maxBtn.setAttribute('aria-label', expanded ? 'Shrink to corner' : 'Expand player');
-      maxBtn.title = expanded ? 'Shrink' : 'Expand';
-    }
-  }
-
-  function openExerciseDemo(name, url) {
-    const id = getVideoId(url);
-    if (!id) {
-      window.open(url, '_blank', 'noopener,noreferrer');
-      return;
-    }
-    const modal = document.getElementById('yt-modal');
-    const iframe = document.getElementById('yt-modal-iframe');
-    const title = document.getElementById('yt-modal-title');
-    if (title) title.textContent = name;
-    iframe.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
-    modal.hidden = false;
-    setYtModalMode('pip');
-  }
-
-  function closeExerciseDemo(e) {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    const modal = document.getElementById('yt-modal');
-    const iframe = document.getElementById('yt-modal-iframe');
-    if (!modal || modal.hidden) return;
-    modal.hidden = true;
-    if (iframe) iframe.src = '';
-    modal.classList.remove('is-maximized');
-    document.body.classList.remove('yt-modal-maximized');
-    ytModalMode = 'pip';
-  }
-
-  function toggleYtMaximize(e) {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    setYtModalMode(ytModalMode === 'maximized' ? 'pip' : 'maximized');
-  }
-
-  function wireExerciseDemos() {
-    document.querySelectorAll('#tab-exercise table tbody tr td:first-child').forEach(td => {
-      if (td.querySelector('.yt-demo')) return;
-      const name = td.textContent.trim();
-      const url = EXERCISE_DEMOS[name];
-      if (!url) return;
-      td.innerHTML = '';
-      const wrap = document.createElement('span');
-      wrap.className = 'inline-flex items-center gap-2 min-w-0';
-      const label = document.createElement('span');
-      label.className = 'min-w-0';
-      label.textContent = name;
-      wrap.appendChild(label);
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'yt-demo';
-      btn.title = 'Watch form demo here';
-      btn.setAttribute('aria-label', 'Watch ' + name + ' form demo');
-      btn.innerHTML = YT_DEMO_ICON;
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        openExerciseDemo(name, url);
-      });
-      wrap.appendChild(btn);
-      td.appendChild(wrap);
-    });
-    // Inline demo buttons outside tables (e.g. Thursday recovery card)
-    document.querySelectorAll('button.yt-demo:not(:has(svg))').forEach(btn => {
-      btn.innerHTML = YT_DEMO_ICON;
-    });
-
-    // Direct handlers on chrome bar (outside iframe — taps can’t be stolen)
-    const closeBtn = document.getElementById('yt-modal-close');
-    const maxBtn = document.getElementById('yt-modal-max');
-    const backdrop = document.querySelector('#yt-modal .yt-modal-backdrop');
-    if (closeBtn) closeBtn.addEventListener('click', closeExerciseDemo);
-    if (maxBtn) maxBtn.addEventListener('click', toggleYtMaximize);
-    if (backdrop) {
-      backdrop.addEventListener('click', function () {
-        if (ytModalMode === 'maximized') setYtModalMode('pip');
-      });
-    }
-    document.addEventListener('keydown', (e) => {
-      if (e.key !== 'Escape') return;
-      if (ytModalMode === 'maximized') setYtModalMode('pip');
-      else closeExerciseDemo();
-    });
-  }
 
   // ─── Helpers ────────────────────────────────────────────────────────────
   function getVideoId(url) {
@@ -1302,22 +852,8 @@
     if (name === 'goodtoknow') renderLinks();
   }
 
-  // ─── Accordion ──────────────────────────────────────────────────────────
-  function toggleAccordion(btn) {
-    const body = btn.nextElementSibling;
-    const icon = btn.querySelector('.accordion-icon');
-    const isOpen = body.classList.contains('open');
-    document.querySelectorAll('.accordion-body.open').forEach(b => {
-      b.classList.remove('open');
-      const i = b.previousElementSibling.querySelector('.accordion-icon');
-      if (i) i.classList.remove('rotated');
-    });
-    if (!isOpen) { body.classList.add('open'); icon.classList.add('rotated'); }
-  }
-
   // Initial render
   renderLinks();
-  wireExerciseDemos();
 
   // If user resizes to desktop while Profile tab was open, restore Exercise content
   window.addEventListener('resize', () => {

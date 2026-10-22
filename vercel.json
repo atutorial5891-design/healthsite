@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/daily-plan", "destination": "/library/", "permanent": true },
+    { "source": "/daily-plan/:path*", "destination": "/library/", "permanent": true }
+  ]
+}
