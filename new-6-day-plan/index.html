@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>New 6-Day Plan — Manas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+    body { font-family: 'Inter', system-ui, sans-serif; }
+
+    /* Filter chips */
+    .chip {
+      display: inline-flex; align-items: center; gap: 0.3rem; white-space: nowrap;
+      font-size: 0.75rem; font-weight: 600; padding: 0.4rem 0.75rem; border-radius: 9999px;
+      border: 1px solid #e2e8f0; background: #fff; color: #475569; cursor: pointer;
+      transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+    }
+    .chip:hover { border-color: #10b981; }
+    .chip.on { background: #0f172a; border-color: #0f172a; color: #fff; }
+    .chip-row { display: flex; gap: 0.4rem; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+    .chip-row::-webkit-scrollbar { display: none; }
+
+    /* Tags on cards */
+    .tag { display: inline-flex; align-items: center; gap: 0.2rem; font-size: 0.66rem; font-weight: 700;
+      padding: 0.15rem 0.5rem; border-radius: 9999px; white-space: nowrap; }
+    .t-easy   { background: #dcfce7; color: #166534; }
+    .t-medium { background: #fef3c7; color: #92400e; }
+    .t-hard   { background: #fee2e2; color: #991b1b; }
+    .t-machine{ background: #e0e7ff; color: #3730a3; }
+    .t-free   { background: #ccfbf1; color: #115e59; }
+    .t-either { background: #f1f5f9; color: #334155; }
+    .t-req    { background: #0f172a; color: #fff; }
+    .t-good   { background: #fff; color: #475569; border: 1px solid #cbd5e1; }
+    .t-day    { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+
+    .ex-card { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+    .ex-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+
+    .play-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; font-weight: 700;
+      padding: 0.45rem 0.8rem; border-radius: 10px; background: #fee2e2; color: #b91c1c; border: none;
+      cursor: pointer; transition: background 0.15s, transform 0.15s; -webkit-tap-highlight-color: transparent;
+    }
+    .play-btn:hover { background: #fecaca; transform: scale(1.03); }
+    .play-btn svg { width: 12px; height: 12px; }
+    .swap-link { font-size: 0.72rem; font-weight: 600; color: #047857; background: none; border: none; cursor: pointer; padding: 0; text-align: left; }
+    .swap-link:hover { text-decoration: underline; }
+    .flash { animation: flash 1.4s ease; }
+    @keyframes flash { 0%,100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); } 25% { box-shadow: 0 0 0 4px rgba(16,185,129,0.55); } }
+
+    /* Floating PiP YouTube player (same as dashboard) */
+    .yt-modal { position: fixed; inset: 0; z-index: 9999; pointer-events: none; touch-action: manipulation; }
+    .yt-modal[hidden] { display: none !important; }
+    .yt-modal-backdrop { display: none; position: absolute; inset: 0; background: rgba(15,23,42,0.55); pointer-events: auto; }
+    .yt-modal-dialog {
+      pointer-events: auto; position: absolute; top: max(0.65rem, env(safe-area-inset-top)); left: 0.65rem;
+      width: min(52vw, 220px); display: flex; flex-direction: column; background: #0b1220; border-radius: 14px;
+      overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.14);
+    }
+    @media (min-width: 640px) { .yt-modal-dialog { width: 260px; top: 1rem; left: 1rem; } }
+    .yt-modal-chrome { position: relative; z-index: 20; display: flex; align-items: center; gap: 0.35rem; padding: 0.4rem;
+      background: #0f172a; border-bottom: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
+    .yt-modal-chrome #yt-modal-title { flex: 1; min-width: 0; color: #e2e8f0; font-size: 0.68rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
+    .yt-modal-btn { flex-shrink: 0; width: 40px; height: 40px; border: none; border-radius: 10px; background: rgba(255,255,255,0.12);
+      color: #fff; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; touch-action: manipulation; }
+    .yt-modal-btn svg { width: 16px; height: 16px; pointer-events: none; }
+    .yt-modal-btn-close { background: #dc2626; }
+    .yt-modal-frame-wrap { position: relative; z-index: 1; width: 100%; aspect-ratio: 9 / 16; max-height: 32vh; background: #000; }
+    .yt-modal-frame-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .yt-modal.is-maximized { pointer-events: auto; }
+    .yt-modal.is-maximized .yt-modal-backdrop { display: block; }
+    .yt-modal.is-maximized .yt-modal-dialog { top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(92vw, 380px); max-height: calc(100dvh - 1.5rem); }
+    .yt-modal.is-maximized .yt-modal-frame-wrap { max-height: min(68vh, 560px); }
+    .yt-modal.is-maximized .yt-modal-btn { width: 44px; height: 44px; }
+    body.yt-modal-maximized { overflow: hidden; overscroll-behavior: none; }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen overflow-x-hidden">
+
+  <header class="bg-slate-900 border-b border-slate-700 px-4 sm:px-6 py-3.5 flex items-center justify-between sticky top-0 z-30 shadow-lg">
+    <div class="flex items-center gap-2.5 min-w-0">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-400 to-emerald-600 flex items-center justify-center text-white text-lg shadow-md flex-shrink-0">📚</div>
+      <div class="min-w-0">
+        <h1 class="font-black text-white text-sm sm:text-base leading-tight tracking-tight truncate">New 6-Day Plan</h1>
+        <p class="text-[10px] sm:text-xs text-slate-400 truncate">One muscle group, one day · <span id="n-focus-a">24</span> target muscles · OR swaps · Shorts demos</p>
+      </div>
+    </div>
+    <a href="../index.html" class="text-xs sm:text-sm font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full px-3 sm:px-4 py-1.5 transition-all flex-shrink-0">← Dashboard</a>
+  </header>
+
+  <!-- ── SITE NAV (grouped: Home · Train · Eat) ── -->
+  <nav aria-label="Site pages" class="bg-slate-800 border-b border-slate-700 px-4 sm:px-6 py-2 flex items-center gap-x-2 sm:gap-x-3 overflow-x-auto whitespace-nowrap text-xs">
+    <span class="text-[10px] font-bold uppercase tracking-wide text-slate-500 flex-shrink-0">Home</span>
+    <a href="../index.html" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">🏠 Dashboard</a>
+    <span class="text-slate-600 flex-shrink-0" aria-hidden="true">|</span>
+    <span class="text-[10px] font-bold uppercase tracking-wide text-slate-500 flex-shrink-0">Train</span>
+    <a href="../library/" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">📚 Exercise Library (old plan)</a>
+    <a href="../new-6-day-plan/" aria-current="page" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors bg-emerald-600 text-white">🆕 New 6-Day Plan</a>
+    <a href="../fat-loss/" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">🔥 Belly Fat Videos</a>
+    <span class="text-slate-600 flex-shrink-0" aria-hidden="true">|</span>
+    <span class="text-[10px] font-bold uppercase tracking-wide text-slate-500 flex-shrink-0">Eat</span>
+    <a href="../kichdi-plan.html" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">🍲 Kichdi Plan</a>
+  </nav>
+
+
+  <main class="max-w-5xl mx-auto p-4 sm:p-6 space-y-5">
+
+    <!-- INTRO -->
+    <section class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
+      <h2 class="font-black text-xl sm:text-2xl text-slate-900 mb-1">New 6-day plan — one muscle group per day</h2>
+      <p class="text-sm text-slate-500 mb-2">Every exercise for a muscle is on the same day (all shoulders on Wednesday, all core on Tuesday), arranged around the Tue · Thu · Sat runs. The original plan is still in the <a href="../library/" class="text-emerald-700 font-semibold hover:underline">Exercise Library</a>.</p>
+      <p class="text-sm text-slate-500 mb-2">The <strong class="text-slate-700">Muscle focus list</strong> at the top ranks <span id="n-focus-b">24</span> specific muscles (forearms first), grouped upper body, lower body and core. Each has its own <strong class="text-slate-700">Videos</strong> list, showing <em>NA</em> until a good video is added. Below it, the nine functional groups hold the full exercise menu.</p>
+      <p class="text-sm text-slate-500">You don't need to isolate every muscle. Train these nine functional groups, with extra attention to running muscles and joints. <strong class="text-slate-700">Required</strong> = in your current weekly plan. <strong class="text-slate-700">Good to have</strong> = proven swaps and progressions for when equipment is busy or you want variety.</p>
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mt-4" id="stats"></div>
+      <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
+        <strong>Difficulty</strong> is rated for a returning lifter at 45: <span class="tag t-easy">Easy</span> stable, low-skill, safe to start · <span class="tag t-medium">Medium</span> needs balance or technique · <span class="tag t-hard">Hard</span> high skill or load — add only after 8–12 weeks of consistent training. Stop any movement that causes knee pain.
+      </div>
+    </section>
+
+    <!-- WEEK STRIP -->
+    <section class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
+      <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+        <h3 class="font-bold text-slate-900">New 6-day plan</h3>
+        <span class="text-xs text-slate-400">Tap a day to show only that session's cards below</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5" id="week-strip"></div>
+      <p class="text-xs text-slate-400 mt-3"><strong class="text-slate-500">One muscle group, one day:</strong> every exercise for a muscle sits on the same day (all shoulder work is Wednesday, all core is Tuesday, and so on), so each muscle gets a full week to recover. <strong class="text-slate-500">Mon · Wed · Fri</strong> = gym strength days: legs, then push (chest, shoulders, triceps), then pull (back, biceps, forearms). <strong class="text-slate-500">Tue · Thu · Sat</strong> = run first, then a short home-friendly session that never loads the legs heavily: core, lower legs, hip stability. Sun = rest or an easy walk. Heavy legs sit on Monday so they've recovered by the weekend run — keep Tuesday's run easy, the day after legs. Friday has no leg work before Saturday's run. <strong class="text-slate-500">Don't skip the run-day session</strong> — it's the only day core, calves and side hips are trained. If fatigue builds, drop it to 1 set per exercise instead, and stop every run-day set 2–3 reps short of failure. Never add heavy legs to a run day. <strong class="text-slate-500">Missed a gym day?</strong> Do it on Sunday, or add its first 3 exercises to the next gym day — otherwise those muscles go a full two weeks untrained.</p>
+      <p class="text-xs text-slate-400 mt-1.5"><strong class="text-slate-500">Gym days:</strong> warm up 5 min (easy bike or brisk walk), then 3–4 lighter ramp-up sets of the first exercise (age 45+). On Wednesday, also do 1 light set of Face Pull before pressing to wake up the shoulders. <strong class="text-slate-500">Getting stronger:</strong> when you hit the top of the rep range on every set with 2 reps still in the tank, add a little weight next week. <strong class="text-slate-500">Every 4–6 weeks:</strong> take an easy week — about 40% fewer sets and ~10% lighter weights. <strong class="text-slate-500">After every run:</strong> 5 min easy walk before the light session. <strong class="text-slate-500">Wednesday is the longest day:</strong> do Lateral Raise and Reverse Fly back-to-back, and the two triceps moves back-to-back, to save time. <strong class="text-slate-500">OR options:</strong> every exercise in the library has a day. Each main exercise is done every week; an <span class="font-bold text-amber-700">OR</span> line under it is a same-muscle swap for variety, a busy machine or a home day — do the main one OR the swap, never both.</p>
+    </section>
+
+    <!-- MUSCLE COVERAGE -->
+    <section class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
+      <div class="flex items-center justify-between flex-wrap gap-2 mb-1">
+        <h3 class="font-bold text-slate-900">Every muscle, every week</h3>
+        <span class="text-xs font-semibold" id="coverage-count"></span>
+      </div>
+      <p class="text-xs text-slate-500 mb-3">All <span id="n-focus-c">24</span> muscles from the Muscle focus list, grouped by body area, with the days and exercises that train each one in the 6-day plan. A second day only appears when the muscle is a helper in another exercise (for example, Reverse Fly on shoulder day also works the upper back).</p>
+      <div class="grid sm:grid-cols-2 gap-4" id="coverage"></div>
+    </section>
+
+    <!-- FILTERS -->
+    <section class="bg-white rounded-2xl shadow-sm p-4 border border-slate-200 sm:sticky sm:top-[60px] z-20 space-y-2.5">
+      <input id="q" type="search" placeholder="Search exercise, e.g. calf, row, knee…" class="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-emerald-500" />
+      <div class="chip-row" id="f-equip"></div>
+      <div class="chip-row" id="f-diff"></div>
+      <div class="chip-row" id="f-tier"></div>
+      <div class="chip-row" id="f-group"></div>
+      <div class="flex items-center justify-between text-xs text-slate-500 pt-0.5">
+        <span id="count"></span>
+        <button id="reset" class="font-semibold text-emerald-700 hover:underline">Reset filters</button>
+      </div>
+    </section>
+
+    <div id="library" class="space-y-6"></div>
+    <div id="empty" class="hidden text-center py-12 text-slate-400 text-sm bg-white rounded-2xl border border-slate-200">No exercises match these filters.</div>
+
+    <!-- REMOVED -->
+    <section class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
+      <h3 class="font-bold text-slate-900 mb-2">Merged or demoted</h3>
+      <p class="text-xs text-slate-500 mb-3">Former 3-day-plan extras (Front Raise, Arnold Press, Wrist Curls, Shrug, Cable Crunch, Back Squat) are back in the library as <strong class="text-slate-700">Good to have</strong> with their demos — filter by that tier to find them. Only true merges stay listed below.</p>
+      <ul class="text-xs text-slate-600 space-y-1.5" id="removed"></ul>
+    </section>
+
+    <p class="text-[11px] text-slate-400 text-center pb-6">Videos are YouTube Shorts from established coaches and physio channels; each was checked to exist and to show the same exercise and equipment as its card (audited 15 Oct 2026). Add or swap a video in <code class="bg-slate-200 px-1 rounded">LIBRARY</code> inside this page's &lt;script&gt;.</p>
+  </main>
+
+  <!-- Floating PiP YouTube player -->
+  <div id="yt-modal" class="yt-modal" hidden role="dialog" aria-modal="true" aria-labelledby="yt-modal-title">
+    <div class="yt-modal-backdrop" aria-hidden="true"></div>
+    <div class="yt-modal-dialog">
+      <div class="yt-modal-chrome">
+        <button type="button" class="yt-modal-btn yt-modal-btn-close" id="yt-modal-close" title="Close" aria-label="Close video">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <span id="yt-modal-title">Form demo</span>
+        <button type="button" class="yt-modal-btn" id="yt-modal-max" title="Expand" aria-label="Expand player">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 3H3v6M15 3h6v6M9 21H3v-6M21 15v6h-6"/><path d="M3 3l7 7M21 3l-7 7M3 21l7-7M21 21l-7-7"/></svg>
+        </button>
+      </div>
+      <div class="yt-modal-frame-wrap">
+        <iframe id="yt-modal-iframe" title="Exercise form demo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen playsinline></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // ════════════════════════════════════════════════════════════
+  //  📚 LIBRARY DATABASE
+  //  diff  → "easy" | "medium" | "hard"
+  //  equip → "machine" (machine / cable station) | "free" (no machine: DB, bodyweight, band) | "either"
+  //  kit   → what you actually need
+  //  tier  → "required" (in weekly plan) | "good" (good to have)
+  //  days  → [{d:"mon", sets:"3 × 8–12"}]  · OR option: {d, sets, alt:true, or:"Main exercise name"}
+  //  swap  → name of a no-machine (or easier) alternative in this library
+  // ════════════════════════════════════════════════════════════
+  const GROUPS = [
+    { id: 'focus',     icon: '🎯', name: 'Muscle focus list',             why: 'Specific muscles in priority order. Each card lists the exact muscles it covers, links to related exercises already in this library, and has its own Videos list. "NA" means no video added yet: tap "Find more", pick a good one, and add it to that muscle\'s videos list.' },
+    { id: 'chest',     icon: '🫁', name: 'Chest',                         why: 'Pushing strength, posture and upper-body balance.' },
+    { id: 'back',      icon: '🔙', name: 'Back',                          why: 'Upper-back endurance and posture during long runs.' },
+    { id: 'shoulders', icon: '🏋️', name: 'Shoulders',                     why: 'Shoulder stability and balanced upper-body strength.' },
+    { id: 'arms',      icon: '💪', name: 'Arms',                          why: 'Biceps, triceps and forearms for general strength.' },
+    { id: 'thighs',    icon: '🦵', name: 'Thighs',                        why: 'Quads and hamstrings absorb and produce force every stride.' },
+    { id: 'glutes',    icon: '🍑', name: 'Glutes & hips',                 why: 'Hip extension, pelvic stability and single-leg control.' },
+    { id: 'calves',    icon: '🦶', name: 'Calves, ankles & feet',         why: 'Calf endurance, ankle control and repeated push-off.' },
+    { id: 'core',      icon: '🎯', name: 'Core',                          why: 'Abdominals, obliques and trunk stability.' },
+    { id: 'stability', icon: '🛡️', name: 'Hip stabilizers & knee support', why: 'Abductors, adductors and the muscles that control your knees on one leg.' },
+  ];
+
+  //  Muscle focus entries (group:'focus') also use:
+  //    muscles → the specific muscles this one video should cover
+  //    see     → related exercises already in this library
+  //    find    → YouTube search text used while video is still missing
+  //  Order of the focus entries below = the priority number shown on the card.
+  const LIBRARY = [
+    // ── 0. MUSCLE FOCUS LIST (ranked; each muscle gets its own VIDEOS list) ──
+    //    To add videos later, put them inside that muscle's  videos: [ ]  like:
+    //      videos: [ { url: 'https://www.youtube.com/shorts/XXXX', title: 'Short title', by: 'Channel' } ]
+    //    Empty list = shows "NA" on the card.
+    { name: 'Forearms', group: 'focus', region: 'Upper body', diff: 'medium', equip: 'free', kit: 'Dumbbells / bodyweight', tier: 'good',
+      muscles: 'Wrist flexors, wrist extensors, brachioradialis, grip',
+      cue: 'One short routine that covers every forearm muscle. Control each rep, no swinging.',
+      see: ["Farmer's Carry", 'Hammer Curl', 'Wrist Curl', 'Reverse Wrist Curl'],
+      find: 'forearm workout wrist flexors extensors grip shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/6eAuMx5M0ho', title: 'Forearm builder (all forearm muscles)', by: '' },
+        { url: 'https://www.youtube.com/shorts/xY8c6LcLRao', title: 'Wrist curl (3-day plan)', by: '' },
+        { url: 'https://www.youtube.com/shorts/shqAI51IP74', title: 'Reverse wrist curl (3-day plan)', by: '' },
+      ] },
+    { name: 'Triceps', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'either', kit: 'Cable rope or one dumbbell', tier: 'good',
+      muscles: 'Long head, lateral head, medial head',
+      cue: 'Pick videos that hit all three heads: overhead work for the long head, pushdown or kickback for lateral and medial. Elbows stay fixed.',
+      see: ['Triceps Pushdown', 'Overhead DB Triceps Extension', 'Push-up', 'Diamond Push-up'],
+      find: 'triceps workout all three heads shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/NvZKjiZ8NYc', title: 'Rope pushdown', by: '' },
+        { url: 'https://www.youtube.com/shorts/b_r_LW4HEcM', title: 'Overhead DB extension', by: 'DeltaBolic' },
+        { url: 'https://www.youtube.com/shorts/NZAVsAk-Vgc', title: 'Overhead extension (3-day plan demo)', by: '' },
+        { url: 'https://www.youtube.com/shorts/eZSeVSev8KI', title: 'Diamond push-up', by: '' },
+      ] },
+    { name: 'Biceps', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'free', kit: 'Dumbbells', tier: 'good',
+      muscles: 'Biceps brachii (long and short head), brachialis',
+      cue: 'Look for curl variations that change grip and angle (supinated, hammer, incline) so both heads and the brachialis get work.',
+      see: ['Biceps Curl', 'Hammer Curl'],
+      find: 'biceps workout both heads brachialis dumbbells shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/sAq_ocpRh_I', title: 'DB curl', by: '' },
+        { url: 'https://www.youtube.com/shorts/zC3nLlEvin4', title: 'Hammer curl', by: '' },
+      ] },
+    { name: 'Glutes', group: 'focus', region: 'Lower body', diff: 'medium', equip: 'free', kit: 'Bodyweight, mini band, dumbbell', tier: 'good',
+      muscles: 'Gluteus maximus (main hip extensor)',
+      cue: 'Hip-extension work: bridges, thrusts, hinges. Squeeze at the top, ribs down, no lower-back arching. Side-hip work is its own entry: Glute medius.',
+      see: ['Glute Bridge', 'Low Step-up', 'Hip Thrust', 'Romanian Deadlift (DB)', 'Single-Leg RDL (supported)', 'Walking Lunges', 'Bulgarian Split Squat'],
+      find: 'glute max workout hip thrust bridge at home shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/hm_UVD6SUeA', title: 'Hip thrust', by: '' },
+        { url: 'https://www.youtube.com/shorts/X_IGw8U_e38', title: 'Glute bridge', by: 'WeShape' },
+        { url: 'https://www.youtube.com/shorts/Fsve8fkMGcY', title: 'Romanian deadlift (DB)', by: '' },
+      ] },
+    { name: 'Chest', group: 'focus', region: 'Upper body', diff: 'medium', equip: 'free', kit: 'Dumbbells / bodyweight', tier: 'good',
+      muscles: 'Pectoralis major (upper, mid, lower fibres), pectoralis minor',
+      cue: 'Look for incline + flat + fly angles. Shoulder blades pinned back, elbows ~45 degrees from the body.',
+      see: ['Incline DB Press', 'Push-up', 'Machine Chest Press', 'Cable Chest Fly', 'Flat Bench Press'],
+      find: 'chest workout upper mid lower dumbbells shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/8fXfwG4ftaQ', title: 'Incline DB press', by: '' },
+        { url: 'https://www.youtube.com/shorts/Qu7-ceCvq7w', title: 'Machine chest press', by: 'DeltaBolic' },
+        { url: 'https://www.youtube.com/shorts/8laBBEpDgac', title: 'Flat bench press', by: '' },
+        { url: 'https://www.youtube.com/shorts/yrpiK8R4Vqo', title: 'Cable chest fly', by: '' },
+      ] },
+    { name: 'Serratus anterior', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'free', kit: 'Bodyweight / light dumbbells', tier: 'good',
+      muscles: 'Serratus anterior (the muscle that holds the shoulder blade to the ribs)',
+      cue: 'Keeps shoulders healthy and stable under presses and push-ups. Look for push-up plus, wall slides or serratus punches. Gentle, no shrugging.',
+      see: ['Push-up'],
+      find: 'serratus anterior exercises push up plus wall slide shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/WSqc-58sBCw', title: 'Serratus anterior strengthening exercises', by: '' },
+      ] },
+    { name: 'Lats', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'either', kit: 'Pulldown machine or band', tier: 'good',
+      muscles: 'Latissimus dorsi, teres major',
+      cue: 'Drive elbows down toward your hips, not your hands. Chest tall, no leaning back to cheat.',
+      see: ['Lat Pulldown', 'Single-Arm DB Row', 'Band Lat Pulldown', 'Straight-Arm Pulldown'],
+      find: 'lat workout pulldown form shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/z-lxcsIN4T4', title: 'Lat pulldown', by: '' },
+        { url: 'https://www.youtube.com/shorts/Z1Je4hIcCz0', title: 'Single-arm DB row', by: 'Life Fitness' },
+        { url: 'https://www.youtube.com/shorts/eKJUJ2eFPUY', title: 'Straight-arm pulldown', by: '' },
+      ] },
+    { name: 'Upper back (rhomboids & mid-traps)', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'either', kit: 'Cable row or dumbbells + bench', tier: 'good',
+      muscles: 'Rhomboids, middle trapezius, lower trapezius',
+      cue: 'Squeeze shoulder blades together at the end of every row. Key for posture on long runs and at a desk.',
+      see: ['Seated Cable Row', 'Reverse Fly', 'Face Pull', 'Chest-Supported Row'],
+      find: 'upper back rhomboids mid traps workout shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/PeMw-NWlNY8', title: 'Seated cable row', by: '' },
+        { url: 'https://www.youtube.com/shorts/tahGpBijHkY', title: 'Chest-supported row', by: '' },
+        { url: 'https://www.youtube.com/shorts/vGIY3D9digk', title: 'Reverse / rear delt fly', by: '' },
+        { url: 'https://www.youtube.com/shorts/MChHOiaCR7s', title: 'Face pull', by: '' },
+      ] },
+    { name: 'Shoulders (delts)', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'free', kit: 'Light dumbbells', tier: 'good',
+      muscles: 'Front deltoid, side deltoid, rear deltoid',
+      cue: 'Light weight, slow reps. Make sure the video trains all three heads, especially side and rear.',
+      see: ['DB Lateral Raise', 'Reverse Fly', 'DB Shoulder Press', 'Arnold Press', 'Front Raise'],
+      find: 'shoulder workout front side rear delts dumbbells shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/Myim1WH6Qec', title: 'Lateral raise', by: '' },
+        { url: 'https://www.youtube.com/shorts/bQPhGIJJ-jQ', title: 'DB shoulder press', by: '' },
+        { url: 'https://www.youtube.com/shorts/vGIY3D9digk', title: 'Rear delt fly', by: '' },
+        { url: 'https://www.youtube.com/shorts/FnHeJ3Z3d1w', title: 'Front raise (optional)', by: '' },
+        { url: 'https://www.youtube.com/shorts/wRlIuexTowA', title: 'Arnold press (optional)', by: '' },
+      ] },
+    { name: 'Rotator cuff & shoulder stabilisers', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'free', kit: 'Light band', tier: 'good',
+      muscles: 'Supraspinatus, infraspinatus, teres minor, subscapularis',
+      cue: 'Shoulder-health work for returning lifters: band external/internal rotation, light and controlled. Never push through pain.',
+      see: ['Face Pull'],
+      find: 'rotator cuff exercises band shoulder health shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/MChHOiaCR7s', title: 'Face pull (shoulder health)', by: '' },
+      ] },
+    { name: 'Upper traps', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'free', kit: 'Dumbbells', tier: 'good',
+      muscles: 'Upper trapezius, levator scapulae',
+      cue: 'Shrug straight up and down, no rolling. Heavy carries train this too.',
+      see: ["Farmer's Carry", 'Dumbbell Shrug'],
+      find: 'trap workout dumbbell shrug form shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/rt17lmnaLSM', title: "Farmer's carry", by: '' },
+        { url: 'https://www.youtube.com/shorts/cJRVVxmytaM', title: 'Dumbbell shrug (optional)', by: '' },
+      ] },
+    { name: 'Neck & deep neck flexors', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'free', kit: 'Bodyweight / towel', tier: 'good',
+      muscles: 'Deep neck flexors, sternocleidomastoid, upper neck extensors',
+      cue: 'Desk-posture fix: chin tucks and gentle isometric holds. Very light effort, no neck cranking or heavy loading.',
+      see: ['Chin Tuck'],
+      find: 'chin tuck deep neck flexor exercise posture shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/IWrjp_B4ZgI', title: 'Chin tucks for forward head posture', by: 'Dr. Kevin Wafer' },
+        { url: 'https://www.youtube.com/shorts/SGbp8EpPvh8', title: 'Chin tuck form cues (subtle, keep airway open)', by: '' },
+      ] },
+    { name: 'Quads', group: 'focus', region: 'Lower body', diff: 'easy', equip: 'either', kit: 'Leg press / box / dumbbell', tier: 'good',
+      muscles: 'Rectus femoris, vastus lateralis, vastus medialis, vastus intermedius',
+      cue: 'Knees track over toes, pain-free depth only. Good quad strength protects your knees when running.',
+      see: ['Leg Press', 'Box Squat', 'Low Step-up', 'Goblet Squat', 'Leg Extension', 'Walking Lunges', 'Bulgarian Split Squat', 'Back Squat'],
+      find: 'quad workout knee friendly shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/k0EQGAaYI48', title: 'The muscle to strengthen for your knees', by: 'WeShape' },
+        { url: 'https://www.youtube.com/shorts/jA9tsYbA7Ms', title: 'Leg press', by: '' },
+        { url: 'https://www.youtube.com/shorts/MeIiIdhvXT4', title: 'Goblet squat', by: '' },
+        { url: 'https://www.youtube.com/shorts/W6o1A0bEnmU', title: 'Back squat (optional / advanced)', by: '' },
+      ] },
+    { name: 'Hamstrings', group: 'focus', region: 'Lower body', diff: 'medium', equip: 'either', kit: 'Curl machine or dumbbells', tier: 'good',
+      muscles: 'Biceps femoris, semitendinosus, semimembranosus',
+      cue: 'Cover both the hip-hinge (RDL) and knee-curl actions. Control the lowering phase.',
+      see: ['Seated Hamstring Curl', 'Romanian Deadlift (DB)', 'Single-Leg RDL (supported)'],
+      find: 'hamstring workout RDL curl form shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/7PE3MlvGAts', title: 'Seated hamstring curl', by: 'Hayden Steele' },
+        { url: 'https://www.youtube.com/shorts/bgfHeL6eR9Q', title: 'Hamstring curl (3-day plan demo)', by: '' },
+        { url: 'https://www.youtube.com/shorts/Fsve8fkMGcY', title: 'Romanian deadlift (DB)', by: '' },
+      ] },
+    { name: 'Glute medius (side hips)', group: 'focus', region: 'Lower body', diff: 'easy', equip: 'free', kit: 'Mini band / mat', tier: 'good',
+      muscles: 'Gluteus medius, gluteus minimus, tensor fasciae latae',
+      cue: "The runner's knee-and-pelvis stabiliser. Side-lying and standing abduction, band walks. Hips stay stacked, no leaning.",
+      see: ['Band Lateral Walk', 'Clamshell', 'Hip Abduction Machine', 'Standing Hip & Waist Trio'],
+      find: 'glute medius exercises runners hip stability shorts',
+      videos: [
+        { url: 'https://www.youtube.com/watch?v=AWVxYHAkEwE', title: '15 min side glute workout (no equipment)', by: 'Workout With Roxanne' },
+      ] },
+    { name: 'Hip rotators (deep glutes)', group: 'focus', region: 'Lower body', diff: 'easy', equip: 'free', kit: 'Mat / mini band', tier: 'good',
+      muscles: 'Piriformis, gemelli, obturators, quadratus femoris',
+      cue: 'Small deep muscles that turn the thigh and steady the hip joint. Look for 90/90 holds, seated banded external rotation or figure-4 strengthening. Gentle, no pinching at the front of the hip.',
+      see: ['Clamshell'],
+      find: 'hip external rotators strengthening piriformis 90 90 shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/EayTGEq1nEQ', title: 'Clamshell', by: 'Brookbush Institute' },
+      ] },
+    { name: 'Adductors (inner thigh)', group: 'focus', region: 'Lower body', diff: 'easy', equip: 'either', kit: 'Machine, bench or band', tier: 'good',
+      muscles: 'Adductor magnus, longus, brevis, gracilis',
+      cue: 'Inner-thigh strength steadies the knee and pelvis on one leg. Start light and avoid groin pain.',
+      see: ['Hip Adduction Machine', 'Copenhagen Plank (short lever)'],
+      find: 'adductor strengthening exercises inner thigh shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/njuekVcLXKA', title: '3 moves to loosen tight inner thighs', by: 'Jason and Lauren' },
+      ] },
+    { name: 'Hip flexors', group: 'focus', region: 'Lower body', diff: 'easy', equip: 'free', kit: 'Mat / bodyweight', tier: 'good',
+      muscles: 'Psoas, iliacus, rectus femoris',
+      cue: 'Runners and desk workers get tight here. Look for a strengthen + stretch combo (marching lifts, lunge stretch).',
+      see: ['Hip Flexor March & Lunge Stretch', 'Dead Bug'],
+      find: 'hip flexor strengthening and stretching runners shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/RO57Szu8hx4', title: 'Hip flexor march (runners)', by: '' },
+        { url: 'https://www.youtube.com/watch?v=X7eo5mzI8xg', title: 'Half-kneeling hip flexor stretch', by: '' },
+        { url: 'https://www.youtube.com/shorts/Aoipu_fl3HA', title: 'Dead bug (hip flexor control)', by: '' },
+        { url: 'https://www.youtube.com/shorts/5YLmdfxXEfs', title: 'Standing hip & waist trio', by: '' },
+      ] },
+    { name: 'Calves', group: 'focus', region: 'Lower body', diff: 'easy', equip: 'either', kit: 'Step edge or machine', tier: 'good',
+      muscles: 'Gastrocnemius, soleus',
+      cue: 'Straight-knee raises hit the gastrocnemius; bent-knee (seated) raises hit the soleus. Full stretch at the bottom.',
+      see: ['Standing Calf Raise', 'Seated Calf Raise', 'Single-Leg Calf Raise'],
+      find: 'calf workout gastrocnemius soleus shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/8sT7Ne3Kzwc', title: 'Standing calf raise', by: '' },
+        { url: 'https://www.youtube.com/shorts/JbyjNymZOt0', title: 'Seated calf raise', by: '' },
+        { url: 'https://www.youtube.com/shorts/g3a-VzkmFYg', title: 'Single-leg calf raise', by: '' },
+      ] },
+    { name: 'Shins (tibialis anterior)', group: 'focus', region: 'Lower body', diff: 'easy', equip: 'free', kit: 'Wall', tier: 'good',
+      muscles: 'Tibialis anterior, ankle dorsiflexors',
+      cue: 'Helps prevent shin splints and improves ankle control for runners.',
+      see: ['Tibialis Raise'],
+      find: 'tibialis anterior raise shin splints shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/h57xceuiO40', title: 'Tibialis raise', by: 'Clench Fitness' },
+      ] },
+    { name: 'Ankle & foot stabilisers', group: 'focus', region: 'Lower body', diff: 'easy', equip: 'free', kit: 'Bodyweight / mini band', tier: 'good',
+      muscles: 'Peroneals (fibularis), tibialis posterior, intrinsic foot muscles',
+      cue: 'Ankle-sprain protection and foot arch strength for running: short-foot exercise, band eversion, single-leg balance.',
+      see: ['Single-Leg Balance', 'Single-Leg Calf Raise'],
+      find: 'ankle stability peroneals short foot exercise runners shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/HwJUXz6jnkg', title: 'Single-leg balance', by: '' },
+        { url: 'https://www.youtube.com/shorts/g3a-VzkmFYg', title: 'Single-leg calf raise', by: '' },
+      ] },
+    { name: 'Abs (rectus & deep core)', group: 'focus', region: 'Core', diff: 'easy', equip: 'free', kit: 'Mat', tier: 'good',
+      muscles: 'Rectus abdominis, transverse abdominis',
+      cue: 'Ribs down, belly braced, slow reps. Quality beats quantity. The dragon flag video is an ADVANCED progression: build up with Dead Bug and Plank first, and skip it if your lower back or neck complains.',
+      see: ['Dead Bug', 'Plank', 'Cable Crunch'],
+      find: 'abs workout rectus transverse abdominis beginner shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/Bvhz7Rfnrr4', title: 'Cable crunch (3-day plan)', by: '' },
+        { url: 'https://www.youtube.com/shorts/Aoipu_fl3HA', title: 'Dead bug', by: '' },
+        { url: 'https://www.youtube.com/shorts/v25dawSzRTM', title: 'Plank', by: 'Jeremy Ethier' },
+        { url: 'https://www.youtube.com/shorts/eLCBC6fjtQU', title: 'Dragon flag for abs (advanced)', by: 'Jeff Nippard' },
+      ] },
+    { name: 'Obliques & side core', group: 'focus', region: 'Core', diff: 'medium', equip: 'either', kit: 'Mat, cable or band', tier: 'good',
+      muscles: 'Internal and external obliques, quadratus lumborum',
+      cue: 'Anti-rotation and side-bend work. Keep hips stacked and avoid twisting through the lower back.',
+      see: ['Side Plank', 'Pallof Press'],
+      find: 'obliques side core workout anti rotation shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/V2cUr7zG4hw', title: 'Side plank', by: 'Kayla Itsines (SWEAT)' },
+        { url: 'https://www.youtube.com/shorts/K2VljzCC16g', title: 'Plank + side plank (3-day plan demo)', by: '' },
+        { url: 'https://www.youtube.com/shorts/6q2n6pxG7jE', title: 'Pallof press', by: '' },
+      ] },
+    { name: 'Lower back', group: 'focus', region: 'Core', diff: 'easy', equip: 'free', kit: 'Mat / bodyweight', tier: 'good',
+      muscles: 'Erector spinae, multifidus',
+      cue: 'Gentle, controlled work (bird dog, back extension). Stop on any sharp pain.',
+      see: ['Bird Dog', 'Romanian Deadlift (DB)'],
+      find: 'lower back strengthening erector spinae safe shorts',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/_1j_HWknGLg', title: 'Bird dog', by: 'AARP' },
+        { url: 'https://www.youtube.com/shorts/Fsve8fkMGcY', title: 'Romanian deadlift (DB)', by: '' },
+      ] },
+
+    // ── 1. CHEST ──
+    { name: 'Machine Chest Press', group: 'chest', diff: 'easy', equip: 'machine', kit: 'Chest press machine', tier: 'required',
+      days: [{ d: 'wed', sets: '3 × 8–12' }], cue: 'Handles at mid-chest, shoulder blades pinned back, press without locking elbows.',
+      swap: 'Push-up', video: 'https://www.youtube.com/shorts/Qu7-ceCvq7w', by: 'DeltaBolic' },
+    { name: 'Incline DB Press', group: 'chest', diff: 'medium', equip: 'free', kit: 'Dumbbells + incline bench', tier: 'required',
+      days: [{ d: 'wed', sets: '3 × 8–12' }], cue: 'Bench at 30°, elbows ~45° from body, lower slowly to upper chest.',
+      video: 'https://www.youtube.com/shorts/8fXfwG4ftaQ' },
+    { name: 'Push-up', group: 'chest', diff: 'medium', equip: 'free', kit: 'Bodyweight', tier: 'required',
+      days: [{ d: 'wed', sets: '2 × 8–12 (incline) + push-up plus' }], cue: 'Start hands-on-bench (incline = easier). Body in one line, chest to fist height from the floor. Finish each set with 8 "push-up plus" reps: arms straight, push the floor away so the shoulder blades spread — trains the serratus.',
+      video: 'https://www.youtube.com/shorts/A-2re9hs990', by: 'Nick Tumminello' },
+    { name: 'Cable Chest Fly', group: 'chest', diff: 'easy', equip: 'machine', kit: 'Cable station', tier: 'good',
+      days: [{ d: 'wed', sets: '2 × 12–15 + 8 push-up plus', alt: true, or: 'Push-up' }],
+      cue: 'Soft bend in elbows, hug a big tree, squeeze chest at the middle.',
+      swap: 'Push-up', video: 'https://www.youtube.com/shorts/yrpiK8R4Vqo' },
+    { name: 'Flat Bench Press', group: 'chest', diff: 'hard', equip: 'free', kit: 'Barbell + bench + spotter', tier: 'good',
+      days: [{ d: 'wed', sets: '3 × 6–10 (with spotter)', alt: true, or: 'Machine Chest Press' }],
+      cue: 'Feet planted, slight arch, bar to lower chest. Use a spotter or safety pins.',
+      swap: 'Machine Chest Press', video: 'https://www.youtube.com/shorts/8laBBEpDgac' },
+
+    // ── 2. BACK ──
+    { name: 'Lat Pulldown', group: 'back', diff: 'easy', equip: 'machine', kit: 'Lat pulldown machine', tier: 'required',
+      days: [{ d: 'fri', sets: '3 × 8–12' }], cue: 'Chest up, pull bar to upper chest, elbows drive down to your pockets.',
+      swap: 'Band Lat Pulldown', video: 'https://www.youtube.com/shorts/z-lxcsIN4T4' },
+    { name: 'Seated Cable Row', group: 'back', diff: 'easy', equip: 'machine', kit: 'Cable row station', tier: 'required',
+      days: [{ d: 'fri', sets: '3 × 10–12' }], cue: 'Sit tall, pull handle to belly, squeeze shoulder blades — no rocking.',
+      swap: 'Chest-Supported Row', video: 'https://www.youtube.com/shorts/PeMw-NWlNY8' },
+    { name: 'Chest-Supported Row', group: 'back', diff: 'easy', equip: 'free', kit: 'Dumbbells + incline bench', tier: 'good',
+      days: [{ d: 'fri', sets: '3 × 10–12', alt: true, or: 'Seated Cable Row' }],
+      cue: 'Chest on bench takes your lower back out of it — row elbows back and pause.',
+      video: 'https://www.youtube.com/shorts/tahGpBijHkY' },
+    { name: 'Band Lat Pulldown', group: 'back', diff: 'easy', equip: 'free', kit: 'Resistance band anchored overhead', tier: 'good',
+      days: [{ d: 'fri', sets: '3 × 12–15', alt: true, or: 'Lat Pulldown' }],
+      cue: 'Kneel or sit under the anchor, pull elbows down to your ribs. Vertical pull with no machine — the right swap for Lat Pulldown.',
+      video: 'https://www.youtube.com/shorts/nmY4MTSFln8', by: 'Digg Deep Fitness' },
+    { name: 'Single-Arm DB Row', group: 'back', diff: 'medium', equip: 'free', kit: 'Dumbbell + bench', tier: 'required',
+      days: [{ d: 'fri', sets: '3 × 10–12 each side' }], cue: 'Flat back, pull the dumbbell toward your hip, not your shoulder — that path trains the lats. Hand on the bench supports your lower back.',
+      swap: 'Chest-Supported Row', video: 'https://www.youtube.com/shorts/Z1Je4hIcCz0', by: 'Life Fitness' },
+    { name: 'Chin Tuck', group: 'back', diff: 'easy', equip: 'free', kit: 'Bodyweight (wall optional)', tier: 'required',
+      days: [{ d: 'fri', sets: '2 × 10 (5 s hold)' }],
+      cue: 'Stand tall with your back to a wall, glide the chin straight back (a "double chin") without tilting the head, hold 5 s. Very light effort — fixes the head-forward posture from desk work and tired running.',
+      video: 'https://www.youtube.com/shorts/IWrjp_B4ZgI', by: 'Dr. Kevin Wafer',
+      videos: [ { url: 'https://www.youtube.com/shorts/SGbp8EpPvh8', title: 'Chin tuck form cues (subtle, keep airway open)', by: '' } ],
+      find: 'chin tuck deep neck flexor exercise posture shorts' },
+    { name: 'Straight-Arm Pulldown', group: 'back', diff: 'medium', equip: 'machine', kit: 'Cable + rope/bar', tier: 'good',
+      days: [{ d: 'fri', sets: '3 × 12–15', alt: true, or: 'Lat Pulldown' }],
+      cue: 'Arms nearly straight, hinge slightly, sweep the bar to your thighs using lats.', swap: 'Band Lat Pulldown',
+      video: 'https://www.youtube.com/shorts/eKJUJ2eFPUY' },
+
+    // ── 3. SHOULDERS ──
+    { name: 'DB Shoulder Press', group: 'shoulders', diff: 'medium', equip: 'free', kit: 'Dumbbells + bench', tier: 'required',
+      days: [{ d: 'wed', sets: '3 × 8–12' }], cue: 'Seated with back support, press up and slightly in, ribs down.',
+      video: 'https://www.youtube.com/shorts/bQPhGIJJ-jQ' },
+    { name: 'DB Lateral Raise', group: 'shoulders', diff: 'easy', equip: 'free', kit: 'Light dumbbells', tier: 'required',
+      days: [{ d: 'wed', sets: '3 × 12–15' }], cue: 'Lead with elbows, raise to shoulder height, light weight and slow.',
+      video: 'https://www.youtube.com/shorts/Myim1WH6Qec' },
+    { name: 'Reverse Fly', group: 'shoulders', diff: 'easy', equip: 'free', kit: 'Light dumbbells', tier: 'required',
+      days: [{ d: 'wed', sets: '2 × 12–15 (light)' }], cue: 'Hinge forward, arms wide like wings, squeeze rear shoulders. Great for running posture.',
+      video: 'https://www.youtube.com/shorts/vGIY3D9digk' },
+    { name: 'Face Pull', group: 'shoulders', diff: 'easy', equip: 'either', kit: 'Cable + rope (or band)', tier: 'required',
+      days: [{ d: 'wed', sets: '2 × 15 (cable)' }], cue: 'Pull rope to forehead, hands finish beside ears. Shoulder-health staple after 45.',
+      video: 'https://www.youtube.com/shorts/MChHOiaCR7s' },
+
+    // ── 4. ARMS ──
+    { name: 'Biceps Curl', group: 'arms', diff: 'easy', equip: 'free', kit: 'Dumbbells', tier: 'required',
+      days: [{ d: 'fri', sets: '2 × 10–15' }], cue: 'Elbows pinned at sides, no swinging, slow on the way down.',
+      video: 'https://www.youtube.com/shorts/sAq_ocpRh_I' },
+    { name: 'Triceps Pushdown', group: 'arms', diff: 'easy', equip: 'machine', kit: 'Cable + rope', tier: 'required',
+      days: [{ d: 'wed', sets: '2 × 10–15' }], cue: 'Elbows tucked, push down and spread the rope at the bottom.',
+      swap: 'Overhead DB Triceps Extension', video: 'https://www.youtube.com/shorts/NvZKjiZ8NYc' },
+    { name: 'Hammer Curl', group: 'arms', diff: 'easy', equip: 'free', kit: 'Dumbbells', tier: 'required',
+      days: [{ d: 'fri', sets: '2 × 10–12' }], cue: 'Thumbs up grip, trains forearms and grip too.',
+      video: 'https://www.youtube.com/shorts/zC3nLlEvin4' },
+    { name: 'Overhead DB Triceps Extension', group: 'arms', diff: 'medium', equip: 'free', kit: 'One dumbbell', tier: 'required',
+      days: [{ d: 'wed', sets: '2 × 10–12' }], cue: 'Elbows point forward, lower behind head, stop if shoulders pinch.',
+      video: 'https://www.youtube.com/shorts/b_r_LW4HEcM', by: 'DeltaBolic',
+      videos: [ { url: 'https://www.youtube.com/shorts/NZAVsAk-Vgc', title: '3-day plan overhead extension demo', by: '' } ] },
+    { name: "Farmer's Carry", group: 'arms', diff: 'easy', equip: 'free', kit: 'Heavy dumbbells', tier: 'required',
+      days: [{ d: 'fri', sets: '3 × 30–40 m' }], cue: 'Walk tall with heavy DBs. Builds grip, traps and core — great posture work for runners.',
+      video: 'https://www.youtube.com/shorts/rt17lmnaLSM' },
+    { name: 'Diamond Push-up', group: 'arms', diff: 'hard', equip: 'free', kit: 'Bodyweight', tier: 'good',
+      days: [{ d: 'wed', sets: '2 × 8–12 (hands on bench)', alt: true, or: 'Triceps Pushdown' }],
+      cue: 'Hands together under chest. Do it on a bench or knees until strong.',
+      video: 'https://www.youtube.com/shorts/eZSeVSev8KI' },
+
+    // ── 5. THIGHS ──
+    { name: 'Leg Press', group: 'thighs', diff: 'easy', equip: 'machine', kit: 'Leg press machine', tier: 'required',
+      days: [{ d: 'mon', sets: '3 × 8–12' }], cue: 'Feet shoulder-width mid-platform, knees track toes, lower back stays on pad.',
+      swap: 'Box Squat', video: 'https://www.youtube.com/shorts/jA9tsYbA7Ms' },
+    { name: 'Box Squat', group: 'thighs', diff: 'easy', equip: 'free', kit: 'Bench/box (+ dumbbell later)', tier: 'good',
+      days: [{ d: 'mon', sets: '3 × 8–12', alt: true, or: 'Leg Press' }], cue: 'Sit back to touch the box, stand up driving through heels. Box sets a safe, knee-friendly depth.',
+      video: 'https://www.youtube.com/shorts/5e7YnJP5u3U', by: 'GoTherex' },
+    { name: 'Goblet Squat', group: 'thighs', diff: 'medium', equip: 'free', kit: 'One dumbbell/kettlebell', tier: 'good',
+      days: [{ d: 'mon', sets: '3 × 8–12', alt: true, or: 'Leg Press' }],
+      cue: 'Hold weight at chest, sit between heels, chest tall. Next step after box squat.',
+      video: 'https://www.youtube.com/shorts/MeIiIdhvXT4' },
+    { name: 'Leg Extension', group: 'thighs', diff: 'easy', equip: 'machine', kit: 'Leg extension machine', tier: 'good',
+      days: [{ d: 'mon', sets: '3 × 12–15 (lighter quad option)', alt: true, or: 'Leg Press' }],
+      cue: 'Light-moderate weight, pause at top. Useful quad/knee builder if it feels pain-free.', swap: 'Box Squat',
+      video: 'https://www.youtube.com/shorts/ztNBgrGy6FQ' },
+    { name: 'Walking Lunges', group: 'thighs', diff: 'medium', equip: 'free', kit: 'Bodyweight or dumbbells', tier: 'good',
+      days: [{ d: 'mon', sets: '2 × 8 each leg', alt: true, or: 'Low Step-up' }],
+      cue: 'Long-ish step, back knee lowers under hip, front knee stays over foot.',
+      video: 'https://www.youtube.com/shorts/L8fvypPrzzs' },
+
+    // ── 6. GLUTES & HIPS ──
+    { name: 'Romanian Deadlift (DB)', group: 'glutes', diff: 'medium', equip: 'free', kit: 'Dumbbells', tier: 'required',
+      days: [{ d: 'mon', sets: '3 × 8–10' }], cue: 'Soft knees, push hips back, DBs slide down thighs, flat back. Stop at mid-shin.',
+      video: 'https://www.youtube.com/shorts/Fsve8fkMGcY' },
+    { name: 'Seated Hamstring Curl', group: 'thighs', diff: 'easy', equip: 'machine', kit: 'Hamstring curl machine', tier: 'required',
+      days: [{ d: 'mon', sets: '3 × 10–12' }], cue: 'Knee lined up with machine pivot, curl and control the return.',
+      swap: 'Romanian Deadlift (DB)', video: 'https://www.youtube.com/shorts/7PE3MlvGAts', by: 'Hayden Steele',
+      videos: [ { url: 'https://www.youtube.com/shorts/bgfHeL6eR9Q', title: '3-day plan hamstring curl demo', by: '' } ] },
+    { name: 'Low Step-up', group: 'glutes', diff: 'easy', equip: 'free', kit: 'Low step/box (rail for support)', tier: 'required',
+      days: [{ d: 'mon', sets: '3 × 8 each leg' }], cue: 'Whole foot on step, push through that heel, control the step down. Use a rail if needed.',
+      video: 'https://www.youtube.com/shorts/Znmlh8_ToGo', by: 'Be Mobile Physiotherapy' },
+    { name: 'Glute Bridge', group: 'glutes', diff: 'easy', equip: 'free', kit: 'Bodyweight / mat', tier: 'required',
+      days: [{ d: 'mon', sets: '2 × 12–15 (finisher)' }], cue: 'Feet close to glutes, squeeze glutes to lift, ribs down — no arching.',
+      video: 'https://www.youtube.com/shorts/X_IGw8U_e38', by: 'WeShape' },
+    { name: 'Hip Thrust', group: 'glutes', diff: 'medium', equip: 'free', kit: 'Bench + barbell/dumbbell', tier: 'good',
+      days: [{ d: 'mon', sets: '2 × 10–12', alt: true, or: 'Glute Bridge' }],
+      cue: 'Upper back on bench, chin tucked, drive hips up and pause. Loaded progression of the bridge.',
+      video: 'https://www.youtube.com/shorts/hm_UVD6SUeA' },
+    { name: 'Single-Leg RDL (supported)', group: 'glutes', diff: 'medium', equip: 'free', kit: 'Dumbbell + wall/rail', tier: 'good',
+      days: [{ d: 'mon', sets: '2 × 8 each leg', alt: true, or: 'Romanian Deadlift (DB)' }],
+      cue: 'Hold a support, hinge on one leg, hips stay square. Runner-specific balance + hamstring work.',
+      video: 'https://www.youtube.com/shorts/-10WIm3-6_k', by: 'The Diabetes Resistance' },
+    { name: 'Bulgarian Split Squat', group: 'glutes', diff: 'hard', equip: 'free', kit: 'Bench + dumbbells', tier: 'good',
+      days: [{ d: 'mon', sets: '2 × 8 each leg (advanced)', alt: true, or: 'Low Step-up' }],
+      cue: 'Rear foot on bench, drop straight down. Very effective but demanding — add after step-ups feel easy.',
+      video: 'https://www.youtube.com/shorts/Cow3ESXmrTU' },
+    { name: 'Standing Hip & Waist Trio', group: 'glutes', diff: 'easy', equip: 'free', kit: 'Bodyweight', tier: 'required',
+      days: [{ d: 'sat', sets: '3 moves · 3 × 20' }],
+      cue: 'Standing circuit for hips, glutes and waist: (1) reverse leg raise + arm swing, (2) side leg raise each side, (3) step-back arm swing. Brace the core; 20 reps × 3 per move. Home-friendly — do after Saturday\'s run.',
+      video: 'https://www.youtube.com/shorts/5YLmdfxXEfs' },
+    { name: 'Hip Flexor March & Lunge Stretch', group: 'glutes', diff: 'easy', equip: 'free', kit: 'Mat (+ mini band optional)', tier: 'required',
+      days: [{ d: 'tue', sets: '2 × 10 marches + 30 s stretch each side' }],
+      cue: 'Stand tall, drive one knee to hip height and hold 2 s (band around the feet makes it harder). Then half-kneeling lunge stretch: tuck the pelvis, squeeze the back glute, 30 s each side. Strong, loose hip flexors help your stride and ease lower-back tightness.',
+      video: 'https://www.youtube.com/shorts/RO57Szu8hx4', by: '',
+      videos: [ { url: 'https://www.youtube.com/watch?v=X7eo5mzI8xg', title: 'Half-kneeling hip flexor stretch (form cues)', by: '' } ],
+      find: 'standing hip flexor march and half kneeling hip flexor stretch runners shorts' },
+
+    // ── 7. CALVES, ANKLES & FEET ──
+    { name: 'Standing Calf Raise', group: 'calves', diff: 'easy', equip: 'either', kit: 'Machine or step edge', tier: 'required',
+      days: [{ d: 'thu', sets: '3 × 12–15 (step edge)' }], cue: 'Full stretch at bottom, rise high, 2-sec lower. Do on a step if machine is busy.',
+      video: 'https://www.youtube.com/shorts/8sT7Ne3Kzwc' },
+    { name: 'Seated Calf Raise', group: 'calves', diff: 'easy', equip: 'either', kit: 'Seated calf machine — or sit on a bench with a heavy DB on your knees', tier: 'required',
+      days: [{ d: 'thu', sets: '2 × 12–15' }], cue: 'Bent-knee raise targets the soleus, a calf muscle that takes a big share of the load when running.',
+      video: 'https://www.youtube.com/shorts/JbyjNymZOt0' },
+    { name: 'Tibialis Raise', group: 'calves', diff: 'easy', equip: 'free', kit: 'Wall', tier: 'required',
+      days: [{ d: 'thu', sets: '2 × 12–15' }], cue: 'Back on wall, heels forward, lift toes toward shins. Strengthens the front-of-shin muscle that controls each foot strike.',
+      video: 'https://www.youtube.com/shorts/h57xceuiO40', by: 'Clench Fitness' },
+    { name: 'Single-Leg Balance', group: 'calves', diff: 'easy', equip: 'free', kit: 'Bodyweight, near support', tier: 'required',
+      days: [{ d: 'thu', sets: '2 × 30 s each leg' }], cue: 'Stand on one leg near a rail, soft knee, toes grip floor. Progress: eyes closed.',
+      video: 'https://www.youtube.com/shorts/HwJUXz6jnkg' },
+    { name: 'Single-Leg Calf Raise', group: 'calves', diff: 'medium', equip: 'free', kit: 'Step + wall for balance', tier: 'good',
+      days: [{ d: 'thu', sets: '2 × 10–12 each leg', alt: true, or: 'Standing Calf Raise' }],
+      cue: 'One leg on a step edge, slow up and down. Builds Achilles and calf endurance for longer runs.',
+      video: 'https://www.youtube.com/shorts/g3a-VzkmFYg' },
+
+    // ── 8. CORE ──
+    { name: 'Dead Bug', group: 'core', diff: 'easy', equip: 'free', kit: 'Mat', tier: 'required',
+      days: [{ d: 'tue', sets: '2 × 8–10 each side' }], cue: 'Lower back pressed to floor, extend opposite arm + leg slowly, exhale.',
+      video: 'https://www.youtube.com/shorts/Aoipu_fl3HA' },
+    { name: 'Pallof Press', group: 'core', diff: 'medium', equip: 'either', kit: 'Cable or resistance band', tier: 'required',
+      days: [{ d: 'tue', sets: '2 × 10 each side (band)' }], cue: 'Stand side-on to the anchor, press straight out and resist the twist.',
+      video: 'https://www.youtube.com/shorts/6q2n6pxG7jE' },
+    { name: 'Side Plank', group: 'core', diff: 'medium', equip: 'free', kit: 'Mat', tier: 'required',
+      days: [{ d: 'tue', sets: '2 × 20–30 s each side' }], cue: 'Elbow under shoulder, hips high in one line. Knees-down version is easier.',
+      video: 'https://www.youtube.com/shorts/V2cUr7zG4hw', by: 'Kayla Itsines (SWEAT)',
+      videos: [ { url: 'https://www.youtube.com/shorts/K2VljzCC16g', title: 'Plank + side plank (3-day plan)', by: '' } ] },
+    { name: 'Plank', group: 'core', diff: 'easy', equip: 'free', kit: 'Mat', tier: 'required',
+      days: [{ d: 'tue', sets: '2 × 30 s' }], cue: 'Squeeze glutes, ribs down, breathe. Quality 30 s beats sagging 90 s.',
+      video: 'https://www.youtube.com/shorts/v25dawSzRTM', by: 'Jeremy Ethier' },
+    { name: 'Bird Dog', group: 'core', diff: 'easy', equip: 'free', kit: 'Mat', tier: 'required',
+      days: [{ d: 'tue', sets: '2 × 8 each side' }], cue: 'On all fours, reach opposite arm + leg, keep hips level. Back-friendly core.',
+      video: 'https://www.youtube.com/shorts/_1j_HWknGLg', by: 'AARP' },
+
+    // ── 9. HIP STABILIZERS & KNEE SUPPORT ──
+    { name: 'Band Lateral Walk', group: 'stability', diff: 'easy', equip: 'free', kit: 'Mini resistance band', tier: 'required',
+      days: [{ d: 'sat', sets: '2 × 10 steps each way' }], cue: 'Band above knees, half-squat, small steps, knees push out. Glute medius = knee control.',
+      video: 'https://www.youtube.com/shorts/mZ23K1ulW2A' },
+    { name: 'Clamshell', group: 'stability', diff: 'easy', equip: 'free', kit: 'Mat (+ mini band)', tier: 'required',
+      days: [{ d: 'sat', sets: '2 × 12 each side' }], cue: 'Side-lying, heels together, open top knee without rolling the hips back.',
+      video: 'https://www.youtube.com/shorts/EayTGEq1nEQ', by: 'Brookbush Institute' },
+    { name: 'Hip Abduction Machine', group: 'stability', diff: 'easy', equip: 'machine', kit: 'Abduction machine', tier: 'good',
+      days: [{ d: 'sat', sets: '2 × 12–15 (if at the gym)', alt: true, or: 'Band Lateral Walk' }],
+      cue: 'Push knees out against pads, slow return. Machine version of band walks.',
+      swap: 'Band Lateral Walk', video: 'https://www.youtube.com/shorts/Z6Aq5upUp4A' },
+    { name: 'Hip Adduction Machine', group: 'stability', diff: 'easy', equip: 'machine', kit: 'Adduction machine', tier: 'required',
+      days: [{ d: 'mon', sets: '2 × 12–15' }], cue: 'Squeeze knees together, light-moderate weight. Inner thighs stabilise knees too.',
+      swap: 'Copenhagen Plank (short lever)', video: 'https://www.youtube.com/watch?v=CjAVezAggkI' },
+    { name: 'Copenhagen Plank (short lever)', group: 'stability', diff: 'hard', equip: 'free', kit: 'Bench', tier: 'good',
+      days: [{ d: 'mon', sets: '2 × 10–15 s each side', alt: true, or: 'Hip Adduction Machine' }],
+      cue: 'Side plank with top knee on a bench. Well-studied for groin-injury prevention in field sports and builds inner-thigh strength for knee control — start with 10–15 s.',
+      video: 'https://www.youtube.com/shorts/kbTj61pYcPM', by: 'Waughfit' },
+    // ── RESTORED FROM 3-DAY PLAN (optional / good-to-have — kept for demos & variety) ──
+    { name: 'Front Raise', group: 'shoulders', diff: 'easy', equip: 'free', kit: 'Light dumbbells', tier: 'good',
+      days: [{ d: 'wed', sets: '2 × 12–15 (light day, if presses irritate the shoulder)', alt: true, or: 'DB Shoulder Press' }],
+      cue: 'Optional isolation — front delts already get plenty from every press. Light weight, no swinging.',
+      video: 'https://www.youtube.com/shorts/FnHeJ3Z3d1w' },
+    { name: 'Arnold Press', group: 'shoulders', diff: 'medium', equip: 'free', kit: 'Dumbbells + bench', tier: 'good',
+      days: [{ d: 'wed', sets: '3 × 8–12', alt: true, or: 'DB Shoulder Press' }],
+      cue: 'Optional variety on DB Shoulder Press. More shoulder stress — stop if anything pinches.',
+      swap: 'DB Shoulder Press', video: 'https://www.youtube.com/shorts/wRlIuexTowA' },
+    { name: 'Wrist Curl', group: 'arms', diff: 'easy', equip: 'free', kit: 'Light dumbbells', tier: 'good',
+      days: [{ d: 'fri', sets: '2 × 12–15 (pair with Reverse Wrist Curl)', alt: true, or: 'Hammer Curl' }],
+      cue: 'Optional forearm isolation. Hammer Curl and Farmer\'s Carry already cover most grip work.',
+      video: 'https://www.youtube.com/shorts/xY8c6LcLRao' },
+    { name: 'Reverse Wrist Curl', group: 'arms', diff: 'easy', equip: 'free', kit: 'Light dumbbells', tier: 'good',
+      days: [{ d: 'fri', sets: '2 × 12–15 (pair with Wrist Curl)', alt: true, or: 'Hammer Curl' }],
+      cue: 'Optional wrist-extensor work. Keep the weight light and the wrist range small.',
+      video: 'https://www.youtube.com/shorts/shqAI51IP74' },
+    { name: 'Dumbbell Shrug', group: 'shoulders', diff: 'easy', equip: 'free', kit: 'Dumbbells', tier: 'good',
+      days: [{ d: 'fri', sets: '2 × 12–15', alt: true, or: "Farmer's Carry" }],
+      cue: 'Optional trap isolation. Farmer\'s Carry trains traps in a more useful way for runners.',
+      swap: "Farmer's Carry", video: 'https://www.youtube.com/shorts/cJRVVxmytaM' },
+    { name: 'Cable Crunch', group: 'core', diff: 'easy', equip: 'machine', kit: 'Cable + rope', tier: 'good',
+      days: [{ d: 'tue', sets: '2 × 12–15 (if at the gym)', alt: true, or: 'Plank' }],
+      cue: 'Optional abs finisher. Dead Bug, Pallof Press and planks give runners better trunk stability for most weeks.',
+      swap: 'Dead Bug', video: 'https://www.youtube.com/shorts/Bvhz7Rfnrr4' },
+    { name: 'Back Squat', group: 'thighs', diff: 'hard', equip: 'free', kit: 'Barbell + rack', tier: 'good',
+      days: [{ d: 'mon', sets: '3 × 6–8 (advanced, after 12 weeks)', alt: true, or: 'Leg Press' }],
+      cue: 'High skill and spinal load — optional later progression. Prefer Leg Press / Box Squat / Goblet while running mileage.',
+      swap: 'Leg Press', video: 'https://www.youtube.com/shorts/W6o1A0bEnmU' },
+
+  ];
+
+  const REMOVED = [
+    ['Lat Pulldown (wide)', 'Merged into Lat Pulldown — same demo URL as Lat Pulldown.'],
+  ];
+
+  //  Each muscle is trained on ONE day.
+  const DAYS = [
+    { d: 'mon', label: 'Mon', title: 'Gym — legs: quads, hamstrings, glutes & inner thighs', time: '50–60 min' },
+    { d: 'tue', label: 'Tue', title: 'Easy run + core: abs, obliques, lower back & hip flexors', time: '20 min', run: true },
+    { d: 'wed', label: 'Wed', title: 'Gym — push: chest, all shoulders & triceps', time: '55–65 min' },
+    { d: 'thu', label: 'Thu', title: 'Run + lower legs: calves, shins & ankles', time: '15 min', run: true },
+    { d: 'fri', label: 'Fri', title: 'Gym — pull: back, biceps, forearms, traps & neck', time: '50–55 min' },
+    { d: 'sat', label: 'Sat', title: 'Run + hips: side glutes & hip stability', time: '15 min', run: true },
+  ];
+
+  // Body areas for the "Every muscle, every week" section — names must match the focus entries above.
+  const AREAS = [
+    { name: '💪 Arms', muscles: ['Biceps', 'Triceps', 'Forearms'] },
+    { name: '🫁 Chest & shoulders', muscles: ['Chest', 'Serratus anterior', 'Shoulders (delts)', 'Rotator cuff & shoulder stabilisers'] },
+    { name: '🔙 Back & neck', muscles: ['Lats', 'Upper back (rhomboids & mid-traps)', 'Upper traps', 'Neck & deep neck flexors', 'Lower back'] },
+    { name: '🦵 Thighs, glutes & hips', muscles: ['Quads', 'Hamstrings', 'Glutes', 'Glute medius (side hips)', 'Hip rotators (deep glutes)', 'Adductors (inner thigh)', 'Hip flexors'] },
+    { name: '🦶 Calves, shins & feet', muscles: ['Calves', 'Shins (tibialis anterior)', 'Ankle & foot stabilisers'] },
+    { name: '🎯 Core', muscles: ['Abs (rectus & deep core)', 'Obliques & side core'] },
+  ];
+
+  const FOCUS_ORDER = LIBRARY.filter(e => e.group === 'focus').map(e => e.name);
+  // All videos for an exercise: the single `video` (if any) + the `videos` list.
+  const videosOf = ex => [
+    ...(ex.video ? [{ url: ex.video, title: 'Main video', by: ex.by || '' }] : []),
+    ...(ex.videos || []).filter(v => v && v.url).map(v => ({ url: v.url, title: v.title || 'Video', by: v.by || '' })),
+  ];
+  const DIFF_LABEL = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
+  const EQUIP_LABEL = { machine: '⚙️ Machine', free: '🙌 No machine', either: '⚙️/🙌 Either' };
+  const PLAY = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+
+  const state = { equip: 'all', diff: 'all', tier: 'all', group: 'all', day: 'all', q: '' };
+
+  const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  function chipRow(el, key, options) {
+    el.innerHTML = options.map(([v, l]) => `<button class="chip${state[key] === v ? ' on' : ''}" data-k="${key}" data-v="${v}" aria-pressed="${state[key] === v}">${l}</button>`).join('');
+  }
+
+  function renderFilters() {
+    chipRow(document.getElementById('f-equip'), 'equip', [['all', 'All equipment'], ['machine', '⚙️ Machine'], ['free', '🙌 No machine']]);
+    chipRow(document.getElementById('f-diff'), 'diff', [['all', 'All levels'], ['easy', '🟢 Easy'], ['medium', '🟡 Medium'], ['hard', '🔴 Hard']]);
+    chipRow(document.getElementById('f-tier'), 'tier', [['all', 'Required + good to have'], ['required', '★ Required'], ['good', 'Good to have']]);
+    chipRow(document.getElementById('f-group'), 'group', [['all', 'All groups'], ...GROUPS.map(g => [g.id, g.icon + ' ' + g.name])]);
+    document.querySelectorAll('#week-strip [data-day]').forEach(b => {
+      const on = state.day === b.dataset.day;
+      b.classList.toggle('ring-2', on); b.classList.toggle('ring-emerald-500', on); b.classList.toggle('bg-emerald-50', on);
+      b.setAttribute('aria-pressed', on);
+    });
+  }
+
+  function matches(ex) {
+    if (state.equip !== 'all' && !(ex.equip === state.equip || ex.equip === 'either')) return false;
+    if (state.diff !== 'all' && ex.diff !== state.diff) return false;
+    if (state.tier !== 'all' && ex.tier !== state.tier) return false;
+    if (state.group !== 'all' && ex.group !== state.group) return false;
+    if (state.day !== 'all' && !(ex.days || []).some(x => x.d === state.day)) return false;
+    if (state.q) {
+      const hay = (ex.name + ' ' + ex.kit + ' ' + ex.cue + ' ' + (ex.muscles || '') + ' ' + GROUPS.find(g => g.id === ex.group).name).toLowerCase();
+      if (!hay.includes(state.q)) return false;
+    }
+    return true;
+  }
+
+  function card(ex) {
+    const dayTags = (ex.days || []).map(x => x.alt
+      ? `<span class="tag t-good">${x.d.toUpperCase()} · OR ${esc(x.or)} · ${esc(x.sets)}</span>`
+      : `<span class="tag t-day">${x.d.toUpperCase()} · ${esc(x.sets)}</span>`).join('');
+    const swap = ex.swap ? `<button class="swap-link" data-jump="${slug(ex.swap)}">↪ No-machine / easier swap: ${esc(ex.swap)}</button>` : '';
+    const isFocus = ex.group === 'focus';
+    const rank = isFocus ? FOCUS_ORDER.indexOf(ex.name) + 1 : 0;
+    const tierTag = isFocus
+      ? '<span class="tag t-req">🎯 Target muscle</span>'
+      : `<span class="tag ${ex.tier === 'required' ? 't-req' : 't-good'}">${ex.tier === 'required' ? '★ Required' : 'Good to have'}</span>`;
+    const muscles = ex.muscles ? `<p class="text-xs text-slate-700"><span class="font-semibold">Muscles:</span> ${esc(ex.muscles)}</p>` : '';
+    const see = (ex.see || []).length
+      ? `<div class="flex flex-wrap gap-x-3 gap-y-1"><span class="text-[11px] text-slate-400">Related:</span>${ex.see.map(n => `<button class="swap-link" data-jump="${slug(n)}">${esc(n)}</button>`).join('')}</div>` : '';
+    const findUrl = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(ex.find || ex.name + ' exercise shorts');
+    const vids = videosOf(ex);
+    // Focus cards: a dedicated VIDEOS list (shows NA when empty). Other cards: single Watch button.
+    const videoBox = isFocus ? `<div class="rounded-xl bg-slate-50 border border-slate-200 p-2.5">
+        <div class="flex items-center justify-between gap-2 mb-1.5">
+          <span class="text-[11px] font-bold uppercase tracking-wide text-slate-500">Videos (${vids.length})</span>
+          <a class="swap-link" href="${findUrl}" target="_blank" rel="noopener noreferrer">🔍 Find more ↗</a>
+        </div>
+        ${vids.length
+          ? `<div class="flex flex-col gap-1.5">${vids.map(v => `<button class="play-btn w-full" style="justify-content:flex-start" data-vurl="${esc(v.url)}" data-vtitle="${esc(ex.name + ' — ' + v.title)}">${PLAY} <span class="truncate">${esc(v.title)}</span>${v.by ? `<span class="ml-auto pl-2 text-[10px] font-medium opacity-70 truncate">${esc(v.by)}</span>` : ''}</button>`).join('')}</div>`
+          : '<p class="text-xs font-semibold text-slate-400">NA — no video added yet</p>'}
+      </div>` : '';
+    const action = ex.video
+      ? `<button class="play-btn" data-play="${esc(ex.name)}">${PLAY} ${/\/shorts\//.test(ex.video) ? 'Watch short' : 'Watch video'}</button>`
+      : `<a class="play-btn" href="${findUrl}" target="_blank" rel="noopener noreferrer">🔍 Find a video</a>`;
+    const footer = isFocus ? '' : `<div class="mt-auto pt-1 flex items-center justify-between gap-2">
+        ${action}
+        ${ex.by ? `<span class="text-[10px] text-slate-400 truncate">${esc(ex.by)}</span>` : ''}
+      </div>`;
+    return `<article id="ex-${slug(ex.name)}" class="ex-card bg-white rounded-2xl border border-slate-200 p-4 flex flex-col gap-2.5">
+      <div class="flex items-start justify-between gap-2">
+        <h4 class="font-bold text-slate-900 leading-snug">${rank ? `<span class="text-emerald-600">#${rank}</span> ` : ''}${esc(ex.name)}</h4>
+        ${tierTag}
+      </div>
+      <div class="flex flex-wrap gap-1.5">
+        ${ex.region ? `<span class="tag t-either">${esc(ex.region)}</span>` : ''}
+        <span class="tag t-${ex.diff}">${DIFF_LABEL[ex.diff]}</span>
+        <span class="tag t-${ex.equip}">${EQUIP_LABEL[ex.equip]}</span>
+        ${dayTags}
+      </div>
+      <p class="text-xs text-slate-500"><span class="font-semibold text-slate-600">Kit:</span> ${esc(ex.kit)}</p>
+      ${muscles}
+      <p class="text-xs text-slate-600 leading-relaxed">${esc(ex.cue)}</p>
+      ${swap}
+      ${see}
+      ${videoBox}
+      ${footer}
+    </article>`;
+  }
+
+  function render() {
+    renderFilters();
+    const lib = document.getElementById('library');
+    let shown = 0;
+    lib.innerHTML = GROUPS.map((g, i) => {
+      const items = LIBRARY.filter(ex => ex.group === g.id && matches(ex));
+      if (g.id !== 'focus') items.sort((a, b) => (a.tier === b.tier ? 0 : a.tier === 'required' ? -1 : 1) || ['easy', 'medium', 'hard'].indexOf(a.diff) - ['easy', 'medium', 'hard'].indexOf(b.diff));
+      if (!items.length) return '';
+      shown += items.length;
+      return `<section id="${g.id}">
+        <div class="flex items-baseline gap-2 mb-2.5 px-1">
+          <h3 class="font-black text-lg text-slate-900">${g.id === 'focus' ? '' : i + '. '}${g.icon} ${g.name}</h3>
+          <span class="text-xs text-slate-400">${items.length}${g.id === 'focus' ? ' muscles · ' + items.filter(x => videosOf(x).length).length + ' with video · ' + items.filter(x => !videosOf(x).length).length + ' NA' : ''}</span>
+        </div>
+        <p class="text-xs text-slate-500 mb-3 px-1">${g.why}</p>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">${items.map(card).join('')}</div>
+      </section>`;
+    }).join('');
+    document.getElementById('empty').classList.toggle('hidden', shown > 0);
+    document.getElementById('count').textContent = `Showing ${shown} of ${LIBRARY.length} cards (${FOCUS_ORDER.length} muscles + ${LIBRARY.length - FOCUS_ORDER.length} exercises)`;
+  }
+
+  function renderStatic() {
+    const n = f => LIBRARY.filter(e => e.group !== 'focus').filter(f).length; // real exercises only
+    const nf = FOCUS_ORDER.length;
+    document.getElementById('n-focus-a').textContent = nf;
+    document.getElementById('n-focus-b').textContent = nf;
+    const stats = [
+      ['Target muscles', nf, 'bg-amber-50 text-amber-800'],
+      ['Exercises', n(() => true), 'bg-slate-50 text-slate-900'],
+      ['★ Required', n(e => e.tier === 'required'), 'bg-emerald-50 text-emerald-800'],
+      ['⚙️ Can use machine', n(e => e.equip !== 'free'), 'bg-indigo-50 text-indigo-800'],
+      ['🙌 Doable without machine', n(e => e.equip !== 'machine'), 'bg-teal-50 text-teal-800'],
+    ];
+    document.getElementById('stats').innerHTML = stats.map(([l, v, c]) =>
+      `<div class="${c} rounded-xl p-3 text-center"><div class="text-2xl font-black">${v}</div><div class="text-[11px] font-semibold opacity-80">${l}</div></div>`).join('');
+
+    const focus = LIBRARY.filter(e => e.group === 'focus');
+    const shortName = n => n.replace(/\s*\(.*?\)/, '');
+    const onDay = (e, d) => (e.days || []).some(x => x.d === d);
+    const musclesOf = exName => focus.filter(f => (f.see || []).includes(exName));
+
+    document.getElementById('week-strip').innerHTML = DAYS.map(day => {
+      const exs = LIBRARY.filter(e => e.group !== 'focus' && onDay(e, day.d));
+      const k = exs.filter(e => e.days.some(x => x.d === day.d && !x.alt)).length;
+      const muscles = focus.filter(f => exs.some(e => (f.see || []).includes(e.name))).map(f => shortName(f.name));
+      const entry = e => e.days.find(y => y.d === day.d);
+      const rows = exs.filter(e => !entry(e).alt).map(e => {
+        const x = entry(e);
+        const hits = musclesOf(e.name).map(f => shortName(f.name)).join(', ');
+        const ors = exs.filter(a => entry(a).alt && entry(a).or === e.name).map(a =>
+          `<span class="block pl-3 border-l-2 border-amber-200 text-slate-500"><span class="font-bold text-amber-700">OR</span> <span class="font-semibold text-slate-600">${esc(a.name)}</span> <span class="text-slate-400">· ${esc(entry(a).sets)}</span></span>`).join('');
+        return `<span class="block leading-snug"><span class="font-semibold text-slate-700">${esc(e.name)}</span> <span class="text-slate-400">· ${esc(x.sets)}</span>${hits ? `<span class="block text-[10px] text-slate-400">${esc(hits)}</span>` : ''}${ors}</span>`;
+      }).join('');
+      return `<button data-day="${day.d}" aria-label="${day.label}: ${esc(day.title)} — show only this day's exercise cards" class="text-left rounded-xl border border-slate-200 p-3 hover:border-emerald-500 transition flex flex-col gap-1.5">
+        <span class="flex items-center justify-between w-full"><span class="font-black text-slate-900">${day.label}</span><span class="text-[10px] text-slate-400">${day.time}</span></span>
+        <span class="block text-[10px] font-bold ${day.run ? 'text-sky-700' : 'text-slate-500'}">${day.run ? '🏃 Run day · light' : '🏋️ Gym strength'} · ${k} exercises</span>
+        <span class="block text-xs text-slate-600">${day.title}</span>
+        <span class="block text-[11px] text-emerald-800 bg-emerald-50 rounded-lg px-2 py-1"><span class="font-bold">Muscles:</span> ${esc(muscles.join(' · '))}</span>
+        <span class="block text-xs space-y-1">${rows}</span>
+      </button>`;
+    }).join('');
+
+    let covered = 0;
+    document.getElementById('coverage').innerHTML = AREAS.map(area => `<div>
+        <h4 class="text-sm font-black text-slate-800 mb-1.5">${area.name}</h4>
+        <div class="space-y-1.5">${area.muscles.map(name => {
+          const f = focus.find(x => x.name === name);
+          const exs = LIBRARY.filter(e => e.group !== 'focus' && (f.see || []).includes(e.name) && (e.days || []).some(x => !x.alt));
+          const ors = LIBRARY.filter(e => e.group !== 'focus' && (f.see || []).includes(e.name) && (e.days || []).some(x => x.alt));
+          const days = DAYS.filter(d => exs.some(e => onDay(e, d.d)));
+          if (days.length) covered++;
+          return `<div class="flex items-start justify-between gap-2 rounded-lg border ${days.length ? 'border-slate-200' : 'border-rose-300 bg-rose-50'} px-2.5 py-1.5">
+            <div class="min-w-0">
+              <button class="swap-link font-semibold" data-jump="${slug(name)}">${esc(name)}</button>
+              <div class="text-[11px] text-slate-500">${exs.length ? exs.map(e => esc(e.name)).join(', ') : 'Not in the plan yet'}</div>
+              ${ors.length ? `<div class="text-[11px] text-slate-400"><span class="font-bold text-amber-700">OR</span> ${ors.map(e => esc(e.name)).join(', ')}</div>` : ''}
+            </div>
+            <div class="flex flex-wrap justify-end gap-1 flex-shrink-0">${days.map(d => `<span class="tag t-day">${d.label}</span>`).join('')}</div>
+          </div>`;
+        }).join('')}</div>
+      </div>`).join('');
+    const listed = AREAS.flatMap(a => a.muscles).length;
+    const cc = document.getElementById('coverage-count');
+    cc.textContent = `${covered} of ${focus.length} muscles trained this week` + (listed !== focus.length ? ` · ${focus.length - listed} not grouped` : '');
+    cc.className = 'text-xs font-semibold ' + (covered === focus.length && listed === focus.length ? 'text-emerald-700' : 'text-rose-700');
+    document.getElementById('n-focus-c').textContent = focus.length;
+
+    document.getElementById('removed').innerHTML = REMOVED.map(([a, b]) => `<li><strong class="text-slate-800">${a}</strong> — ${b}</li>`).join('');
+  }
+
+  // ── Video player (same behaviour as dashboard) ──
+  let ytModalMode = 'pip';
+  function getVideoId(url) {
+    for (const p of [/youtu\.be\/([^?&#]+)/, /youtube\.com\/shorts\/([^?&#]+)/, /[?&]v=([^&#]+)/, /youtube\.com\/embed\/([^?&#]+)/]) {
+      const m = url.match(p); if (m) return m[1];
+    }
+    return null;
+  }
+  function setYtModalMode(mode) {
+    const modal = document.getElementById('yt-modal');
+    ytModalMode = mode;
+    modal.classList.toggle('is-maximized', mode === 'maximized');
+    document.body.classList.toggle('yt-modal-maximized', mode === 'maximized');
+    const maxBtn = document.getElementById('yt-modal-max');
+    maxBtn.setAttribute('aria-label', mode === 'maximized' ? 'Shrink to corner' : 'Expand player');
+    maxBtn.title = mode === 'maximized' ? 'Shrink' : 'Expand';
+  }
+  function openExerciseDemo(name, url) {
+    const id = url && getVideoId(url);
+    if (!id) { if (url) window.open(url, '_blank', 'noopener,noreferrer'); return; }
+    document.getElementById('yt-modal-title').textContent = name;
+    document.getElementById('yt-modal-iframe').src = 'https://www.youtube.com/embed/' + encodeURIComponent(id) + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+    document.getElementById('yt-modal').hidden = false;
+    setYtModalMode('pip');
+  }
+  function closeExerciseDemo(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    const modal = document.getElementById('yt-modal');
+    if (modal.hidden) return;
+    modal.hidden = true;
+    document.getElementById('yt-modal-iframe').src = '';
+    modal.classList.remove('is-maximized');
+    document.body.classList.remove('yt-modal-maximized');
+    ytModalMode = 'pip';
+  }
+
+  // ── Events ──
+  document.addEventListener('click', e => {
+    const chip = e.target.closest('.chip');
+    if (chip) { state[chip.dataset.k] = chip.dataset.v; render(); return; }
+    const dayBtn = e.target.closest('#week-strip [data-day]');
+    if (dayBtn) {
+      state.day = state.day === dayBtn.dataset.day ? 'all' : dayBtn.dataset.day;
+      state.tier = 'all'; render();
+      document.getElementById('library').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    const vbtn = e.target.closest('button[data-vurl]');
+    if (vbtn) { openExerciseDemo(vbtn.dataset.vtitle, vbtn.dataset.vurl); return; }
+    const play = e.target.closest('button[data-play]');
+    if (play) { const ex = LIBRARY.find(x => x.name === play.dataset.play); openExerciseDemo(ex.name, ex.video); return; }
+    const jump = e.target.closest('[data-jump]');
+    if (jump) {
+      let el = document.getElementById('ex-' + jump.dataset.jump);
+      if (!el) { Object.assign(state, { equip: 'all', diff: 'all', tier: 'all', group: 'all', day: 'all', q: '' }); document.getElementById('q').value = ''; render(); el = document.getElementById('ex-' + jump.dataset.jump); }
+      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+    }
+  });
+  document.getElementById('q').addEventListener('input', e => { state.q = e.target.value.trim().toLowerCase(); render(); });
+  document.getElementById('reset').addEventListener('click', () => {
+    Object.assign(state, { equip: 'all', diff: 'all', tier: 'all', group: 'all', day: 'all', q: '' });
+    document.getElementById('q').value = ''; render();
+  });
+  document.getElementById('yt-modal-close').addEventListener('click', closeExerciseDemo);
+  document.getElementById('yt-modal-max').addEventListener('click', e => { e.preventDefault(); setYtModalMode(ytModalMode === 'maximized' ? 'pip' : 'maximized'); });
+  document.querySelector('#yt-modal .yt-modal-backdrop').addEventListener('click', () => { if (ytModalMode === 'maximized') setYtModalMode('pip'); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { ytModalMode === 'maximized' ? setYtModalMode('pip') : closeExerciseDemo(); } });
+
+  // Deep links: new-6-day-plan/?day=wed · ?group=calves · ?equip=free · #ex-glute-bridge
+  (function initFromUrl() {
+    const p = new URLSearchParams(location.search);
+    const valid = {
+      day: DAYS.map(d => d.d), group: GROUPS.map(g => g.id),
+      equip: ['machine', 'free'], diff: ['easy', 'medium', 'hard'], tier: ['required', 'good'],
+    };
+    Object.keys(valid).forEach(k => { const v = (p.get(k) || '').toLowerCase(); if (valid[k].includes(v)) state[k] = v; });
+  })();
+  renderStatic();
+  render();
+  if (location.hash) setTimeout(() => { const el = document.querySelector(location.hash); if (el) el.scrollIntoView({ block: 'center' }); }, 50);
+  </script>
+</body>
+</html>
