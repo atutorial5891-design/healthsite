@@ -30,6 +30,17 @@
     .t-machine{ background: #e0e7ff; color: #3730a3; }
     .t-free   { background: #ccfbf1; color: #115e59; }
     .t-either { background: #f1f5f9; color: #334155; }
+    .t-dumbbell  { background: #ffedd5; color: #9a3412; }
+    .t-bodyweight{ background: #ecfccb; color: #3f6212; }
+    .t-band      { background: #fae8ff; color: #86198f; }
+    .or-badge { display: inline-block; font-size: 0.62rem; font-weight: 900; letter-spacing: 0.04em; color: #fff; background: #dc2626; border-radius: 4px; padding: 0 0.3rem; line-height: 1.25rem; }
+    .or-name  { color: #b91c1c; font-weight: 600; }
+    .or-link  { color: #b91c1c; font-weight: 600; background: none; border: none; padding: 0; cursor: pointer; text-align: left; font-size: inherit; }
+    .or-link:hover { text-decoration: underline; }
+    .yt-search { display: inline-flex; align-items: center; gap: 0.2rem; font-size: 0.72rem; font-weight: 700; color: #b91c1c; text-decoration: none; white-space: nowrap; }
+    .yt-search:hover { text-decoration: underline; }
+    .yt-name { color: inherit; text-decoration: underline dotted; text-decoration-color: #94a3b8; text-underline-offset: 3px; }
+    .yt-name:hover { color: #b91c1c; text-decoration-color: #b91c1c; }
     .t-req    { background: #0f172a; color: #fff; }
     .t-good   { background: #fff; color: #475569; border: 1px solid #cbd5e1; }
     .t-day    { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
@@ -114,6 +125,7 @@
       <h2 class="font-black text-xl sm:text-2xl text-slate-900 mb-1">Your exercise library</h2>
       <p class="text-sm text-slate-500 mb-2">The <strong class="text-slate-700">Muscle focus list</strong> at the top ranks <span id="n-focus-b">24</span> specific muscles (forearms first), grouped upper body, lower body and core. Each has its own <strong class="text-slate-700">Videos</strong> list, showing <em>NA</em> until a good video is added. Below it, the nine functional groups hold the full exercise menu.</p>
       <p class="text-sm text-slate-500">You don't need to isolate every muscle. Train these nine functional groups, with extra attention to running muscles and joints. <strong class="text-slate-700">Required</strong> = in your current weekly plan. <strong class="text-slate-700">Good to have</strong> = proven swaps and progressions for when equipment is busy or you want variety.</p>
+      <p class="text-sm text-slate-500 mt-2">Every exercise in the weekly plan has <span class="or-badge">OR</span> <strong class="text-red-700">alternatives in red</strong>, tagged <span class="tag t-machine">⚙️ Machine</span> <span class="tag t-dumbbell">🏋️ Dumbbell</span> <span class="tag t-bodyweight">🧍 Bodyweight</span> <span class="tag t-band">➰ Band</span>. Do the main exercise <em>or</em> one swap, never both.</p>
       <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 mt-4" id="stats"></div>
       <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
         <strong>Difficulty</strong> is rated for a returning lifter at 45: <span class="tag t-easy">Easy</span> stable, low-skill, safe to start · <span class="tag t-medium">Medium</span> needs balance or technique · <span class="tag t-hard">Hard</span> high skill or load — add only after 8–12 weeks of consistent training. Stop any movement that causes knee pain.
@@ -124,7 +136,7 @@
     <section class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
       <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
         <h3 class="font-bold text-slate-900">This week's 6-day plan</h3>
-        <span class="text-xs text-slate-400">Tap a day to show only that session's cards below</span>
+        <span class="text-xs text-slate-400">Tap a day to show only that session's cards below · tap an exercise name to search it on YouTube</span>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5" id="week-strip"></div>
       <p class="text-xs text-slate-400 mt-3"><strong class="text-slate-500">Mon · Wed · Fri</strong> = gym strength days. <strong class="text-slate-500">Tue · Thu · Sat</strong> = run first, then a short light session (bodyweight, band or light dumbbells — home-friendly, nothing heavy for the legs). Sun = rest or an easy walk. Heavy legs sit on Monday so they've recovered by the weekend run — keep Tuesday's run easy, the day after legs. Friday has no leg work before Saturday's run. If fatigue builds, skip the light session after a run first — never add heavy legs to a run day.</p>
@@ -534,7 +546,7 @@
       days: [{ d: 'mon', sets: '3 × 8–12' }], cue: 'Feet shoulder-width mid-platform, knees track toes, lower back stays on pad.',
       swap: 'Box Squat', video: 'https://www.youtube.com/shorts/jA9tsYbA7Ms' },
     { name: 'Box Squat', group: 'thighs', diff: 'easy', equip: 'free', kit: 'Bench/box (+ dumbbell later)', tier: 'required',
-      days: [{ d: 'mon', sets: '3 × 8–12 (alt to leg press)', alt: true }], cue: 'Sit back to touch the box, stand up driving through heels. Box sets a safe, knee-friendly depth.',
+      days: [{ d: 'mon', sets: '3 × 8–12', alt: true, or: 'Leg Press' }], cue: 'Sit back to touch the box, stand up driving through heels. Box sets a safe, knee-friendly depth.',
       video: 'https://www.youtube.com/shorts/5e7YnJP5u3U', by: 'GoTherex' },
     { name: 'Seated Hamstring Curl', group: 'thighs', diff: 'easy', equip: 'machine', kit: 'Hamstring curl machine', tier: 'required',
       days: [{ d: 'mon', sets: '2 × 10–12' }], cue: 'Knee lined up with machine pivot, curl and control the return.',
@@ -659,6 +671,56 @@
 
   ];
 
+  // ── OR alternatives for every exercise in the weekly plan ──
+  //  name → [ [alternative name, tag, optional sets] ]
+  //  tag  → "machine" | "dumbbell" | "bodyweight" | "band"
+  //  If the alternative has its own card in LIBRARY it links to it; otherwise it links to a YouTube search.
+  const ALTS = {
+    // Mon
+    'Leg Press':                     [['Goblet Squat', 'dumbbell'], ['Box Squat', 'bodyweight', '3 × 8–12']],
+    'Box Squat':                     [['Leg Press', 'machine'], ['Goblet Squat', 'dumbbell']],
+    'Seated Hamstring Curl':         [['Single-Leg RDL (supported)', 'dumbbell'], ['Lying Leg Curl', 'machine']],
+    'Romanian Deadlift (DB)':        [['Cable Pull-Through', 'machine'], ['Single-Leg RDL (supported)', 'dumbbell']],
+    'Low Step-up':                   [['Reverse Lunge (DB)', 'dumbbell'], ['Hip Thrust Machine', 'machine']],
+    'Standing Calf Raise':           [['Leg Press Calf Raise', 'machine'], ['Single-Leg Calf Raise', 'bodyweight']],
+    'Dead Bug':                      [['Cable Crunch', 'machine'], ['Reverse Crunch', 'bodyweight']],
+    'Hip Adduction Machine':         [['Sumo Squat (DB)', 'dumbbell'], ['Copenhagen Plank (short lever)', 'bodyweight', '10–15 s each side']],
+    // Tue
+    'Push-up':                       [['Machine Chest Press', 'machine'], ['DB Floor Press', 'dumbbell']],
+    'Chin Tuck':                     [['Supine Chin Tuck (lying)', 'bodyweight'], ['Neck Isometric Hold (hand resist)', 'bodyweight']],
+    'Reverse Fly':                   [['Reverse Pec Deck', 'machine'], ['Band Pull-Apart', 'band']],
+    'Face Pull':                     [['Cable Rear-Delt Fly', 'machine'], ['DB Rear-Delt Row', 'dumbbell']],
+    'Standing Hip & Waist Trio':     [['Cable Hip Abduction (ankle strap)', 'machine'], ['DB Side Bend', 'dumbbell']],
+    // Wed
+    'Machine Chest Press':           [['DB Bench Press', 'dumbbell'], ['Push-up', 'bodyweight']],
+    'Lat Pulldown':                  [['DB Pullover', 'dumbbell'], ['Band Lat Pulldown', 'band']],
+    'Seated Cable Row':              [['Chest-Supported Row', 'dumbbell'], ['Chest-Supported Row Machine', 'machine']],
+    'DB Lateral Raise':              [['Lateral Raise Machine', 'machine'], ['Band Lateral Raise', 'band']],
+    'Biceps Curl':                   [['Cable Curl', 'machine'], ['Incline DB Curl', 'dumbbell']],
+    'Triceps Pushdown':              [['Overhead DB Triceps Extension', 'dumbbell'], ['Triceps Dip Machine', 'machine']],
+    'Pallof Press':                  [['Suitcase Carry (DB)', 'dumbbell'], ['Cable Woodchop', 'machine']],
+    // Thu
+    'Hip Flexor March & Lunge Stretch': [["Captain's Chair Knee Raise", 'machine'], ['Light-DB Standing Knee Drive', 'dumbbell']],
+    'Seated Calf Raise':             [['Leg Press Calf Raise', 'machine'], ['DB Standing Calf Raise', 'dumbbell']],
+    'Tibialis Raise':                [['Seated DB Tibialis Raise', 'dumbbell'], ['Tibialis Raise Machine', 'machine']],
+    'Single-Leg Balance':            [['Single-Leg Balance + DB Reach', 'dumbbell'], ['Balance Pad Single-Leg Stand', 'bodyweight']],
+    'Side Plank':                    [['DB Side Bend', 'dumbbell'], ['Cable Side Bend', 'machine']],
+    'Band Lateral Walk':             [['Hip Abduction Machine', 'machine'], ['Goblet Side Lunge', 'dumbbell']],
+    // Fri
+    'Incline DB Press':              [['Incline Chest Press Machine', 'machine'], ['Incline Push-up', 'bodyweight']],
+    'Single-Arm DB Row':             [['Seated Cable Row', 'machine'], ['Chest-Supported Row', 'dumbbell']],
+    'DB Shoulder Press':             [['Shoulder Press Machine', 'machine'], ['Arnold Press', 'dumbbell']],
+    'Hammer Curl':                   [['Cable Rope Hammer Curl', 'machine'], ['Reverse Curl (DB)', 'dumbbell']],
+    'Overhead DB Triceps Extension': [['Triceps Pushdown', 'machine'], ['DB Triceps Kickback', 'dumbbell']],
+    "Farmer's Carry":                [['Shrug Machine', 'machine'], ['Dumbbell Shrug', 'dumbbell']],
+    // Sat
+    'Glute Bridge':                  [['Hip Thrust Machine', 'machine'], ['Hip Thrust', 'dumbbell']],
+    'Plank':                         [['Ab Crunch Machine', 'machine'], ['Plank Pull-Through (DB)', 'dumbbell']],
+    'Bird Dog':                      [['Back Extension Machine', 'machine'], ['Bird Dog Row (DB)', 'dumbbell']],
+    'Clamshell':                     [['Hip Abduction Machine', 'machine'], ['Side-Lying Leg Raise', 'bodyweight']],
+  };
+  LIBRARY.forEach(e => { e.alts = (ALTS[e.name] || []).map(([name, tag, sets]) => ({ name, tag, sets: sets || '' })); });
+
   const REMOVED = [
     ['Lat Pulldown (wide)', 'Merged into Lat Pulldown — same demo URL as Lat Pulldown.'],
   ];
@@ -690,6 +752,9 @@
   ];
   const DIFF_LABEL = { easy: 'Easy', medium: 'Medium', hard: 'Hard' };
   const EQUIP_LABEL = { machine: '⚙️ Machine', free: '🙌 No machine', either: '⚙️/🙌 Either' };
+  const ytUrl = (name, suffix = ' exercise shorts') => 'https://www.youtube.com/results?search_query=' + encodeURIComponent(name + suffix);
+  const ytAttrs = 'target="_blank" rel="noopener noreferrer"';
+  const ALT_TAG = { machine: '⚙️ Machine', dumbbell: '🏋️ Dumbbell', bodyweight: '🧍 Bodyweight', band: '➰ Band' };
   const PLAY = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
 
   const state = { equip: 'all', diff: 'all', tier: 'all', group: 'all', day: 'all', q: '' };
@@ -720,15 +785,26 @@
     if (state.group !== 'all' && ex.group !== state.group) return false;
     if (state.day !== 'all' && !(ex.days || []).some(x => x.d === state.day)) return false;
     if (state.q) {
-      const hay = (ex.name + ' ' + ex.kit + ' ' + ex.cue + ' ' + (ex.muscles || '') + ' ' + GROUPS.find(g => g.id === ex.group).name).toLowerCase();
+      const hay = (ex.name + ' ' + ex.kit + ' ' + ex.cue + ' ' + (ex.muscles || '') + ' ' + (ex.alts || []).map(a => a.name + ' ' + a.tag).join(' ') + ' ' + GROUPS.find(g => g.id === ex.group).name).toLowerCase();
       if (!hay.includes(state.q)) return false;
     }
     return true;
   }
 
   function card(ex) {
-    const dayTags = (ex.days || []).map(x => `<span class="tag t-day">${x.d.toUpperCase()} · ${esc(x.sets)}</span>`).join('');
-    const swap = ex.swap ? `<button class="swap-link" data-jump="${slug(ex.swap)}">↪ No-machine / easier swap: ${esc(ex.swap)}</button>` : '';
+    const dayTags = (ex.days || []).map(x => x.alt
+      ? `<span class="tag t-good">${x.d.toUpperCase()} · OR ${esc(x.or)} · ${esc(x.sets)}</span>`
+      : `<span class="tag t-day">${x.d.toUpperCase()} · ${esc(x.sets)}</span>`).join('');
+    const altLine = a => {
+      const inLib = LIBRARY.some(x => x.name === a.name);
+      const name = inLib
+        ? `<button class="or-link" data-jump="${slug(a.name)}">${esc(a.name)}</button>`
+        : `<span class="or-name">${esc(a.name)}</span>`;
+      return `<li class="flex items-center flex-wrap gap-x-1.5 gap-y-0.5"><span class="or-badge">OR</span>${name}<span class="tag t-${a.tag}">${ALT_TAG[a.tag]}</span>${a.sets ? `<span class="text-[10px] text-slate-400">${esc(a.sets)}</span>` : ''}<a class="yt-search" href="${ytUrl(a.name)}" ${ytAttrs} title="Search YouTube for ${esc(a.name)}">🔍 YouTube ↗</a></li>`;
+    };
+    const alts = (ex.alts || []).length
+      ? `<div class="rounded-xl border border-red-200 bg-red-50 px-2.5 py-2 text-xs"><div class="text-[11px] font-bold uppercase tracking-wide text-red-700 mb-1">Alternatives — do the main one OR a swap</div><ul class="space-y-1">${ex.alts.map(altLine).join('')}</ul></div>` : '';
+    const swap = ex.swap && !alts ? `<button class="swap-link" data-jump="${slug(ex.swap)}">↪ No-machine / easier swap: ${esc(ex.swap)}</button>` : '';
     const isFocus = ex.group === 'focus';
     const rank = isFocus ? FOCUS_ORDER.indexOf(ex.name) + 1 : 0;
     const tierTag = isFocus
@@ -752,9 +828,11 @@
     const action = ex.video
       ? `<button class="play-btn" data-play="${esc(ex.name)}">${PLAY} ${/\/shorts\//.test(ex.video) ? 'Watch short' : 'Watch video'}</button>`
       : `<a class="play-btn" href="${findUrl}" target="_blank" rel="noopener noreferrer">🔍 Find a video</a>`;
-    const footer = isFocus ? '' : `<div class="mt-auto pt-1 flex items-center justify-between gap-2">
+    const search = ex.video ? `<a class="yt-search" href="${ytUrl(ex.name)}" ${ytAttrs} title="Search YouTube for ${esc(ex.name)}">🔍 Search YouTube ↗</a>` : '';
+    const footer = isFocus ? '' : `<div class="mt-auto pt-1 flex items-center flex-wrap gap-x-3 gap-y-1.5">
         ${action}
-        ${ex.by ? `<span class="text-[10px] text-slate-400 truncate">${esc(ex.by)}</span>` : ''}
+        ${search}
+        ${ex.by ? `<span class="text-[10px] text-slate-400 truncate ml-auto">${esc(ex.by)}</span>` : ''}
       </div>`;
     return `<article id="ex-${slug(ex.name)}" class="ex-card bg-white rounded-2xl border border-slate-200 p-4 flex flex-col gap-2.5">
       <div class="flex items-start justify-between gap-2">
@@ -770,6 +848,7 @@
       <p class="text-xs text-slate-500"><span class="font-semibold text-slate-600">Kit:</span> ${esc(ex.kit)}</p>
       ${muscles}
       <p class="text-xs text-slate-600 leading-relaxed">${esc(ex.cue)}</p>
+      ${alts}
       ${swap}
       ${see}
       ${videoBox}
@@ -823,18 +902,19 @@
       const exs = LIBRARY.filter(e => e.group !== 'focus' && onDay(e, day.d));
       const k = exs.filter(e => e.days.some(x => x.d === day.d && !x.alt)).length;
       const muscles = focus.filter(f => exs.some(e => (f.see || []).includes(e.name))).map(f => shortName(f.name));
-      const rows = exs.map(e => {
+      const rows = exs.filter(e => !e.days.find(y => y.d === day.d).alt).map(e => {
         const x = e.days.find(y => y.d === day.d);
         const hits = musclesOf(e.name).map(f => shortName(f.name)).join(', ');
-        return `<span class="block leading-snug"><span class="font-semibold text-slate-700">${x.alt ? 'or ' : ''}${esc(e.name)}</span> <span class="text-slate-400">· ${esc(x.sets)}</span>${hits ? `<span class="block text-[10px] text-slate-400">${esc(hits)}</span>` : ''}</span>`;
+        const ors = e.alts.map(a => `<span class="block pl-2 mt-0.5 border-l-2 border-red-300 text-[11px] leading-snug"><span class="or-badge">OR</span> <a class="or-name yt-name" href="${ytUrl(a.name)}" ${ytAttrs} title="Search YouTube for ${esc(a.name)}">${esc(a.name)}</a> <span class="tag t-${a.tag}" style="padding:0.05rem 0.4rem">${ALT_TAG[a.tag]}</span>${a.sets ? ` <span class="text-slate-400">· ${esc(a.sets)}</span>` : ''}</span>`).join('');
+        return `<span class="block leading-snug"><a class="font-semibold text-slate-700 yt-name" href="${ytUrl(e.name)}" ${ytAttrs} title="Search YouTube for ${esc(e.name)}">${esc(e.name)}</a> <span class="text-slate-400">· ${esc(x.sets)}</span>${hits ? `<span class="block text-[10px] text-slate-400">${esc(hits)}</span>` : ''}${ors}</span>`;
       }).join('');
-      return `<button data-day="${day.d}" aria-label="${day.label}: ${esc(day.title)} — show only this day's exercise cards" class="text-left rounded-xl border border-slate-200 p-3 hover:border-emerald-500 transition flex flex-col gap-1.5">
+      return `<div role="button" tabindex="0" data-day="${day.d}" aria-label="${day.label}: ${esc(day.title)} — show only this day's exercise cards" class="text-left cursor-pointer rounded-xl border border-slate-200 p-3 hover:border-emerald-500 transition flex flex-col gap-1.5">
         <span class="flex items-center justify-between w-full"><span class="font-black text-slate-900">${day.label}</span><span class="text-[10px] text-slate-400">${day.time}</span></span>
         <span class="block text-[10px] font-bold ${day.run ? 'text-sky-700' : 'text-slate-500'}">${day.run ? '🏃 Run day · light' : '🏋️ Gym strength'} · ${k} exercises</span>
         <span class="block text-xs text-slate-600">${day.title}</span>
         <span class="block text-[11px] text-emerald-800 bg-emerald-50 rounded-lg px-2 py-1"><span class="font-bold">Muscles:</span> ${esc(muscles.join(' · '))}</span>
         <span class="block text-xs space-y-1">${rows}</span>
-      </button>`;
+      </div>`;
     }).join('');
 
     let covered = 0;
@@ -903,6 +983,7 @@
   document.addEventListener('click', e => {
     const chip = e.target.closest('.chip');
     if (chip) { state[chip.dataset.k] = chip.dataset.v; render(); return; }
+    if (e.target.closest('#week-strip a')) return; // exercise-name links open a YouTube search in a new tab
     const dayBtn = e.target.closest('#week-strip [data-day]');
     if (dayBtn) {
       state.day = state.day === dayBtn.dataset.day ? 'all' : dayBtn.dataset.day;
@@ -929,6 +1010,9 @@
   document.getElementById('yt-modal-close').addEventListener('click', closeExerciseDemo);
   document.getElementById('yt-modal-max').addEventListener('click', e => { e.preventDefault(); setYtModalMode(ytModalMode === 'maximized' ? 'pip' : 'maximized'); });
   document.querySelector('#yt-modal .yt-modal-backdrop').addEventListener('click', () => { if (ytModalMode === 'maximized') setYtModalMode('pip'); });
+  document.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('#week-strip [data-day]')) { e.preventDefault(); e.target.click(); }
+  });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { ytModalMode === 'maximized' ? setYtModalMode('pip') : closeExerciseDemo(); } });
 
   // Deep links: library/?day=wed · ?group=calves · ?equip=free · #ex-glute-bridge
