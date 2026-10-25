@@ -44,6 +44,16 @@
     .t-req    { background: #0f172a; color: #fff; }
     .t-good   { background: #fff; color: #475569; border: 1px solid #cbd5e1; }
     .t-day    { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+    .t-rank   { background: #fef9c3; color: #854d0e; border: 1px solid #fde047; cursor: pointer; }
+    .t-rank:hover { background: #fef08a; }
+
+    /* Tier-list (ranking) box on muscle-focus cards */
+    .rank-box > summary { cursor: pointer; list-style: none; }
+    .rank-box > summary::-webkit-details-marker { display: none; }
+    .rank-box[open] > summary .rank-hint { display: none; }
+    .rank-n { flex: none; width: 1.4rem; height: 1.4rem; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 900; color: #fff; }
+    .rank-top { background: #059669; } .rank-mid { background: #d97706; } .rank-low { background: #dc2626; }
 
     .ex-card { transition: transform 0.18s ease, box-shadow 0.18s ease; }
     .ex-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
@@ -176,7 +186,7 @@
       <ul class="text-xs text-slate-600 space-y-1.5" id="removed"></ul>
     </section>
 
-    <p class="text-[11px] text-slate-400 text-center pb-6">Videos are YouTube Shorts from established coaches and physio channels; each was checked to exist and to show the same exercise and equipment as its card (audited 15 Oct 2026). Add or swap a video in <code class="bg-slate-200 px-1 rounded">LIBRARY</code> inside this page's &lt;script&gt;.</p>
+    <p class="text-[11px] text-slate-400 text-center pb-6">Videos are YouTube Shorts from established coaches and physio channels; each was checked to exist and to show the same exercise and equipment as its card (audited 15 Oct 2026). The 🏆 tier lists on the Triceps, Biceps, Chest and Abs cards summarise four "Ranking … exercises" Shorts by disciplinewithpriyansh (added 23 Oct 2026); they rank muscle-building value, not running benefit. Add or swap a video in <code class="bg-slate-200 px-1 rounded">LIBRARY</code> inside this page's &lt;script&gt;.</p>
   </main>
 
   <!-- Floating PiP YouTube player -->
@@ -231,6 +241,8 @@
     //    To add videos later, put them inside that muscle's  videos: [ ]  like:
     //      videos: [ { url: 'https://www.youtube.com/shorts/XXXX', title: 'Short title', by: 'Channel' } ]
     //    Empty list = shows "NA" on the card.
+  //  Tier-list videos ("Ranking X exercises") go in an optional  ranking: { url, by, title, summary, plan, list: [ { n, note, ex? } ] }
+  //    list is ordered best (#1) to worst. Set  ex: 'Library card name'  to show a "#n in … tier list" tag on that exercise card.
     { name: 'Forearms', group: 'focus', region: 'Upper body', diff: 'medium', equip: 'free', kit: 'Dumbbells / bodyweight', tier: 'good',
       muscles: 'Wrist flexors, wrist extensors, brachioradialis, grip',
       cue: 'One short routine that covers every forearm muscle. Control each rep, no swinging.',
@@ -251,7 +263,24 @@
         { url: 'https://www.youtube.com/shorts/b_r_LW4HEcM', title: 'Overhead DB extension', by: 'DeltaBolic' },
         { url: 'https://www.youtube.com/shorts/NZAVsAk-Vgc', title: 'Overhead extension (3-day plan demo)', by: '' },
         { url: 'https://www.youtube.com/shorts/eZSeVSev8KI', title: 'Diamond push-up', by: '' },
-      ] },
+      ],
+      ranking: {
+        url: 'https://www.youtube.com/shorts/MTR0RHCX_cw', by: 'disciplinewithpriyansh', title: 'Ranking tricep exercises (1 = best)',
+        summary: 'Judged on stretch, constant tension and how easily you can add load. Overhead work (long head) and cable work win. His advice: pick any 2 from the top 5.',
+        plan: 'Our plan already has Triceps Pushdown (#2, Wed) and Overhead DB Extension (#5, Fri). Cable overhead extension (#1) is the cable version of the Friday one. Skull crushers and JM press load the elbows hard, so start light.',
+        list: [
+          { n: 'Cable overhead extension', note: 'Best of all. Stretches the long head under constant tension. His pick to do if you want fat triceps.' },
+          { n: 'Cable pushdown (rope or bar)', note: 'Constant tension and very easy to overload.', ex: 'Triceps Pushdown' },
+          { n: 'Skull crushers (incline bench)', note: 'Classic and very effective. Incline the bench and flare the elbows: stretch and load on the long head.' },
+          { n: 'Cable kickbacks', note: 'Upgraded dumbbell kickback with constant tension.' },
+          { n: 'One-arm DB overhead extension', note: 'Pushing overhead trains the biggest triceps muscle, the long head.', ex: 'Overhead DB Triceps Extension' },
+          { n: 'Close-grip bench press', note: 'Some chest joins in, but it is a compound lift you can overload.' },
+          { n: 'Smith machine JM press', note: 'Better than a free-weight JM press because progressive overload is easy.' },
+          { n: 'Diamond push-ups', note: 'Use as a finisher after your workout.', ex: 'Diamond Push-up' },
+          { n: 'Dumbbell kickback', note: 'Fine with good form, but the cable version is much better.' },
+          { n: 'Reverse-grip pushdown', note: 'Worst of the list. His advice: never do it.' },
+        ],
+      } },
     { name: 'Biceps', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'free', kit: 'Dumbbells', tier: 'good',
       muscles: 'Biceps brachii (long and short head), brachialis',
       cue: 'Look for curl variations that change grip and angle (supinated, hammer, incline) so both heads and the brachialis get work.',
@@ -260,7 +289,24 @@
       videos: [
         { url: 'https://www.youtube.com/shorts/sAq_ocpRh_I', title: 'DB curl', by: '' },
         { url: 'https://www.youtube.com/shorts/zC3nLlEvin4', title: 'Hammer curl', by: '' },
-      ] },
+      ],
+      ranking: {
+        url: 'https://www.youtube.com/shorts/vSdq3MbvmlU', by: 'disciplinewithpriyansh', title: 'Ranking bicep exercises (1 = best)',
+        summary: 'Judged on stretch, constant tension and how well the exercise isolates the biceps. His own routine: hammer curl, incline dumbbell curl and the #1 pick.',
+        plan: 'Our plan has Biceps Curl (Wed) and Hammer Curl (#4, Fri). Incline DB curl (#2) is already listed as the swap for Biceps Curl. Reverse curl ranks last for biceps because it mostly loads the forearms, so treat it as a forearm-leaning swap.',
+        list: [
+          { n: 'Preacher curl', note: 'Isolates the biceps best of the list.' },
+          { n: 'Incline dumbbell curl', note: 'He wanted to put it first. Strong stretch on the biceps.' },
+          { n: 'Barbell curl', note: 'Good for both size and strength.' },
+          { n: 'Hammer curl', note: 'Trains the brachialis (between biceps and triceps), which pushes the biceps peak up. Should be in your routine.', ex: 'Hammer Curl' },
+          { n: 'Cable curl', note: 'Constant tension through the whole motion. Very underrated.' },
+          { n: 'Chin-ups', note: 'Good stretch for the biceps, but most of the load goes to your back.' },
+          { n: 'Concentration curl', note: 'Good stretch and isolates the biceps well.' },
+          { n: 'Spider curl', note: 'Great stretch, but hard to add load progressively.' },
+          { n: 'Dumbbell head curl (name as captioned)', note: 'Good peak contraction, but a limited range of motion.' },
+          { n: 'Reverse curl', note: 'Hits the biceps, but most of the tension lands on the forearms.' },
+        ],
+      } },
     { name: 'Glutes', group: 'focus', region: 'Lower body', diff: 'medium', equip: 'free', kit: 'Bodyweight, mini band, dumbbell', tier: 'good',
       muscles: 'Gluteus maximus (main hip extensor)',
       cue: 'Hip-extension work: bridges, thrusts, hinges. Squeeze at the top, ribs down, no lower-back arching. Side-hip work is its own entry: Glute medius.',
@@ -269,6 +315,11 @@
       videos: [
         { url: 'https://www.youtube.com/shorts/hm_UVD6SUeA', title: 'Hip thrust', by: '' },
         { url: 'https://www.youtube.com/shorts/X_IGw8U_e38', title: 'Glute bridge', by: 'WeShape' },
+        { url: 'https://www.youtube.com/shorts/hG_fz1s9M10', title: 'Glute bridge variations', by: '' },
+        { url: 'https://www.youtube.com/shorts/svzEf5AVEA4', title: 'Glute bridge form fixes (no more bad bridges)', by: '' },
+        { url: 'https://www.youtube.com/shorts/iahCy86m-Ps', title: 'Glute workout at home', by: '' },
+        { url: 'https://www.youtube.com/shorts/ruAfITJBa9A', title: 'At-home glute workout (no gym)', by: '' },
+        { url: 'https://www.youtube.com/shorts/S1_eZIIZlIc', title: 'Hyperextensions for glute focus', by: '' },
         { url: 'https://www.youtube.com/shorts/Fsve8fkMGcY', title: 'Romanian deadlift (DB)', by: '' },
       ] },
     { name: 'Chest', group: 'focus', region: 'Upper body', diff: 'medium', equip: 'free', kit: 'Dumbbells / bodyweight', tier: 'good',
@@ -277,11 +328,29 @@
       see: ['Incline DB Press', 'Push-up', 'Machine Chest Press', 'Cable Chest Fly'],
       find: 'chest workout upper mid lower dumbbells shorts',
       videos: [
+        { url: 'https://www.youtube.com/shorts/2yFmbGXtFw8', title: 'Full chest workout for beginners at home (dumbbells only)', by: '' },
         { url: 'https://www.youtube.com/shorts/8fXfwG4ftaQ', title: 'Incline DB press', by: '' },
         { url: 'https://www.youtube.com/shorts/Qu7-ceCvq7w', title: 'Machine chest press', by: 'DeltaBolic' },
         { url: 'https://www.youtube.com/shorts/8laBBEpDgac', title: 'Flat bench press', by: '' },
         { url: 'https://www.youtube.com/shorts/yrpiK8R4Vqo', title: 'Cable chest fly', by: '' },
-      ] },
+      ],
+      ranking: {
+        url: 'https://www.youtube.com/shorts/1nino-CA9EE', by: 'disciplinewithpriyansh', title: 'Ranking chest exercises (1 = best)',
+        summary: 'Judged on muscle stretch, range of motion, tension and how easily you can progress the load.',
+        plan: 'Our plan has Incline DB Press (#1, Fri), Push-up (#6, Tue) and Machine Chest Press (#8, Wed). The machine press is a safe, stable choice and he says it suits people whose shoulders hurt with dumbbells. Pec deck fly (#3) is the machine option with more stretch.',
+        list: [
+          { n: 'Incline dumbbell press', note: 'Good muscle stretch and range of motion. One of the best chest exercises.', ex: 'Incline DB Press' },
+          { n: 'Incline Smith machine press', note: 'Very good. Add it to your plan with your eyes closed.' },
+          { n: 'Pec deck fly', note: 'Constant stretch and tension. Very good for beginners.' },
+          { n: 'Flat bench press', note: 'Very good for strength and size.', ex: 'Flat Bench Press' },
+          { n: 'Cable crossover', note: 'Keeps the chest stretched and under tension.', ex: 'Cable Chest Fly' },
+          { n: 'Push-ups', note: 'Hard for beginners, which is why it sits at 6. Pure gold for home workouts.', ex: 'Push-up' },
+          { n: 'Dips', note: 'Can be tough for beginners at the start. Great for people who have trained a while.' },
+          { n: 'Machine chest press', note: 'Very limited range of motion, but fine for beginners whose shoulders hurt with dumbbells.', ex: 'Machine Chest Press' },
+          { n: 'Dumbbell fly', note: 'Good stretch, but progressive overload is hard.' },
+          { n: 'Hex press', note: 'No real stretch and little tension. Very poor.' },
+        ],
+      } },
     { name: 'Serratus anterior', group: 'focus', region: 'Upper body', diff: 'easy', equip: 'free', kit: 'Bodyweight / light dumbbells', tier: 'good',
       muscles: 'Serratus anterior (the muscle that holds the shoulder blade to the ribs)',
       cue: 'Keeps shoulders healthy and stable under presses and push-ups. Look for push-up plus, wall slides or serratus punches. Gentle, no shrugging.',
@@ -434,15 +503,33 @@
       ] },
     { name: 'Abs (rectus & deep core)', group: 'focus', region: 'Core', diff: 'easy', equip: 'free', kit: 'Mat', tier: 'good',
       muscles: 'Rectus abdominis, transverse abdominis',
-      cue: 'Ribs down, belly braced, slow reps. Quality beats quantity. The dragon flag video is an ADVANCED progression: build up with Dead Bug and Plank first, and skip it if your lower back or neck complains.',
+      cue: 'Ribs down, belly braced, slow reps. Quality beats quantity. BEST AT HOME: the full 6-move mat routine (first video): crunch (upper abs), V-up (abs overall), leg raise (lower abs), double side crunch (side abs), cross double hands-up (abs and obliques), plank knee-up (lower abs). No equipment. Keep your lower back pressed down on the leg raise and V-up, and bend the knees if it arches. The dragon flag video is an ADVANCED progression: build up with Dead Bug and Plank first, and skip it if your lower back or neck complains.',
       see: ['Dead Bug', 'Plank'],
       find: 'abs workout rectus transverse abdominis beginner shorts',
       videos: [
+        { url: 'https://www.youtube.com/shorts/1828MgejVTI', title: 'Full home abs workout (6 moves, no equipment)', by: 'FitBurst' },
         { url: 'https://www.youtube.com/shorts/Bvhz7Rfnrr4', title: 'Cable crunch (3-day plan)', by: '' },
         { url: 'https://www.youtube.com/shorts/Aoipu_fl3HA', title: 'Dead bug', by: '' },
         { url: 'https://www.youtube.com/shorts/v25dawSzRTM', title: 'Plank', by: 'Jeremy Ethier' },
         { url: 'https://www.youtube.com/shorts/eLCBC6fjtQU', title: 'Dragon flag for abs (advanced)', by: 'Jeff Nippard' },
-      ] },
+      ],
+      ranking: {
+        url: 'https://www.youtube.com/shorts/SSPqp5VueEo', by: 'disciplinewithpriyansh', title: 'Ranking abs exercises (1 = best)',
+        summary: 'Ranked for growing the abs. His logic: the abs bend the spine, so the best moves give a stretch, real load and easy progressive overload.',
+        plan: 'This ranks abs size, not running core stability. Plank (#10) and Dead Bug stay in our plan for trunk control, and Cable Crunch (#2) is the optional finisher. Hanging leg raises (#1) are advanced: build up with Dead Bug and reverse crunches first, and skip them if your lower back or shoulders complain.',
+        list: [
+          { n: 'Hanging leg raises', note: 'King of the ab exercises. Grew his abs and his friends\u2019 in a few months.' },
+          { n: 'Cable crunch', note: 'Proper tension on the abs and progressive overload is easy.', ex: 'Cable Crunch' },
+          { n: 'Crunch machine', note: 'The best machine: stretch, proper load and easy overload. Do 2 sets if your gym has it.' },
+          { n: 'Decline sit-ups', note: 'Full range of motion and proper spine bend, so the abs take a proper load.' },
+          { n: 'Reverse crunch', note: 'Very good stretch. Underrated.' },
+          { n: 'Leg raises', note: 'Good load on the lower abs and beginner friendly.' },
+          { n: 'Toe touches', note: 'Hits the upper abs. Fine for beginners, a waste of time for advanced lifters.' },
+          { n: 'Mountain climbers', note: 'Good burn for beginners.' },
+          { n: 'Russian twist', note: 'Okay for obliques, but the benefit drops to zero once you use momentum.' },
+          { n: 'Plank', note: 'Little load, no stretch and no spine bending, so the abs will not grow properly.', ex: 'Plank' },
+        ],
+      } },
     { name: 'Obliques & side core', group: 'focus', region: 'Core', diff: 'medium', equip: 'either', kit: 'Mat, cable or band', tier: 'good',
       muscles: 'Internal and external obliques, quadratus lumborum',
       cue: 'Anti-rotation and side-bend work. Keep hips stacked and avoid twisting through the lower back.',
@@ -745,6 +832,12 @@
   ];
 
   const FOCUS_ORDER = LIBRARY.filter(e => e.group === 'focus').map(e => e.name);
+  // Exercise card name → [{ muscle, rank, total }] from the tier-list videos on the muscle cards.
+  const RANK_INDEX = {};
+  LIBRARY.filter(e => e.ranking).forEach(m => m.ranking.list.forEach((it, i) => {
+    if (it.ex) (RANK_INDEX[it.ex] = RANK_INDEX[it.ex] || []).push({ muscle: m.name, rank: i + 1, total: m.ranking.list.length });
+  }));
+  const shortMuscle = n => n.replace(/\s*\(.*?\)/, '');
   // All videos for an exercise: the single `video` (if any) + the `videos` list.
   const videosOf = ex => [
     ...(ex.video ? [{ url: ex.video, title: 'Main video', by: ex.by || '' }] : []),
@@ -785,7 +878,8 @@
     if (state.group !== 'all' && ex.group !== state.group) return false;
     if (state.day !== 'all' && !(ex.days || []).some(x => x.d === state.day)) return false;
     if (state.q) {
-      const hay = (ex.name + ' ' + ex.kit + ' ' + ex.cue + ' ' + (ex.muscles || '') + ' ' + (ex.alts || []).map(a => a.name + ' ' + a.tag).join(' ') + ' ' + GROUPS.find(g => g.id === ex.group).name).toLowerCase();
+      const hay = (ex.name + ' ' + ex.kit + ' ' + ex.cue + ' ' + (ex.muscles || '') + ' ' + (ex.alts || []).map(a => a.name + ' ' + a.tag).join(' ') + ' ' + GROUPS.find(g => g.id === ex.group).name
+        + ' ' + (ex.ranking ? ex.ranking.list.map(i => i.n).join(' ') : '')).toLowerCase();
       if (!hay.includes(state.q)) return false;
     }
     return true;
@@ -825,6 +919,24 @@
           ? `<div class="flex flex-col gap-1.5">${vids.map(v => `<button class="play-btn w-full" style="justify-content:flex-start" data-vurl="${esc(v.url)}" data-vtitle="${esc(ex.name + ' — ' + v.title)}">${PLAY} <span class="truncate">${esc(v.title)}</span>${v.by ? `<span class="ml-auto pl-2 text-[10px] font-medium opacity-70 truncate">${esc(v.by)}</span>` : ''}</button>`).join('')}</div>`
           : '<p class="text-xs font-semibold text-slate-400">NA — no video added yet</p>'}
       </div>` : '';
+    // Tier-list video summary (muscle-focus cards only): ranked list, one-line verdicts, and how it fits our plan.
+    const rankBox = !(isFocus && ex.ranking) ? '' : (() => {
+      const r = ex.ranking;
+      const rows = r.list.map((it, i) => {
+        const cls = i < 3 ? 'rank-top' : i < 6 ? 'rank-mid' : 'rank-low';
+        const lib = it.ex ? ` <button class="swap-link" data-jump="${slug(it.ex)}" title="Open the ${esc(it.ex)} card">in library ↗</button>` : '';
+        return `<li class="flex items-start gap-2"><span class="rank-n ${cls}">${i + 1}</span><div class="min-w-0 text-xs leading-snug"><a class="font-semibold text-slate-800 yt-name" href="${ytUrl(it.n.replace(/\s*\(.*?\)/, ''))}" ${ytAttrs} title="Search YouTube for ${esc(it.n)}">${esc(it.n)}</a>${lib}<span class="block text-[11px] text-slate-500">${esc(it.note)}</span></div></li>`;
+      }).join('');
+      return `<details class="rank-box rounded-xl border border-amber-200 bg-amber-50 p-2.5" data-rank-box>
+        <summary class="flex items-center justify-between gap-2 text-[11px] font-bold uppercase tracking-wide text-amber-800"><span>🏆 Tier list · ${r.list.length} ranked</span><span class="rank-hint font-semibold normal-case text-amber-700">tap to open</span></summary>
+        <p class="text-xs text-slate-600 mt-2 mb-2">${esc(r.summary)}</p>
+        <ol class="space-y-1.5">${rows}</ol>
+        <p class="text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-lg px-2 py-1.5 mt-2.5"><span class="font-bold">For our plan:</span> ${esc(r.plan)}</p>
+        <button class="play-btn w-full mt-2.5" style="justify-content:flex-start" data-vurl="${esc(r.url)}" data-vtitle="${esc(r.title)}">${PLAY} <span class="truncate">${esc(r.title)}</span><span class="ml-auto pl-2 text-[10px] font-medium opacity-70 truncate">${esc(r.by)}</span></button>
+      </details>`;
+    })();
+    const rankTags = (RANK_INDEX[ex.name] || []).map(t =>
+      `<button class="tag t-rank" data-jump="${slug(t.muscle)}" data-rank-open="1" title="Open the ${esc(shortMuscle(t.muscle))} tier list">🏆 #${t.rank}/${t.total} ${esc(shortMuscle(t.muscle))} tier list</button>`).join('');
     const action = ex.video
       ? `<button class="play-btn" data-play="${esc(ex.name)}">${PLAY} ${/\/shorts\//.test(ex.video) ? 'Watch short' : 'Watch video'}</button>`
       : `<a class="play-btn" href="${findUrl}" target="_blank" rel="noopener noreferrer">🔍 Find a video</a>`;
@@ -844,6 +956,7 @@
         <span class="tag t-${ex.diff}">${DIFF_LABEL[ex.diff]}</span>
         <span class="tag t-${ex.equip}">${EQUIP_LABEL[ex.equip]}</span>
         ${dayTags}
+        ${rankTags}
       </div>
       <p class="text-xs text-slate-500"><span class="font-semibold text-slate-600">Kit:</span> ${esc(ex.kit)}</p>
       ${muscles}
@@ -852,6 +965,7 @@
       ${swap}
       ${see}
       ${videoBox}
+      ${rankBox}
       ${footer}
     </article>`;
   }
@@ -999,7 +1113,10 @@
     if (jump) {
       let el = document.getElementById('ex-' + jump.dataset.jump);
       if (!el) { Object.assign(state, { equip: 'all', diff: 'all', tier: 'all', group: 'all', day: 'all', q: '' }); document.getElementById('q').value = ''; render(); el = document.getElementById('ex-' + jump.dataset.jump); }
-      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+      if (el) {
+        if (jump.dataset.rankOpen) { const box = el.querySelector('details[data-rank-box]'); if (box) box.open = true; } // rank tag → open the tier list
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+      }
     }
   });
   document.getElementById('q').addEventListener('input', e => { state.q = e.target.value.trim().toLowerCase(); render(); });
