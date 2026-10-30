@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Dual-Muscle Plan — Manas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap');
+    body { font-family: 'DM Sans', system-ui, sans-serif; }
+
+    .hover-lift { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+    .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.10); }
+
+    .day-chip {
+      display: inline-flex; align-items: center; gap: 0.35rem; white-space: nowrap;
+      font-size: 0.72rem; font-weight: 700; padding: 0.45rem 0.85rem; border-radius: 9999px;
+      border: 1px solid #e2e8f0; background: #fff; color: #475569; cursor: pointer;
+      transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+    }
+    .day-chip:hover { border-color: #10b981; }
+    .day-chip.on { background: #0f172a; border-color: #0f172a; color: #fff; }
+    .day-chip.on-run { background: #0369a1; border-color: #0369a1; color: #fff; }
+
+    .muscle-pill {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      font-size: 0.7rem; font-weight: 800; letter-spacing: 0.01em;
+      padding: 0.2rem 0.65rem; border-radius: 9999px;
+    }
+    .m-gym { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+    .m-run { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .m-pending { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+
+    .play-btn {
+      display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; font-weight: 700;
+      padding: 0.5rem 0.85rem; border-radius: 10px; background: #fee2e2; color: #b91c1c; border: none;
+      cursor: pointer; transition: background 0.15s, transform 0.15s; -webkit-tap-highlight-color: transparent;
+    }
+    .play-btn:hover { background: #fecaca; transform: scale(1.02); }
+    .play-btn svg { width: 12px; height: 12px; }
+
+    .slot-empty {
+      border: 1.5px dashed #cbd5e1; background: #f8fafc; border-radius: 12px;
+      padding: 0.85rem 1rem; color: #94a3b8; font-size: 0.75rem; font-weight: 600;
+    }
+
+    .yt-modal { position: fixed; inset: 0; z-index: 9999; pointer-events: none; touch-action: manipulation; }
+    .yt-modal[hidden] { display: none !important; }
+    .yt-modal-backdrop { display: none; position: absolute; inset: 0; background: rgba(15,23,42,0.55); pointer-events: auto; }
+    .yt-modal-dialog {
+      pointer-events: auto; position: absolute; top: max(0.65rem, env(safe-area-inset-top)); left: 0.65rem;
+      width: min(52vw, 220px); display: flex; flex-direction: column; background: #0b1220; border-radius: 14px;
+      overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.14);
+    }
+    @media (min-width: 640px) { .yt-modal-dialog { width: 260px; top: 1rem; left: 1rem; } }
+    .yt-modal-chrome {
+      position: relative; z-index: 20; display: flex; align-items: center; gap: 0.35rem; padding: 0.4rem;
+      background: #0f172a; border-bottom: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;
+    }
+    .yt-modal-chrome #yt-modal-title {
+      flex: 1; min-width: 0; color: #e2e8f0; font-size: 0.68rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;
+    }
+    .yt-modal-btn {
+      flex-shrink: 0; width: 40px; height: 40px; border: none; border-radius: 10px;
+      background: rgba(255,255,255,0.12); color: #fff; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; touch-action: manipulation;
+    }
+    .yt-modal-btn svg { width: 16px; height: 16px; pointer-events: none; }
+    .yt-modal-btn-close { background: #dc2626; }
+    .yt-modal-frame-wrap { position: relative; z-index: 1; width: 100%; aspect-ratio: 9 / 16; max-height: 32vh; background: #000; }
+    .yt-modal-frame-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .yt-modal.is-maximized { pointer-events: auto; }
+    .yt-modal.is-maximized .yt-modal-backdrop { display: block; }
+    .yt-modal.is-maximized .yt-modal-dialog {
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: min(92vw, 380px); max-height: calc(100dvh - 1.5rem);
+    }
+    .yt-modal.is-maximized .yt-modal-frame-wrap { max-height: min(68vh, 560px); }
+    .yt-modal.is-maximized .yt-modal-btn { width: 44px; height: 44px; }
+    body.yt-modal-maximized { overflow: hidden; overscroll-behavior: none; }
+
+    .day-card[hidden] { display: none !important; }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen overflow-x-hidden">
+
+  <header class="bg-slate-900 border-b border-slate-700 px-4 sm:px-6 py-3.5 flex items-center justify-between sticky top-0 z-30 shadow-lg">
+    <div class="flex items-center gap-2.5 min-w-0">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-400 to-sky-600 flex items-center justify-center text-white text-lg shadow-md flex-shrink-0">💪</div>
+      <div class="min-w-0">
+        <h1 class="font-black text-white text-sm sm:text-base leading-tight tracking-tight truncate">Dual-Muscle Plan</h1>
+        <p class="text-[10px] sm:text-xs text-slate-400 truncate">2 paired targets · all 24 muscles · Mon–Sat · Shorts demos</p>
+      </div>
+    </div>
+    <a href="../index.html" class="text-xs sm:text-sm font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full px-3 sm:px-4 py-1.5 transition-all flex-shrink-0">← Dashboard</a>
+  </header>
+
+  <nav aria-label="Site pages" class="bg-slate-800 border-b border-slate-700 px-4 sm:px-6 py-2 flex items-center gap-x-2 sm:gap-x-3 overflow-x-auto whitespace-nowrap text-xs">
+    <span class="text-[10px] font-bold uppercase tracking-wide text-slate-500 flex-shrink-0">Home</span>
+    <a href="../index.html" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">🏠 Dashboard</a>
+    <span class="text-slate-600 flex-shrink-0" aria-hidden="true">|</span>
+    <span class="text-[10px] font-bold uppercase tracking-wide text-slate-500 flex-shrink-0">Train</span>
+    <a href="../library/" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">📚 Exercise Library</a>
+    <a href="../new-6-day-plan/" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">🆕 New 6-Day Plan</a>
+    <a href="../dual-muscle-plan/" aria-current="page" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors bg-emerald-600 text-white">💪 Dual-Muscle</a>
+    <a href="../fat-loss/" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">🔥 Belly Fat Videos</a>
+    <span class="text-slate-600 flex-shrink-0" aria-hidden="true">|</span>
+    <span class="text-[10px] font-bold uppercase tracking-wide text-slate-500 flex-shrink-0">Eat</span>
+    <a href="../kichdi-plan.html" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">🍲 Kichdi Plan</a>
+  </nav>
+
+  <main class="max-w-4xl mx-auto p-4 sm:p-6 space-y-5">
+
+    <!-- INTRO -->
+    <section class="relative overflow-hidden rounded-2xl border border-teal-200 bg-gradient-to-br from-teal-50 via-sky-50 to-emerald-50 p-5 sm:p-6">
+      <div class="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-teal-200/40 blur-2xl pointer-events-none" aria-hidden="true"></div>
+      <div class="relative">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-teal-700 mb-1">Trainer-style split · 24-muscle coverage</p>
+        <h2 class="font-black text-2xl sm:text-3xl text-slate-900 tracking-tight">Two similar muscles, every day</h2>
+        <p class="mt-2 text-sm text-slate-600 max-w-2xl leading-relaxed">
+          Each day pairs <strong>two complementary targets</strong> (e.g. Back + Biceps). Gym days are Mon · Wed · Fri.
+          Tue · Thu · Sat start with a run, then a short light session. Together, the week hits all
+          <strong>24 Exercise Library muscles</strong> — extras stay light (~10–15 min) so run days stay recovery-friendly.
+        </p>
+        <p class="mt-2 text-xs text-slate-500 max-w-2xl leading-relaxed">
+          Each day card lists the library muscles it covers. The directory at the bottom shows which day trains each one, with YouTube search links.
+        </p>
+        <div class="mt-4 flex flex-wrap gap-2 text-[11px] font-bold">
+          <span class="muscle-pill m-gym">🏋️ Mon · Wed · Fri — gym pairs</span>
+          <span class="muscle-pill m-run">🏃 Tue · Thu · Sat — run + light</span>
+          <span class="muscle-pill m-gym">🎯 24 / 24 muscles covered</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- WEEK OVERVIEW -->
+    <section class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200">
+      <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
+        <h3 class="font-bold text-slate-900">Week at a glance</h3>
+        <span class="text-xs text-slate-400">Tap a day to focus · All shows everything</span>
+      </div>
+      <div class="flex flex-wrap gap-2 mb-4" id="day-filters"></div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-2.5" id="week-grid"></div>
+      <p class="text-xs text-slate-400 mt-3 leading-relaxed">
+        <strong class="text-slate-500">Why this order:</strong> heavy legs sit on Monday so they recover before the weekend run.
+        Keep Tuesday’s run easy the day after legs. Friday is pull (Back + Biceps) with no heavy leg work before Saturday’s run.
+        Light extras on run days (rotator cuff, neck, shins, hip flexors) fill the remaining library muscles without heavy thigh load.
+        Sun = rest or an easy walk.
+      </p>
+    </section>
+
+    <!-- COMMON STRETCHES -->
+    <section class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200 space-y-4" id="stretches">
+      <div>
+        <h3 class="font-bold text-slate-900">Common stretches — every workout day</h3>
+        <p class="text-xs text-slate-500 mt-0.5">Same short routine before and after. Do these on gym days and after the run on run days.</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-3">
+        <div class="rounded-xl border border-amber-200 bg-amber-50/60 p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-lg" aria-hidden="true">🔥</span>
+            <h4 class="font-bold text-slate-900 text-sm">Before — warm-up · ~5 min</h4>
+          </div>
+          <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+            <li>Easy bike or brisk walk — 2–3 min</li>
+            <li>Arm circles + shoulder rolls — 20 each way</li>
+            <li>Cat–cow or thoracic openers — 8 slow reps</li>
+            <li>Bodyweight squats or hip hinges — 10 easy</li>
+            <li>On gym days: 2–3 light ramp-up sets of the first exercise</li>
+          </ul>
+          <div class="mt-3" data-stretch-slot="warm">
+            <div class="slot-empty">Shorts slot · warm-up stretch video (add later)</div>
+          </div>
+        </div>
+        <div class="rounded-xl border border-sky-200 bg-sky-50/60 p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-lg" aria-hidden="true">🧊</span>
+            <h4 class="font-bold text-slate-900 text-sm">After — cool-down · ~5 min</h4>
+          </div>
+          <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+            <li>Easy walk — 2 min (especially after a run)</li>
+            <li>Chest doorway stretch — 30 s each side</li>
+            <li>Half-kneeling hip-flexor stretch — 30 s each side</li>
+            <li>Seated hamstring reach — 30 s each side</li>
+            <li>Child’s pose or child’s pose + side reach — 45–60 s</li>
+          </ul>
+          <div class="mt-3" data-stretch-slot="cool">
+            <div class="slot-empty">Shorts slot · cool-down stretch video (add later)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DAY CARDS -->
+    <div id="days" class="space-y-4"></div>
+
+    <!-- FAT-BURN FINISHER -->
+    <section class="bg-white rounded-2xl shadow-sm p-5 border border-rose-200 space-y-3" id="fat-burn">
+      <div class="flex items-start justify-between gap-3 flex-wrap">
+        <div>
+          <p class="text-[10px] font-bold uppercase tracking-widest text-rose-600 mb-1">Overall fat burn</p>
+          <h3 class="font-bold text-slate-900">Home fat-burn finisher</h3>
+          <p class="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">
+            Short lower-belly / home circuit for calorie burn — not spot reduction. Fat loss still comes from your deficit, protein, steps, and the main lift + run plan.
+          </p>
+        </div>
+        <span class="muscle-pill m-pending">2–3× / week · standard</span>
+      </div>
+      <div class="rounded-xl border border-rose-100 bg-rose-50/50 p-4 space-y-3">
+        <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+          <li><strong class="text-slate-800">Do 2–3 times per week</strong> — enough to raise weekly energy burn without stacking fatigue on top of 3 gym + 3 run days.</li>
+          <li><strong class="text-slate-800">Best days:</strong> Wed (after Chest + Triceps), Thu (after run + light calves/hips), and optionally Sat (only if the run felt easy — keep it short).</li>
+          <li><strong class="text-slate-800">Skip or keep very short</strong> on Mon (heavy legs) and on any day you feel wiped — more than ~4×/week is usually overkill with this schedule.</li>
+          <li>Place it <em>after</em> the main session, then do cool-down stretches. More detail also lives on the <a href="../fat-loss/" class="text-rose-700 font-semibold hover:underline">Belly Fat Videos</a> page.</li>
+        </ul>
+        <div class="flex gap-2 items-stretch flex-wrap">
+          <button type="button" class="play-btn flex-1 min-w-[12rem]" style="justify-content:flex-start"
+            data-vurl="https://www.youtube.com/shorts/pUJ3yPT6eww"
+            data-vtitle="Lower belly fat — top-10 home workout (fat-burn finisher)">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            <span class="truncate">Lower belly fat — top-10 home workout</span>
+          </button>
+          <a href="https://www.youtube.com/shorts/pUJ3yPT6eww" target="_blank" rel="noopener noreferrer"
+            class="flex-shrink-0 px-3 py-2 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-[10px] transition-colors">YouTube ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALL 24 MUSCLES (from Exercise Library focus list) -->
+    <section class="bg-white rounded-2xl shadow-sm p-5 border border-slate-200 space-y-4" id="all-muscles">
+      <div class="flex items-start justify-between gap-3 flex-wrap">
+        <div>
+          <p class="text-[10px] font-bold uppercase tracking-widest text-teal-700 mb-1">Exercise Library</p>
+          <h3 class="font-bold text-slate-900">All 24 target muscles</h3>
+          <p class="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">
+            Same Muscle focus list as the <a href="../library/" class="text-emerald-700 font-semibold hover:underline">Exercise Library</a>.
+            Day tags show where each muscle lands. Hints in brackets mean incidental or light work (e.g. Shoulders on Wed = via presses, not a second shoulder day). Search opens YouTube Shorts.
+          </p>
+        </div>
+        <span id="coverage-pill" class="muscle-pill m-gym">24 / 24 covered</span>
+      </div>
+      <div id="muscle-directory" class="space-y-4"></div>
+    </section>
+
+    <p class="text-[11px] text-slate-400 text-center pb-6">
+      Dual-muscle plan · Shorts use the same floating player as the dashboard.
+      Add a video under any muscle in the <code class="bg-slate-200 px-1 rounded">DAYS</code> data inside this page’s script.
+      Older plans stay in the <a href="../library/" class="text-emerald-700 font-semibold hover:underline">Exercise Library</a> and <a href="../new-6-day-plan/" class="text-emerald-700 font-semibold hover:underline">New 6-Day Plan</a>.
+    </p>
+  </main>
+
+  <div id="yt-modal" class="yt-modal" hidden role="dialog" aria-modal="true" aria-labelledby="yt-modal-title">
+    <div class="yt-modal-backdrop" aria-hidden="true"></div>
+    <div class="yt-modal-dialog">
+      <div class="yt-modal-chrome">
+        <button type="button" class="yt-modal-btn yt-modal-btn-close" id="yt-modal-close" title="Close" aria-label="Close video">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <span id="yt-modal-title">Form demo</span>
+        <button type="button" class="yt-modal-btn" id="yt-modal-max" title="Expand" aria-label="Expand player">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 3H3v6M15 3h6v6M9 21H3v-6M21 15v6h-6"/><path d="M3 3l7 7M21 3l-7 7M3 21l7-7M21 21l-7-7"/></svg>
+        </button>
+      </div>
+      <div class="yt-modal-frame-wrap">
+        <iframe id="yt-modal-iframe" title="Exercise form demo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen playsinline></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // ════════════════════════════════════════════════════════════
+  //  Dual-muscle week — each day has two paired targets.
+  //  Add shorts later: videos: [{ url, title, by }]
+  // ════════════════════════════════════════════════════════════
+  // covers[] names must match FOCUS_MUSCLES exactly (Exercise Library 24).
+  // Use { name, hint } when coverage is incidental / shared — hint shows in brackets in the UI.
+  const DAYS = [
+    {
+      id: 'mon', label: 'Mon', title: 'Legs + Glutes',
+      run: false, time: '60–70 min',
+      why: 'Heavy lower body early in the week so legs recover before Saturday’s run. Adds light inner-thigh work so adductors are covered.',
+      muscles: [
+        {
+          name: 'Legs', icon: '🦵', focus: 'Quads · Hamstrings · Adductors · Lower back (hinge)',
+          covers: [
+            'Quads',
+            'Hamstrings',
+            { name: 'Adductors (inner thigh)', hint: 'light finisher' },
+            { name: 'Lower back', hint: 'via RDL hinge' }
+          ],
+          moves: [
+            'Leg press or goblet squat — 3 × 8–12',
+            'Romanian deadlift (DB) — 3 × 8–10',
+            'Seated hamstring curl — 2 × 10–12',
+            'Hip adduction machine or short Copenhagen — 2 × 8–10 each (light)'
+          ],
+          videos: [
+            { url: 'https://youtube.com/shorts/gSrQfW7Ke38', title: '6 lower body exercises — complete legs & glutes', by: '' }
+          ]
+        },
+        {
+          name: 'Glutes', icon: '🍑', focus: 'Glute max · glute med (side hips)',
+          covers: [
+            'Glutes',
+            { name: 'Glute medius (side hips)', hint: 'band walks · light' }
+          ],
+          moves: [
+            'Hip thrust or glute bridge — 3 × 10–12',
+            'Low step-up — 2 × 10 each',
+            'Band lateral walk — 2 × 12 each (required, light)'
+          ],
+          videos: [
+            { url: 'https://youtube.com/shorts/gSrQfW7Ke38', title: 'Same short — covers glutes + legs variations', by: '' }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'tue', label: 'Tue', title: 'Shoulders + Core',
+      run: true, time: 'Run + 20–25 min',
+      why: 'Easy run after Monday legs. Light upper + core + posture — no heavy leg work. Adds rotator-cuff and chin-tuck extras (~5 min).',
+      muscles: [
+        {
+          name: 'Shoulders', icon: '🏔️', focus: 'Delts · rear upper back · rotator cuff (light)',
+          covers: [
+            { name: 'Shoulders (delts)', hint: 'dedicated · side + rear' },
+            { name: 'Upper back (rhomboids & mid-traps)', hint: 'via rear fly / face pull' },
+            { name: 'Rotator cuff & shoulder stabilisers', hint: 'light band work' }
+          ],
+          moves: [
+            'Lateral raise — 2 × 12–15',
+            'Reverse / rear delt fly — 2 × 12–15',
+            'Band face pull — 2 × 12–15',
+            'Band external rotation — 2 × 12 each (very light)'
+          ],
+          videos: []
+        },
+        {
+          name: 'Core', icon: '🎯', focus: 'Abs · deep core · neck posture · hip flexors light',
+          covers: [
+            { name: 'Abs (rectus & deep core)', hint: 'dedicated' },
+            { name: 'Neck & deep neck flexors', hint: 'chin tucks' },
+            { name: 'Hip flexors', hint: 'via dead bug · light' }
+          ],
+          moves: [
+            'Dead bug — 2 × 8–10 each',
+            'Plank — 2 × 20–40 s',
+            'Chin tuck — 2 × 10 (5 s hold, desk-posture fix)'
+          ],
+          videos: []
+        }
+      ]
+    },
+    {
+      id: 'wed', label: 'Wed', title: 'Chest + Triceps',
+      run: false, time: '55–65 min',
+      why: 'Beginner machine push day — incline + flat press, then two flies, then two triceps finishers. Front delts get incidental work from presses (not a second shoulder day). Optional push-up plus keeps serratus covered.',
+      muscles: [
+        {
+          name: 'Chest', icon: '🫁', focus: 'Beginner · machines + cables · upper + mid',
+          covers: [
+            'Chest',
+            { name: 'Serratus anterior', hint: 'optional push-up plus' },
+            { name: 'Shoulders (delts)', hint: 'via presses · front delts only' }
+          ],
+          moves: [
+            { order: 1, name: 'Incline chest press machine', sets: '3 × 8–12', url: 'https://www.youtube.com/shorts/-QRu-lMwh4k', title: 'Watch incline press' },
+            { order: 2, name: 'Seated chest press machine', sets: '2 × 8–12', url: 'https://www.youtube.com/shorts/Qu7-ceCvq7w', title: 'Watch chest press', by: 'DeltaBolic' },
+            { order: 3, name: 'Pec deck chest fly', sets: '2 × 12–15', url: 'https://www.youtube.com/shorts/a9vQ_hwIksU', title: 'Watch pec deck fly', by: 'DeltaBolic' },
+            { order: 4, name: 'High-to-low cable chest fly', sets: '2 × 12–15', url: 'https://www.youtube.com/shorts/yrpiK8R4Vqo', title: 'Watch cable fly' },
+            { order: null, name: 'Optional: push-up plus (serratus)', sets: '2 × 8–10', url: 'https://www.youtube.com/shorts/WSqc-58sBCw', title: 'Serratus / push-up plus', optional: true }
+          ],
+          videos: []
+        },
+        {
+          name: 'Triceps', icon: '💪', focus: 'Beginner · cable · long head + pushdown',
+          covers: ['Triceps'],
+          moves: [
+            { order: 5, name: 'Overhead cable triceps extension', sets: '2 × 10–12', url: 'https://www.youtube.com/shorts/NTk0Igxqcsk', title: 'Watch triceps extension', by: 'DeltaBolic' },
+            { order: 6, name: 'Rope triceps pushdown', sets: '2 × 10–15', url: 'https://www.youtube.com/shorts/NvZKjiZ8NYc', title: 'Watch rope pushdown' }
+          ],
+          videos: []
+        }
+      ]
+    },
+    {
+      id: 'thu', label: 'Thu', title: 'Calves + Hip stability',
+      run: true, time: 'Run + 20–25 min',
+      why: 'Runner support day. Lower legs, ankles, side hips and deep hip rotators — still light on the thighs.',
+      muscles: [
+        {
+          name: 'Calves', icon: '🦶', focus: 'Gastroc · soleus · shins · ankles',
+          covers: [
+            'Calves',
+            { name: 'Shins (tibialis anterior)', hint: 'tibialis raise' },
+            { name: 'Ankle & foot stabilisers', hint: 'balance / short-foot' }
+          ],
+          moves: [
+            'Standing calf raise — 3 × 12–15',
+            'Seated calf raise — 2 × 12–15',
+            'Tibialis raise — 2 × 12–15 (required)',
+            'Single-leg balance or short-foot hold — 2 × 20–30 s each'
+          ],
+          videos: []
+        },
+        {
+          name: 'Hip stability', icon: '⚖️', focus: 'Glute med · hip rotators',
+          covers: [
+            { name: 'Glute medius (side hips)', hint: 'dedicated · clamshells' },
+            { name: 'Hip rotators (deep glutes)', hint: 'via clamshell' }
+          ],
+          moves: [
+            'Clamshell or side-lying raise — 2 × 12 each',
+            'Standing hip & waist trio — 1–2 rounds'
+          ],
+          videos: []
+        }
+      ]
+    },
+    {
+      id: 'fri', label: 'Fri', title: 'Back + Biceps',
+      run: false, time: '55–65 min',
+      why: 'Classic pull pair. Farmer’s carry covers traps + forearms without loading the legs before Saturday’s run.',
+      muscles: [
+        {
+          name: 'Back', icon: '🔙', focus: 'Lats · upper back · traps · grip',
+          covers: [
+            'Lats',
+            { name: 'Upper back (rhomboids & mid-traps)', hint: 'dedicated · rows' },
+            { name: 'Upper traps', hint: 'via farmer’s carry' },
+            { name: 'Forearms', hint: 'via farmer’s carry' }
+          ],
+          moves: [
+            'Lat pulldown — 3 × 8–12',
+            'Seated cable row or chest-supported row — 3 × 8–12',
+            'Straight-arm pulldown — 2 × 10–12',
+            "Farmer's carry — 2–3 × 30–40 m (traps + forearms)"
+          ],
+          videos: []
+        },
+        {
+          name: 'Biceps', icon: '💪', focus: 'Both heads · brachialis · forearms',
+          covers: [
+            'Biceps',
+            { name: 'Forearms', hint: 'via hammer curl' }
+          ],
+          moves: [
+            'Dumbbell curl — 3 × 8–12',
+            'Hammer curl — 2 × 10–12',
+            'Optional preacher or cable curl — 2 × 10–12'
+          ],
+          videos: [
+            { url: 'https://youtube.com/shorts/A3ej5yPbMxY', title: '6 biceps curl variations — complete biceps workout', by: '' },
+            { url: 'https://youtube.com/shorts/wucliyDYWkU', title: '6 biceps grip variations — build bigger & thicker arms', by: '' }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'sat', label: 'Sat', title: 'Core + Hip reset',
+      run: true, time: 'Run + 25–30 min',
+      why: 'Main run of the week. Easy core (abs + obliques + lower back) + hip-flexor strengthen/stretch — keep legs fresh.',
+      muscles: [
+        {
+          name: 'Core', icon: '🎯', focus: 'Abs · obliques · lower back (easy)',
+          covers: [
+            { name: 'Abs (rectus & deep core)', hint: '2nd hit · easy' },
+            'Obliques & side core',
+            { name: 'Lower back', hint: 'bird dog · easy' }
+          ],
+          moves: [
+            'Dead bug — 2 × 8 each (abs / deep core)',
+            'Bird dog — 2 × 8 each (lower back, controlled)',
+            'Side plank — 2 × 15–30 s each',
+            'Pallof press or standing anti-rotation — 2 × 8–10 each'
+          ],
+          videos: []
+        },
+        {
+          name: 'Hip reset', icon: '🧘', focus: 'Hip flexors · thoracic · recovery',
+          covers: [
+            { name: 'Hip flexors', hint: 'dedicated · march + stretch' }
+          ],
+          moves: [
+            'Hip-flexor march — 2 × 8 each (strengthen)',
+            'Half-kneeling hip-flexor stretch — 30–45 s each',
+            'Thoracic openers — 8 reps'
+          ],
+          videos: []
+        }
+      ]
+    }
+  ];
+
+  // Same 24 focus muscles + YouTube search queries as library/index.html (Muscle focus list).
+  const FOCUS_MUSCLES = [
+    { name: 'Forearms', find: 'forearm workout wrist flexors extensors grip shorts', region: 'Arms' },
+    { name: 'Triceps', find: 'triceps workout all three heads shorts', region: 'Arms' },
+    { name: 'Biceps', find: 'biceps workout both heads brachialis dumbbells shorts', region: 'Arms' },
+    { name: 'Glutes', find: 'glute max workout hip thrust bridge at home shorts', region: 'Thighs, glutes & hips' },
+    { name: 'Chest', find: 'chest workout upper mid lower dumbbells shorts', region: 'Chest & shoulders' },
+    { name: 'Serratus anterior', find: 'serratus anterior exercises push up plus wall slide shorts', region: 'Chest & shoulders' },
+    { name: 'Lats', find: 'lat workout pulldown form shorts', region: 'Back & neck' },
+    { name: 'Upper back (rhomboids & mid-traps)', find: 'upper back rhomboids mid traps workout shorts', region: 'Back & neck' },
+    { name: 'Shoulders (delts)', find: 'shoulder workout front side rear delts dumbbells shorts', region: 'Chest & shoulders' },
+    { name: 'Rotator cuff & shoulder stabilisers', find: 'rotator cuff exercises band shoulder health shorts', region: 'Chest & shoulders' },
+    { name: 'Upper traps', find: 'trap workout dumbbell shrug form shorts', region: 'Back & neck' },
+    { name: 'Neck & deep neck flexors', find: 'chin tuck deep neck flexor exercise posture shorts', region: 'Back & neck' },
+    { name: 'Quads', find: 'quad workout knee friendly shorts', region: 'Thighs, glutes & hips' },
+    { name: 'Hamstrings', find: 'hamstring workout RDL curl form shorts', region: 'Thighs, glutes & hips' },
+    { name: 'Glute medius (side hips)', find: 'glute medius exercises runners hip stability shorts', region: 'Thighs, glutes & hips' },
+    { name: 'Hip rotators (deep glutes)', find: 'hip external rotators strengthening piriformis 90 90 shorts', region: 'Thighs, glutes & hips' },
+    { name: 'Adductors (inner thigh)', find: 'adductor strengthening exercises inner thigh shorts', region: 'Thighs, glutes & hips' },
+    { name: 'Hip flexors', find: 'hip flexor strengthening and stretching runners shorts', region: 'Thighs, glutes & hips' },
+    { name: 'Calves', find: 'calf workout gastrocnemius soleus shorts', region: 'Calves, shins & feet' },
+    { name: 'Shins (tibialis anterior)', find: 'tibialis anterior raise shin splints shorts', region: 'Calves, shins & feet' },
+    { name: 'Ankle & foot stabilisers', find: 'ankle stability peroneals short foot exercise runners shorts', region: 'Calves, shins & feet' },
+    { name: 'Abs (rectus & deep core)', find: 'abs workout rectus transverse abdominis beginner shorts', region: 'Core' },
+    { name: 'Obliques & side core', find: 'obliques side core workout anti rotation shorts', region: 'Core' },
+    { name: 'Lower back', find: 'lower back strengthening erector spinae safe shorts', region: 'Back & neck' },
+  ];
+
+  const MUSCLE_REGIONS = [
+    { name: '💪 Arms', id: 'Arms' },
+    { name: '🫁 Chest & shoulders', id: 'Chest & shoulders' },
+    { name: '🔙 Back & neck', id: 'Back & neck' },
+    { name: '🦵 Thighs, glutes & hips', id: 'Thighs, glutes & hips' },
+    { name: '🦶 Calves, shins & feet', id: 'Calves, shins & feet' },
+    { name: '🎯 Core', id: 'Core' },
+  ];
+
+  const PLAY = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+  let activeDay = 'all';
+  let ytModalMode = 'pip';
+  let lastFocusEl = null;
+
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const ytSearchUrl = q => 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q);
+
+  function getVideoId(url) {
+    const patterns = [
+      /youtu\.be\/([^?&#]+)/,
+      /youtube\.com\/shorts\/([^?&#]+)/,
+      /[?&]v=([^&#]+)/,
+      /youtube\.com\/embed\/([^?&#]+)/
+    ];
+    for (const p of patterns) {
+      const m = url.match(p);
+      if (m) return m[1];
+    }
+    return null;
+  }
+
+  function setYtModalMode(mode) {
+    const modal = document.getElementById('yt-modal');
+    if (!modal) return;
+    ytModalMode = mode;
+    modal.classList.toggle('is-maximized', mode === 'maximized');
+    document.body.classList.toggle('yt-modal-maximized', mode === 'maximized');
+    const maxBtn = document.getElementById('yt-modal-max');
+    if (maxBtn) {
+      const expanded = mode === 'maximized';
+      maxBtn.setAttribute('aria-label', expanded ? 'Shrink to corner' : 'Expand player');
+      maxBtn.title = expanded ? 'Shrink' : 'Expand';
+    }
+  }
+
+  function openVideo(name, url) {
+    if (!url) return;
+    const id = getVideoId(url);
+    if (!id) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    const modal = document.getElementById('yt-modal');
+    const iframe = document.getElementById('yt-modal-iframe');
+    const title = document.getElementById('yt-modal-title');
+    const closeBtn = document.getElementById('yt-modal-close');
+    if (!modal || !iframe) return;
+    lastFocusEl = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    if (title) title.textContent = name;
+    iframe.title = name;
+    iframe.src = 'https://www.youtube.com/embed/' + encodeURIComponent(id) + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+    modal.hidden = false;
+    setYtModalMode('pip');
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function closeVideo(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    const modal = document.getElementById('yt-modal');
+    const iframe = document.getElementById('yt-modal-iframe');
+    if (!modal || modal.hidden) return;
+    modal.hidden = true;
+    if (iframe) { iframe.src = ''; iframe.title = 'Exercise form demo'; }
+    modal.classList.remove('is-maximized');
+    document.body.classList.remove('yt-modal-maximized');
+    ytModalMode = 'pip';
+    if (lastFocusEl && typeof lastFocusEl.focus === 'function') {
+      try { lastFocusEl.focus(); } catch (_) {}
+    }
+    lastFocusEl = null;
+  }
+
+  function toggleYtMaximize(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    setYtModalMode(ytModalMode === 'maximized' ? 'pip' : 'maximized');
+  }
+
+  function normalizeCover(c) {
+    if (typeof c === 'string') return { name: c, hint: '' };
+    return { name: c.name, hint: c.hint || '' };
+  }
+
+  function muscleCovers(m) {
+    return (m.covers || []).map(normalizeCover);
+  }
+
+  function dayCoverEntries(d) {
+    const byName = new Map();
+    d.muscles.forEach(m => {
+      muscleCovers(m).forEach(c => {
+        const prev = byName.get(c.name);
+        if (!prev) byName.set(c.name, c);
+        else if (!prev.hint && c.hint) byName.set(c.name, c);
+      });
+    });
+    return [...byName.values()];
+  }
+
+  function shortCover(n) {
+    return n.replace(/\s*\(.*?\)/g, '').replace(' & shoulder stabilisers', '').replace(' & mid-traps', '');
+  }
+
+  function coverLabel(c, withHint = true) {
+    const base = shortCover(c.name);
+    return withHint && c.hint ? `${base} (${c.hint})` : base;
+  }
+
+  function normalizeMove(x) {
+    if (typeof x === 'string') return { name: x, sets: '', url: '', title: '', optional: false, order: null };
+    return {
+      name: x.name || '',
+      sets: x.sets || '',
+      url: x.url || '',
+      title: x.title || x.name || 'Watch',
+      by: x.by || '',
+      optional: !!x.optional,
+      order: x.order == null ? null : x.order
+    };
+  }
+
+  function renderMoves(muscle) {
+    const moves = (muscle.moves || []).map(normalizeMove);
+    if (!moves.length) return '';
+    const hasStructured = moves.some(m => m.sets || m.url || m.order != null);
+    if (!hasStructured) {
+      return `<ul class="text-xs text-slate-600 space-y-1 list-disc pl-4">${moves.map(m => `<li>${esc(m.name)}</li>`).join('')}</ul>`;
+    }
+    return `<div class="space-y-2">${moves.map(m => {
+      const num = m.order != null
+        ? `<span class="flex-shrink-0 w-5 h-5 rounded-md bg-slate-900 text-white text-[10px] font-black flex items-center justify-center">${m.order}</span>`
+        : `<span class="flex-shrink-0 w-5 h-5 rounded-md ${m.optional ? 'bg-amber-100 text-amber-800' : 'bg-slate-200 text-slate-500'} text-[9px] font-bold flex items-center justify-center">${m.optional ? 'opt' : '·'}</span>`;
+      const watch = m.url ? `
+        <div class="flex gap-1.5 items-stretch mt-1.5 pl-7">
+          <button type="button" class="play-btn flex-1 min-w-0" style="justify-content:flex-start"
+            data-vurl="${esc(m.url)}" data-vtitle="${esc(m.title)}">
+            ${PLAY} <span class="truncate">${esc(m.title)}</span>
+            ${m.by ? `<span class="ml-auto pl-2 text-[10px] font-medium opacity-70 truncate">${esc(m.by)}</span>` : ''}
+          </button>
+          <a href="${esc(m.url)}" target="_blank" rel="noopener noreferrer"
+            class="flex-shrink-0 px-2.5 py-2 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-[10px] transition-colors">↗</a>
+        </div>` : '';
+      return `
+        <div class="rounded-lg border ${m.optional ? 'border-amber-200 bg-amber-50/50' : 'border-slate-100 bg-slate-50/70'} px-2.5 py-2">
+          <div class="flex items-start gap-2">
+            ${num}
+            <div class="min-w-0 flex-1">
+              <div class="text-xs font-semibold text-slate-800 leading-snug">${esc(m.name)}</div>
+              ${m.sets ? `<div class="text-[11px] text-slate-500 mt-0.5">${esc(m.sets)}</div>` : ''}
+            </div>
+          </div>
+          ${watch}
+        </div>`;
+    }).join('')}</div>`;
+  }
+
+  function videoButtons(muscle) {
+    const moveVids = (muscle.moves || []).map(normalizeMove).filter(m => m.url);
+    if (moveVids.length) return ''; // per-move Watch buttons already render in renderMoves
+    const vids = (muscle.videos || []).filter(v => v && v.url);
+    if (!vids.length) {
+      const seen = new Set();
+      const searches = muscleCovers(muscle).map(c => {
+        const f = FOCUS_MUSCLES.find(x => x.name === c.name);
+        if (!f || seen.has(f.name)) return null;
+        seen.add(f.name);
+        return { label: shortCover(f.name), url: ytSearchUrl(f.find) };
+      }).filter(Boolean);
+      if (!searches.length) {
+        return `<div class="slot-empty">Shorts slot · ${esc(muscle.name)} demo (add later)</div>`;
+      }
+      return `<div class="space-y-1.5">
+        <div class="slot-empty py-2">No Short pasted yet · YouTube search for covered muscles</div>
+        <div class="flex flex-wrap gap-1.5">${searches.map(s => `
+          <a href="${esc(s.url)}" target="_blank" rel="noopener noreferrer"
+            class="text-[11px] font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg px-2.5 py-1.5 transition-colors">▶ ${esc(s.label)} ↗</a>
+        `).join('')}</div>
+      </div>`;
+    }
+    return `<div class="flex flex-col gap-1.5">${vids.map(v => `
+      <div class="flex gap-2 items-stretch">
+        <button type="button" class="play-btn flex-1 min-w-0" style="justify-content:flex-start"
+          data-vurl="${esc(v.url)}" data-vtitle="${esc(muscle.name + ' — ' + v.title)}">
+          ${PLAY} <span class="truncate">${esc(v.title)}</span>
+          ${v.by ? `<span class="ml-auto pl-2 text-[10px] font-medium opacity-70 truncate">${esc(v.by)}</span>` : ''}
+        </button>
+        <a href="${esc(v.url)}" target="_blank" rel="noopener noreferrer"
+          class="flex-shrink-0 px-3 py-2 text-[11px] font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-[10px] transition-colors">↗</a>
+      </div>`).join('')}</div>`;
+  }
+
+  function renderFilters() {
+    const el = document.getElementById('day-filters');
+    const chips = [{ id: 'all', label: 'All days', run: false }].concat(DAYS.map(d => ({ id: d.id, label: d.label, run: d.run })));
+    el.innerHTML = chips.map(c => {
+      const on = activeDay === c.id;
+      const cls = on ? (c.run ? 'on-run' : 'on') : '';
+      return `<button type="button" class="day-chip ${cls}" data-day="${c.id}" aria-pressed="${on}">${c.run ? '🏃 ' : ''}${esc(c.label)}</button>`;
+    }).join('');
+  }
+
+  function renderWeekGrid() {
+    const el = document.getElementById('week-grid');
+    el.innerHTML = DAYS.map(d => {
+      const pair = d.muscles.map(m => m.name).join(' + ');
+      const covers = dayCoverEntries(d);
+      const active = activeDay === 'all' || activeDay === d.id;
+      return `
+        <button type="button" data-day="${d.id}"
+          class="text-left rounded-xl border p-3 transition hover-lift ${active && activeDay === d.id ? (d.run ? 'border-sky-400 bg-sky-50' : 'border-emerald-400 bg-emerald-50') : 'border-slate-200 bg-slate-50/80'}">
+          <div class="flex items-center justify-between gap-2 mb-1">
+            <span class="font-black text-slate-900 text-sm">${esc(d.label)}</span>
+            <span class="text-[10px] font-bold ${d.run ? 'text-sky-700' : 'text-emerald-700'}">${d.run ? '🏃 Run day' : '🏋️ Gym'}</span>
+          </div>
+          <div class="font-bold text-slate-800 text-xs">${esc(pair)}</div>
+          <div class="text-[10px] text-slate-400 mt-1">${esc(d.time)} · ${covers.length} muscles</div>
+          <div class="text-[10px] text-emerald-800 mt-1.5 leading-snug">${covers.map(c => esc(coverLabel(c))).join(' · ')}</div>
+        </button>`;
+    }).join('');
+  }
+
+  function renderDays() {
+    const el = document.getElementById('days');
+    el.innerHTML = DAYS.map(d => {
+      const pair = d.muscles.map(m => m.name).join(' + ');
+      const covers = dayCoverEntries(d);
+      const hidden = activeDay !== 'all' && activeDay !== d.id ? 'hidden' : '';
+      const badge = d.run
+        ? '<span class="text-xs bg-sky-100 text-sky-800 px-2.5 py-1 rounded-full font-semibold">🏃 Run + light</span>'
+        : '<span class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-semibold">🏋️ Gym strength</span>';
+      const muscleBlocks = d.muscles.map(m => {
+        const mCovers = muscleCovers(m);
+        return `
+        <div class="rounded-xl border border-slate-200 bg-white p-4 flex flex-col gap-3">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-lg" aria-hidden="true">${m.icon}</span>
+                <h4 class="font-black text-slate-900">${esc(m.name)}</h4>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-0.5">${esc(m.focus)}</p>
+            </div>
+            <span class="muscle-pill ${d.run ? 'm-run' : 'm-gym'}">${d.run ? 'Light' : 'Main'}</span>
+          </div>
+          ${mCovers.length ? `<div class="flex flex-wrap gap-1">${mCovers.map(c =>
+            `<span class="text-[10px] font-semibold text-emerald-800 bg-emerald-50 border border-emerald-100 rounded-md px-1.5 py-0.5" title="${esc(c.hint || c.name)}">${esc(coverLabel(c))}</span>`
+          ).join('')}</div>` : ''}
+          ${renderMoves(m)}
+          ${(() => {
+            const vidsHtml = videoButtons(m);
+            return vidsHtml
+              ? `<div><p class="text-[10px] font-bold uppercase tracking-wide text-slate-400 mb-1.5">YouTube Shorts</p>${vidsHtml}</div>`
+              : '';
+          })()}
+        </div>`;
+      }).join('');
+
+      return `
+        <article class="day-card bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden" data-day-card="${d.id}" ${hidden}>
+          <div class="px-5 py-4 border-b border-slate-100 ${d.run ? 'bg-sky-50/70' : 'bg-emerald-50/70'}">
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+              <div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-black text-slate-900 text-lg">${esc(d.label)} — ${esc(pair)}</span>
+                  ${badge}
+                  <span class="text-xs bg-teal-100 text-teal-800 px-2.5 py-1 rounded-full font-semibold">${covers.length} library muscles</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-1">${esc(d.why)}</p>
+              </div>
+              <span class="text-xs font-semibold text-slate-400">${esc(d.time)}</span>
+            </div>
+            <p class="text-[11px] text-slate-600 mt-2 leading-relaxed"><span class="font-bold text-slate-700">Covers:</span> ${covers.map(c => esc(coverLabel(c))).join(' · ')}</p>
+            ${d.run ? '<p class="text-[11px] text-sky-800 mt-2 font-medium">Order: run first → 5 min easy walk → light session → cool-down stretches.</p>' : '<p class="text-[11px] text-emerald-800 mt-2 font-medium">Order: warm-up stretches → main muscle 1 → main muscle 2 → cool-down stretches.</p>'}
+          </div>
+          <div class="p-4 sm:p-5 grid sm:grid-cols-2 gap-3">
+            ${muscleBlocks}
+          </div>
+        </article>`;
+    }).join('');
+  }
+
+  function setDay(id) {
+    activeDay = id;
+    renderFilters();
+    renderWeekGrid();
+    document.querySelectorAll('[data-day-card]').forEach(card => {
+      const show = activeDay === 'all' || card.getAttribute('data-day-card') === activeDay;
+      card.hidden = !show;
+    });
+  }
+
+  function coverageByMuscle() {
+    const map = {};
+    FOCUS_MUSCLES.forEach(m => { map[m.name] = []; });
+    DAYS.forEach(d => {
+      dayCoverEntries(d).forEach(c => {
+        if (!map[c.name]) map[c.name] = [];
+        if (!map[c.name].some(x => x.label === d.label)) {
+          map[c.name].push({ label: d.label, hint: c.hint || '' });
+        }
+      });
+    });
+    return map;
+  }
+
+  function renderMuscleDirectory() {
+    const el = document.getElementById('muscle-directory');
+    if (!el) return;
+    const cov = coverageByMuscle();
+    const covered = FOCUS_MUSCLES.filter(m => (cov[m.name] || []).length).length;
+    const pill = document.getElementById('coverage-pill');
+    if (pill) {
+      pill.textContent = `${covered} / ${FOCUS_MUSCLES.length} covered`;
+      pill.className = 'muscle-pill ' + (covered === FOCUS_MUSCLES.length ? 'm-gym' : 'm-pending');
+    }
+    el.innerHTML = MUSCLE_REGIONS.map(region => {
+      const items = FOCUS_MUSCLES.filter(m => m.region === region.id);
+      if (!items.length) return '';
+      return `
+        <div>
+          <h4 class="text-xs font-bold text-slate-700 mb-2">${esc(region.name)}
+            <span class="text-slate-400 font-semibold">· ${items.length}</span>
+          </h4>
+          <ul class="grid sm:grid-cols-2 gap-2">
+            ${items.map(m => {
+              const n = FOCUS_MUSCLES.indexOf(m) + 1;
+              const href = ytSearchUrl(m.find);
+              const days = cov[m.name] || [];
+              const missing = !days.length;
+              return `
+                <li class="flex flex-col gap-1.5 rounded-xl border ${missing ? 'border-rose-300 bg-rose-50' : 'border-slate-200 bg-slate-50/80'} px-3 py-2.5">
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-bold text-slate-400 w-5 flex-shrink-0">${String(n).padStart(2, '0')}</span>
+                    <span class="text-xs font-semibold text-slate-800 flex-1 min-w-0 leading-snug">${esc(m.name)}</span>
+                    <a href="${esc(href)}" target="_blank" rel="noopener noreferrer"
+                      class="flex-shrink-0 text-[11px] font-bold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg px-2.5 py-1.5 transition-colors whitespace-nowrap"
+                      title="YouTube search: ${esc(m.find)}">▶ Search ↗</a>
+                  </div>
+                  <div class="flex flex-wrap gap-1 pl-7">
+                    ${missing
+                      ? '<span class="text-[10px] font-bold text-rose-700">Not in this week’s plan</span>'
+                      : days.map(entry => {
+                          const day = DAYS.find(d => d.label === entry.label);
+                          const text = entry.hint ? `${entry.label} (${entry.hint})` : entry.label;
+                          return `<button type="button" data-day="${day ? day.id : ''}"
+                            class="text-[10px] font-bold text-emerald-800 bg-emerald-100 hover:bg-emerald-200 rounded-md px-1.5 py-0.5 transition-colors"
+                            title="${esc(text)}">${esc(text)}</button>`;
+                        }).join('')}
+                  </div>
+                </li>`;
+            }).join('')}
+          </ul>
+        </div>`;
+    }).join('');
+  }
+
+  function wire() {
+    document.getElementById('day-filters').addEventListener('click', e => {
+      const btn = e.target.closest('[data-day]');
+      if (btn) setDay(btn.getAttribute('data-day'));
+    });
+    document.getElementById('week-grid').addEventListener('click', e => {
+      const btn = e.target.closest('[data-day]');
+      if (btn) setDay(btn.getAttribute('data-day'));
+    });
+    document.querySelector('main').addEventListener('click', e => {
+      const dayBtn = e.target.closest('#muscle-directory [data-day]');
+      if (dayBtn) {
+        const id = dayBtn.getAttribute('data-day');
+        if (id) {
+          setDay(id);
+          document.getElementById('days')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        return;
+      }
+      const btn = e.target.closest('.play-btn[data-vurl]');
+      if (!btn) return;
+      openVideo(btn.getAttribute('data-vtitle') || 'Form demo', btn.getAttribute('data-vurl'));
+    });
+
+    const closeBtn = document.getElementById('yt-modal-close');
+    const maxBtn = document.getElementById('yt-modal-max');
+    const backdrop = document.querySelector('#yt-modal .yt-modal-backdrop');
+    if (closeBtn) closeBtn.addEventListener('click', closeVideo);
+    if (maxBtn) maxBtn.addEventListener('click', toggleYtMaximize);
+    if (backdrop) {
+      backdrop.addEventListener('click', () => {
+        if (ytModalMode === 'maximized') setYtModalMode('pip');
+      });
+    }
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Escape') return;
+      const modal = document.getElementById('yt-modal');
+      if (!modal || modal.hidden) return;
+      if (ytModalMode === 'maximized') setYtModalMode('pip');
+      else closeVideo();
+    });
+
+    const params = new URLSearchParams(location.search);
+    const day = (params.get('day') || '').toLowerCase();
+    if (DAYS.some(d => d.id === day)) setDay(day);
+  }
+
+  renderFilters();
+  renderWeekGrid();
+  renderDays();
+  renderMuscleDirectory();
+  wire();
+  </script>
+</body>
+</html>
