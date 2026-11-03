@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Muscle Targets — Manas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f8fafc; --card:#ffffff; --ink:#0f172a; --muted:#475569;
+    --line:#e2e8f0; --accent:#059669; --accent-soft:#ecfdf5; --head:#f1f5f9;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif; font-size:15px; line-height:1.6;
+  }
+  .top { background:#0f172a; color:#fff; padding:28px 16px 24px; }
+  .top .wrap { max-width:960px; margin:0 auto; }
+  .top a { color:#a7f3d0; text-decoration:none; font-size:.8rem; font-weight:600; }
+  .top a:hover { color:#fff; }
+  .top h1 {
+    margin:.5rem 0 .25rem; font-size:1.9rem; font-weight:900; letter-spacing:-.02em;
+  }
+  .top .sub { color:#cbd5e1; margin:0; }
+  .wrap-main { max-width:960px; margin:0 auto; padding:20px 16px 60px; }
+
+  .filters {
+    position:sticky; top:0; z-index:20;
+    margin:0 0 1rem; padding:12px;
+    background:rgba(248,250,252,.92); backdrop-filter:blur(10px);
+    border:1px solid var(--line); border-radius:14px;
+    box-shadow:0 4px 18px rgba(15,23,42,.04);
+  }
+  .search-row { display:flex; gap:8px; align-items:center; margin-bottom:10px; }
+  .search-wrap { position:relative; flex:1; min-width:0; }
+  .search-wrap svg {
+    position:absolute; left:12px; top:50%; transform:translateY(-50%);
+    width:16px; height:16px; color:#94a3b8; pointer-events:none;
+  }
+  #search {
+    width:100%; padding:10px 40px 10px 38px; border:1px solid var(--line);
+    border-radius:10px; font:inherit; background:var(--card); color:var(--ink);
+  }
+  #search:focus { outline:2px solid #a7f3d0; outline-offset:1px; border-color:var(--accent); }
+  #clear-search {
+    position:absolute; right:8px; top:50%; transform:translateY(-50%);
+    width:28px; height:28px; border:none; border-radius:8px; background:transparent;
+    color:#94a3b8; cursor:pointer; font-size:1.1rem; line-height:1; display:none;
+  }
+  #clear-search:hover { background:var(--head); color:var(--ink); }
+  #clear-search.visible { display:inline-flex; align-items:center; justify-content:center; }
+
+  .day-filters { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+  .day-filters .label {
+    font-size:.72rem; font-weight:700; color:var(--muted);
+    text-transform:uppercase; letter-spacing:.04em; margin-right:2px;
+  }
+  .day-btn {
+    appearance:none; border:1px solid var(--line); background:#fff; color:var(--muted);
+    font:inherit; font-size:.75rem; font-weight:700; padding:.4rem .75rem;
+    border-radius:9999px; cursor:pointer; transition:background .12s, color .12s, border-color .12s;
+  }
+  .day-btn:hover { border-color:#94a3b8; color:var(--ink); }
+  .day-btn.on { background:#0f172a; border-color:#0f172a; color:#fff; }
+  .day-btn:focus-visible { outline:2px solid #a7f3d0; outline-offset:2px; }
+
+  .meta-row {
+    display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center;
+    justify-content:space-between; margin:0 0 .75rem;
+  }
+  .count { color:var(--muted); font-size:.85rem; margin:0; }
+  .reset-btn {
+    appearance:none; border:none; background:transparent; color:var(--accent);
+    font:inherit; font-size:.8rem; font-weight:700; cursor:pointer; padding:0;
+    display:none;
+  }
+  .reset-btn.visible { display:inline; }
+  .reset-btn:hover { text-decoration:underline; }
+
+  #list { display:flex; flex-direction:column; gap:14px; }
+
+  .group {
+    border:1px solid var(--line); border-radius:14px; background:var(--card); overflow:hidden;
+  }
+  .group[hidden] { display:none; }
+  .group-head {
+    display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1.6fr) minmax(120px,.7fr);
+    gap:12px 16px; padding:14px 16px; background:linear-gradient(180deg, #f1f5f9 0%, #fff 100%);
+    border-bottom:1px solid var(--line); align-items:start;
+  }
+  .group-title {
+    margin:0; font-size:1.05rem; font-weight:900; letter-spacing:-.02em; color:var(--ink);
+  }
+  .group-meta {
+    margin:.25rem 0 0; font-size:.72rem; font-weight:700; color:var(--muted);
+    text-transform:uppercase; letter-spacing:.04em;
+  }
+  .group.ungrouped .group-head {
+    background:#fff; padding:12px 16px 8px; border-bottom:none;
+  }
+  .group.ungrouped .group-title { font-size:.8rem; color:var(--muted); font-weight:700; }
+
+  .targets { width:100%; border-collapse:collapse; font-size:.875rem; }
+  .targets th {
+    text-align:left; padding:8px 16px; font-size:.7rem; font-weight:700;
+    color:var(--muted); text-transform:uppercase; letter-spacing:.04em;
+    background:var(--head); border-bottom:1px solid var(--line);
+  }
+  .targets td {
+    padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:top;
+  }
+  .targets tr:last-child td { border-bottom:none; }
+  .targets tr[hidden] { display:none; }
+  .targets .col-muscle { width:28%; }
+  .targets .col-days { width:22%; }
+
+  .muscle-name {
+    font-weight:800; font-size:.95rem; color:#065f46; letter-spacing:-.01em;
+  }
+  .muscle-nest {
+    display:flex; align-items:flex-start; gap:8px;
+  }
+  .nest-line {
+    flex-shrink:0; width:12px; height:14px; margin-top:4px;
+    border-left:2px solid #cbd5e1; border-bottom:2px solid #cbd5e1;
+    border-radius:0 0 0 4px;
+  }
+
+  .day-chip {
+    display:inline-flex; align-items:center; margin:2px 4px 2px 0;
+    font-size:.72rem; font-weight:700; padding:.35rem .7rem; border-radius:9999px;
+    background:#0f172a; color:#fff; border:none; cursor:pointer;
+  }
+  .day-chip:hover { background:#334155; }
+  .day-chip.active-filter { background:var(--accent); }
+
+  .videos { display:flex; flex-wrap:wrap; gap:10px; }
+  .yt-card {
+    display:block; width:110px; text-decoration:none; color:inherit;
+    border-radius:10px; overflow:hidden; border:1px solid var(--line);
+    background:#fff; transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .yt-card:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(15,23,42,.12); }
+  .yt-card.group-vid { width:120px; border-color:#a7f3d0; }
+  .yt-card .thumb {
+    position:relative; aspect-ratio:9/16; background:#0f172a; overflow:hidden;
+  }
+  .yt-card .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .yt-card .play {
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,.28);
+  }
+  .yt-card .label {
+    display:block; padding:6px 8px; font-size:.68rem; font-weight:600;
+    color:var(--muted); line-height:1.3;
+  }
+  .empty-videos { color:#94a3b8; font-size:.8rem; font-weight:600; }
+
+  .empty-state {
+    display:none; text-align:center; padding:2.5rem 1rem;
+    border:1px dashed var(--line); border-radius:12px; background:var(--card);
+    color:var(--muted);
+  }
+  .empty-state.visible { display:block; }
+  .empty-state strong { display:block; color:var(--ink); font-size:1rem; margin-bottom:.35rem; }
+
+  @media (max-width:720px) {
+    .group-head { grid-template-columns:1fr; }
+    .yt-card, .yt-card.group-vid { width:100px; }
+    .targets th:nth-child(2), .targets td:nth-child(2) { min-width:140px; }
+  }
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <p style="display:flex;flex-wrap:wrap;gap:.65rem 1rem;align-items:center;margin:0 0 .35rem">
+    <a href="../../index.html">← Health site home</a>
+    <a href="../legworkout/">Leg Encyclopedia</a>
+    <a href="../chestworkout/">Chest Encyclopedia</a>
+    <a href="../../dual-muscle-plan/">Dual-Muscle Plan</a>
+    <a href="../../library/">Exercise Library</a>
+  </p>
+  <h1>Muscle Targets</h1>
+  <p class="sub">Grouped workouts · specific muscles · Shorts · training days</p>
+</div></header>
+
+<div class="wrap-main">
+  <div class="filters" role="search">
+    <div class="search-row">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>
+        </svg>
+        <input id="search" type="search" placeholder="Filter by group, muscle, or video…" autocomplete="off" aria-label="Filter muscle targets" />
+        <button type="button" id="clear-search" aria-label="Clear search">×</button>
+      </div>
+    </div>
+    <div class="day-filters" id="day-filters" role="group" aria-label="Filter by training day">
+      <span class="label">Day</span>
+    </div>
+  </div>
+
+  <div class="meta-row">
+    <p class="count" id="count"></p>
+    <button type="button" class="reset-btn" id="reset-filters">Clear filters</button>
+  </div>
+
+  <div id="list"></div>
+
+  <div class="empty-state" id="empty" role="status">
+    <strong>No matches</strong>
+    <span id="empty-msg">Try another search or day.</span>
+  </div>
+</div>
+
+<script>
+  /**
+   * Data model
+   * ----------
+   * GROUPS: array of sections.
+   *   name:    group title (null/"" = ungrouped standalone targets)
+   *   days:    optional group-level training days
+   *   videos:  optional overview Shorts for the whole group
+   *   targets: specific muscles under the group (may be empty)
+   *
+   * A target: { muscle, days, videos: [{ url, title? }] }
+   * Leave `name` empty for workouts that don't belong to a group.
+   */
+  const GROUPS = [
+    {
+      name: "Abs Workout",
+      days: ["Tue", "Thu"],
+      videos: [
+        {
+          url: "https://www.youtube.com/shorts/KrbHV8I7-fU",
+          title: "3 Minute Killer Abs routine",
+        },
+        {
+          url: "https://youtube.com/shorts/NpZmTKKudQ8?si=IHXSkXPyhAxb4u0X",
+          title: "10 ideas to fire up your Abs at home",
+        },
+        {
+          url: "https://youtube.com/shorts/lrolFBYflLA?si=56mhRDmFDQTKMBob",
+          title: "Six pack abs workout for all fitness levels",
+        },
+      ],
+      targets: [
+        {
+          muscle: "Lower Abs",
+          days: ["Tue", "Thu"],
+          videos: [
+            {
+              url: "https://youtube.com/shorts/VWK9kgM2hBE?si=YiBeXbSJ2r8hoy-Z",
+              title: "Best exercise for the Lower Abs",
+            },
+          ],
+        },
+      ],
+    },
+  ];
+
+  const ALL_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  const state = { query: "", day: "All" };
+
+  function videoId(url) {
+    const patterns = [
+      /youtube\.com\/shorts\/([^?&#]+)/,
+      /youtu\.be\/([^?&#]+)/,
+      /youtube\.com\/watch\?v=([^?&#]+)/,
+      /youtube\.com\/embed\/([^?&#]+)/,
+    ];
+    for (const re of patterns) {
+      const m = String(url || "").match(re);
+      if (m) return m[1];
+    }
+    return "";
+  }
+
+  function thumbUrl(id) {
+    return id ? `https://img.youtube.com/vi/${encodeURIComponent(id)}/mqdefault.jpg` : "";
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function normalize(s) {
+    return String(s || "").toLowerCase().trim();
+  }
+
+  function videoHay(videos) {
+    return (videos || []).map((v) => v.title || "").join(" ");
+  }
+
+  function targetHay(t) {
+    return normalize([t.muscle, videoHay(t.videos), (t.days || []).join(" ")].join(" "));
+  }
+
+  function groupHay(g) {
+    const kids = (g.targets || []).map(targetHay).join(" ");
+    return normalize([g.name || "", videoHay(g.videos), (g.days || []).join(" "), kids].join(" "));
+  }
+
+  function dayHit(days) {
+    return state.day === "All" || (days || []).includes(state.day);
+  }
+
+  function queryHit(text) {
+    const q = normalize(state.query);
+    return !q || text.includes(q);
+  }
+
+  /** Which targets in a group survive the current filters */
+  function visibleTargets(g) {
+    const q = normalize(state.query);
+    const groupNameHit = q && normalize(g.name || "").includes(q);
+    const groupVideoHit = q && normalize(videoHay(g.videos)).includes(q);
+
+    return (g.targets || []).filter((t) => {
+      if (!dayHit(t.days)) return false;
+      if (!q) return true;
+      // If query matches the group itself, keep day-matching children
+      if (groupNameHit || groupVideoHit) return true;
+      return targetHay(t).includes(q);
+    });
+  }
+
+  /** Show group if its own days/videos match, or any child remains */
+  function groupVisible(g) {
+    const kids = visibleTargets(g);
+    const selfDay = dayHit(g.days);
+    const selfQuery = queryHit(normalize([g.name || "", videoHay(g.videos)].join(" ")));
+    const hasSelfContent = (g.videos && g.videos.length) || g.name;
+
+    if (kids.length) return true;
+    // Group-only row (no matching kids): show if group itself matches filters
+    if (hasSelfContent && selfDay && selfQuery) return true;
+    // Day filter on group with kids that don't match day — hide
+    if (state.day !== "All" && !selfDay && !kids.length) return false;
+    return false;
+  }
+
+  function allDaysUsed() {
+    const used = new Set();
+    GROUPS.forEach((g) => {
+      (g.days || []).forEach((d) => used.add(d));
+      (g.targets || []).forEach((t) => (t.days || []).forEach((d) => used.add(d)));
+    });
+    return used;
+  }
+
+  function countAllTargets() {
+    return GROUPS.reduce((n, g) => n + (g.targets || []).length, 0);
+  }
+
+  function countAllVideos() {
+    return GROUPS.reduce((n, g) => {
+      n += g.videos?.length || 0;
+      (g.targets || []).forEach((t) => (n += t.videos?.length || 0));
+      return n;
+    }, 0);
+  }
+
+  function renderVideos(videos, extraClass) {
+    if (!videos || !videos.length) {
+      return '<span class="empty-videos">No Shorts yet</span>';
+    }
+    const cls = extraClass ? ` yt-card ${extraClass}` : " yt-card";
+    return (
+      '<div class="videos">' +
+      videos
+        .map((v) => {
+          const id = videoId(v.url);
+          const thumb = thumbUrl(id);
+          const label = escapeHtml(v.title || "Watch Short");
+          const href = escapeHtml(v.url);
+          const img = thumb ? `<img src="${thumb}" alt="" loading="lazy" />` : "";
+          return (
+            `<a class="${cls.trim()}" href="${href}" target="_blank" rel="noopener noreferrer">` +
+            `<span class="thumb">${img}` +
+            `<span class="play"><svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span>` +
+            `</span><span class="label">${label}</span></a>`
+          );
+        })
+        .join("") +
+      "</div>"
+    );
+  }
+
+  function renderDays(days) {
+    if (!days || !days.length) return '<span class="empty-videos">TBD</span>';
+    return days
+      .map((d) => {
+        const on = state.day === d ? " active-filter" : "";
+        return `<button type="button" class="day-chip${on}" data-day="${escapeHtml(d)}" title="Show ${escapeHtml(d)} only">${escapeHtml(d)}</button>`;
+      })
+      .join("");
+  }
+
+  function renderGroup(g, gi) {
+    const named = !!(g.name && String(g.name).trim());
+    const kids = g.targets || [];
+    const showNest = named && kids.length > 0;
+
+    const head =
+      `<div class="group-head">` +
+      `<div>` +
+      `<h2 class="group-title">${escapeHtml(named ? g.name : "Ungrouped")}</h2>` +
+      (named
+        ? `<p class="group-meta">${kids.length} specific target${kids.length === 1 ? "" : "s"}</p>`
+        : "") +
+      `</div>` +
+      `<div>${named || (g.videos && g.videos.length) ? renderVideos(g.videos, "group-vid") : '<span class="empty-videos">—</span>'}</div>` +
+      `<div class="group-days">${renderDays(g.days)}</div>` +
+      `</div>`;
+
+    let body = "";
+    if (kids.length) {
+      body =
+        `<table class="targets">` +
+        `<thead><tr>` +
+        `<th class="col-muscle">Specific muscle</th>` +
+        `<th>YouTube Shorts</th>` +
+        `<th class="col-days">Training days</th>` +
+        `</tr></thead><tbody>` +
+        kids
+          .map((t, ti) => {
+            const nameCell = showNest
+              ? `<div class="muscle-nest"><span class="nest-line" aria-hidden="true"></span><div class="muscle-name">${escapeHtml(t.muscle)}</div></div>`
+              : `<div class="muscle-name">${escapeHtml(t.muscle)}</div>`;
+            return (
+              `<tr data-gi="${gi}" data-ti="${ti}">` +
+              `<td>${nameCell}</td>` +
+              `<td>${renderVideos(t.videos)}</td>` +
+              `<td>${renderDays(t.days)}</td>` +
+              `</tr>`
+            );
+          })
+          .join("") +
+        `</tbody></table>`;
+    }
+
+    return (
+      `<section class="group${named ? "" : " ungrouped"}" data-gi="${gi}">` +
+      (named || (g.videos && g.videos.length) ? head : "") +
+      body +
+      `</section>`
+    );
+  }
+
+  function buildDayButtons() {
+    const el = document.getElementById("day-filters");
+    const used = allDaysUsed();
+    const buttons = ["All", ...ALL_DAYS]
+      .map((d) => {
+        const on = state.day === d ? " on" : "";
+        const has = d === "All" || used.has(d);
+        const hint = d !== "All" && !has ? ' title="No targets on this day yet"' : "";
+        return `<button type="button" class="day-btn${on}" data-day="${d}"${hint}>${d}</button>`;
+      })
+      .join("");
+    el.innerHTML = '<span class="label">Day</span>' + buttons;
+  }
+
+  function syncUrl() {
+    const params = new URLSearchParams();
+    if (state.query) params.set("q", state.query);
+    if (state.day !== "All") params.set("day", state.day);
+    const qs = params.toString();
+    history.replaceState(null, "", qs ? `?${qs}` : location.pathname);
+  }
+
+  function readUrl() {
+    const params = new URLSearchParams(location.search);
+    const q = params.get("q") || "";
+    const day = params.get("day") || "All";
+    state.query = q;
+    state.day = ALL_DAYS.includes(day) || day === "All" ? day : "All";
+    document.getElementById("search").value = q;
+  }
+
+  function applyFilters() {
+    let visibleTargetsN = 0;
+    let visibleVideosN = 0;
+    let visibleGroupsN = 0;
+
+    document.querySelectorAll("#list .group").forEach((section) => {
+      const gi = Number(section.dataset.gi);
+      const g = GROUPS[gi];
+      const kids = visibleTargets(g);
+      const kidSet = new Set(kids);
+
+      let childVisible = 0;
+      section.querySelectorAll("tbody tr").forEach((tr) => {
+        const ti = Number(tr.dataset.ti);
+        const t = g.targets[ti];
+        const ok = kidSet.has(t);
+        tr.hidden = !ok;
+        if (ok) {
+          childVisible += 1;
+          visibleTargetsN += 1;
+          visibleVideosN += t.videos?.length || 0;
+          tr.querySelector("td:last-child").innerHTML = renderDays(t.days);
+        }
+      });
+
+      const show = groupVisible(g);
+      section.hidden = !show;
+      if (show) {
+        visibleGroupsN += 1;
+        // Count group-level videos when group is shown and matches day
+        if (dayHit(g.days) && queryHit(normalize([g.name || "", videoHay(g.videos)].join(" ")))) {
+          visibleVideosN += g.videos?.length || 0;
+        }
+        const daysEl = section.querySelector(".group-days");
+        if (daysEl) daysEl.innerHTML = renderDays(g.days);
+      }
+
+      // If group shown only via children, still ok; if no children and no self — already hidden
+      void childVisible;
+    });
+
+    const totalT = countAllTargets();
+    const totalV = countAllVideos();
+    const filtered = !!(state.query || state.day !== "All");
+    const dayLabel = state.day === "All" ? "" : ` · ${state.day}`;
+
+    document.getElementById("count").textContent = filtered
+      ? `Showing ${visibleGroupsN} group${visibleGroupsN === 1 ? "" : "s"} · ${visibleTargetsN} target${visibleTargetsN === 1 ? "" : "s"} · ${visibleVideosN} Short${visibleVideosN === 1 ? "" : "s"}${dayLabel}`
+      : `${GROUPS.length} group${GROUPS.length === 1 ? "" : "s"} · ${totalT} target${totalT === 1 ? "" : "s"} · ${totalV} Short${totalV === 1 ? "" : "s"}`;
+
+    document.getElementById("reset-filters").classList.toggle("visible", filtered);
+    document.getElementById("clear-search").classList.toggle("visible", !!state.query);
+    document.querySelectorAll(".day-btn").forEach((btn) => {
+      btn.classList.toggle("on", btn.dataset.day === state.day);
+    });
+
+    const empty = visibleGroupsN === 0;
+    document.getElementById("list").style.display = empty ? "none" : "";
+    document.getElementById("empty").classList.toggle("visible", empty);
+    document.getElementById("empty-msg").textContent =
+      state.day !== "All" && !state.query
+        ? `Nothing scheduled for ${state.day} yet.`
+        : "Try another search or day.";
+
+    syncUrl();
+  }
+
+  function renderList() {
+    document.getElementById("list").innerHTML = GROUPS.map((g, i) => renderGroup(g, i)).join("");
+  }
+
+  function setDay(day) {
+    state.day = day === state.day && day !== "All" ? "All" : day;
+    applyFilters();
+  }
+
+  function resetFilters() {
+    state.query = "";
+    state.day = "All";
+    document.getElementById("search").value = "";
+    applyFilters();
+  }
+
+  readUrl();
+  buildDayButtons();
+  renderList();
+  applyFilters();
+
+  document.getElementById("search").addEventListener("input", (e) => {
+    state.query = e.target.value;
+    applyFilters();
+  });
+
+  document.getElementById("clear-search").addEventListener("click", () => {
+    state.query = "";
+    document.getElementById("search").value = "";
+    document.getElementById("search").focus();
+    applyFilters();
+  });
+
+  document.getElementById("day-filters").addEventListener("click", (e) => {
+    const btn = e.target.closest(".day-btn");
+    if (btn) setDay(btn.dataset.day);
+  });
+
+  document.getElementById("list").addEventListener("click", (e) => {
+    const chip = e.target.closest(".day-chip");
+    if (chip) setDay(chip.dataset.day);
+  });
+
+  document.getElementById("reset-filters").addEventListener("click", resetFilters);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "/" && document.activeElement?.tagName !== "INPUT") {
+      e.preventDefault();
+      document.getElementById("search").focus();
+    }
+    if (e.key === "Escape" && (state.query || state.day !== "All")) resetFilters();
+  });
+</script>
+</body>
+</html>
