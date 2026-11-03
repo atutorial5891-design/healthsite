@@ -17,14 +17,12 @@
     font-family:'Inter',system-ui,sans-serif; font-size:15px; line-height:1.6;
   }
   .top { background:#0f172a; color:#fff; padding:28px 16px 24px; }
-  .top .wrap { max-width:960px; margin:0 auto; }
+  .top .wrap { max-width:1080px; margin:0 auto; }
   .top a { color:#a7f3d0; text-decoration:none; font-size:.8rem; font-weight:600; }
   .top a:hover { color:#fff; }
-  .top h1 {
-    margin:.5rem 0 .25rem; font-size:1.9rem; font-weight:900; letter-spacing:-.02em;
-  }
+  .top h1 { margin:.5rem 0 .25rem; font-size:1.9rem; font-weight:900; letter-spacing:-.02em; }
   .top .sub { color:#cbd5e1; margin:0; }
-  .wrap-main { max-width:960px; margin:0 auto; padding:20px 16px 60px; }
+  .wrap-main { max-width:1080px; margin:0 auto; padding:20px 16px 60px; }
 
   .filters {
     position:sticky; top:0; z-index:20;
@@ -60,11 +58,10 @@
   .day-btn {
     appearance:none; border:1px solid var(--line); background:#fff; color:var(--muted);
     font:inherit; font-size:.75rem; font-weight:700; padding:.4rem .75rem;
-    border-radius:9999px; cursor:pointer; transition:background .12s, color .12s, border-color .12s;
+    border-radius:9999px; cursor:pointer;
   }
   .day-btn:hover { border-color:#94a3b8; color:var(--ink); }
   .day-btn.on { background:#0f172a; border-color:#0f172a; color:#fff; }
-  .day-btn:focus-visible { outline:2px solid #a7f3d0; outline-offset:2px; }
 
   .meta-row {
     display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center;
@@ -73,8 +70,7 @@
   .count { color:var(--muted); font-size:.85rem; margin:0; }
   .reset-btn {
     appearance:none; border:none; background:transparent; color:var(--accent);
-    font:inherit; font-size:.8rem; font-weight:700; cursor:pointer; padding:0;
-    display:none;
+    font:inherit; font-size:.8rem; font-weight:700; cursor:pointer; padding:0; display:none;
   }
   .reset-btn.visible { display:inline; }
   .reset-btn:hover { text-decoration:underline; }
@@ -86,21 +82,29 @@
   }
   .group[hidden] { display:none; }
   .group-head {
-    display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1.6fr) minmax(120px,.7fr);
-    gap:12px 16px; padding:14px 16px; background:linear-gradient(180deg, #f1f5f9 0%, #fff 100%);
+    display:grid; grid-template-columns:minmax(160px,1fr) minmax(0,2fr) minmax(120px,.7fr);
+    gap:12px 16px; padding:14px 16px;
+    background:linear-gradient(180deg, #f1f5f9 0%, #fff 100%);
     border-bottom:1px solid var(--line); align-items:start;
   }
   .group-title {
     margin:0; font-size:1.05rem; font-weight:900; letter-spacing:-.02em; color:var(--ink);
   }
+  .yt-name {
+    color:inherit; text-decoration:underline dotted; text-decoration-color:#94a3b8;
+    text-underline-offset:3px; cursor:pointer; background:none; border:none;
+    padding:0; font:inherit; font-weight:inherit; text-align:left;
+  }
+  .yt-name:hover { color:#b91c1c; text-decoration-color:#b91c1c; }
   .group-meta {
-    margin:.25rem 0 0; font-size:.72rem; font-weight:700; color:var(--muted);
+    margin:.3rem 0 0; font-size:.72rem; font-weight:700; color:var(--muted);
     text-transform:uppercase; letter-spacing:.04em;
   }
-  .group.ungrouped .group-head {
-    background:#fff; padding:12px 16px 8px; border-bottom:none;
+  .find-link {
+    display:inline-flex; align-items:center; gap:4px; margin-top:6px;
+    font-size:.72rem; font-weight:700; color:#b91c1c; text-decoration:none;
   }
-  .group.ungrouped .group-title { font-size:.8rem; color:var(--muted); font-weight:700; }
+  .find-link:hover { text-decoration:underline; }
 
   .targets { width:100%; border-collapse:collapse; font-size:.875rem; }
   .targets th {
@@ -108,24 +112,17 @@
     color:var(--muted); text-transform:uppercase; letter-spacing:.04em;
     background:var(--head); border-bottom:1px solid var(--line);
   }
-  .targets td {
-    padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:top;
-  }
+  .targets td { padding:12px 16px; border-bottom:1px solid var(--line); vertical-align:top; }
   .targets tr:last-child td { border-bottom:none; }
   .targets tr[hidden] { display:none; }
-  .targets .col-muscle { width:28%; }
-  .targets .col-days { width:22%; }
+  .col-muscle { width:26%; }
+  .col-days { width:18%; }
 
-  .muscle-name {
-    font-weight:800; font-size:.95rem; color:#065f46; letter-spacing:-.01em;
-  }
-  .muscle-nest {
-    display:flex; align-items:flex-start; gap:8px;
-  }
+  .muscle-name { font-weight:800; font-size:.95rem; color:#065f46; letter-spacing:-.01em; }
+  .muscle-nest { display:flex; align-items:flex-start; gap:8px; }
   .nest-line {
     flex-shrink:0; width:12px; height:14px; margin-top:4px;
-    border-left:2px solid #cbd5e1; border-bottom:2px solid #cbd5e1;
-    border-radius:0 0 0 4px;
+    border-left:2px solid #cbd5e1; border-bottom:2px solid #cbd5e1; border-radius:0 0 0 4px;
   }
 
   .day-chip {
@@ -138,38 +135,34 @@
 
   .videos { display:flex; flex-wrap:wrap; gap:10px; }
   .yt-card {
-    display:block; width:110px; text-decoration:none; color:inherit;
+    display:block; width:104px; text-decoration:none; color:inherit;
     border-radius:10px; overflow:hidden; border:1px solid var(--line);
     background:#fff; transition:transform .15s ease, box-shadow .15s ease;
   }
   .yt-card:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(15,23,42,.12); }
-  .yt-card.group-vid { width:120px; border-color:#a7f3d0; }
-  .yt-card .thumb {
-    position:relative; aspect-ratio:9/16; background:#0f172a; overflow:hidden;
-  }
+  .yt-card.group-vid { border-color:#a7f3d0; width:110px; }
+  .yt-card .thumb { position:relative; aspect-ratio:9/16; background:#0f172a; overflow:hidden; }
   .yt-card .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
   .yt-card .play {
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     background:rgba(0,0,0,.28);
   }
   .yt-card .label {
-    display:block; padding:6px 8px; font-size:.68rem; font-weight:600;
+    display:block; padding:6px 8px; font-size:.66rem; font-weight:600;
     color:var(--muted); line-height:1.3;
   }
   .empty-videos { color:#94a3b8; font-size:.8rem; font-weight:600; }
 
   .empty-state {
     display:none; text-align:center; padding:2.5rem 1rem;
-    border:1px dashed var(--line); border-radius:12px; background:var(--card);
-    color:var(--muted);
+    border:1px dashed var(--line); border-radius:12px; background:var(--card); color:var(--muted);
   }
   .empty-state.visible { display:block; }
   .empty-state strong { display:block; color:var(--ink); font-size:1rem; margin-bottom:.35rem; }
 
-  @media (max-width:720px) {
+  @media (max-width:800px) {
     .group-head { grid-template-columns:1fr; }
-    .yt-card, .yt-card.group-vid { width:100px; }
-    .targets th:nth-child(2), .targets td:nth-child(2) { min-width:140px; }
+    .yt-card, .yt-card.group-vid { width:96px; }
   }
 </style>
 </head>
@@ -183,7 +176,7 @@
     <a href="../../library/">Exercise Library</a>
   </p>
   <h1>Muscle Targets</h1>
-  <p class="sub">Grouped workouts · specific muscles · Shorts · training days</p>
+  <p class="sub">24 library muscles + Lower Abs · Shorts · plan days · tap a name to search YouTube</p>
 </div></header>
 
 <div class="wrap-main">
@@ -217,52 +210,643 @@
 
 <script>
   /**
-   * Data model
-   * ----------
-   * GROUPS: array of sections.
-   *   name:    group title (null/"" = ungrouped standalone targets)
-   *   days:    optional group-level training days
-   *   videos:  optional overview Shorts for the whole group
-   *   targets: specific muscles under the group (may be empty)
-   *
-   * A target: { muscle, days, videos: [{ url, title? }] }
-   * Leave `name` empty for workouts that don't belong to a group.
+   * Sourced from Exercise Library muscle-focus cards + Dual-Muscle plan days.
+   * Tap a group/muscle name → YouTube Shorts search using that entry's `find` query.
+   * Abs Workout overview Shorts are curated here; exercise Shorts live under each muscle.
    */
   const GROUPS = [
-    {
-      name: "Abs Workout",
-      days: ["Tue", "Thu"],
-      videos: [
-        {
-          url: "https://www.youtube.com/shorts/KrbHV8I7-fU",
-          title: "3 Minute Killer Abs routine",
-        },
-        {
-          url: "https://youtube.com/shorts/NpZmTKKudQ8?si=IHXSkXPyhAxb4u0X",
-          title: "10 ideas to fire up your Abs at home",
-        },
-        {
-          url: "https://youtube.com/shorts/lrolFBYflLA?si=56mhRDmFDQTKMBob",
-          title: "Six pack abs workout for all fitness levels",
-        },
-      ],
-      targets: [
-        {
-          muscle: "Lower Abs",
-          days: ["Tue", "Thu"],
-          videos: [
-            {
-              url: "https://youtube.com/shorts/VWK9kgM2hBE?si=YiBeXbSJ2r8hoy-Z",
-              title: "Best exercise for the Lower Abs",
-            },
-          ],
-        },
-      ],
-    },
-  ];
-
+  {
+    "name": "Abs Workout",
+    "find": "abs workout rectus transverse abdominis beginner shorts",
+    "days": [
+      "Mon",
+      "Tue",
+      "Thu",
+      "Sat"
+    ],
+    "videos": [
+      {
+        "url": "https://www.youtube.com/shorts/KrbHV8I7-fU",
+        "title": "3 Minute Killer Abs routine"
+      },
+      {
+        "url": "https://youtube.com/shorts/NpZmTKKudQ8?si=IHXSkXPyhAxb4u0X",
+        "title": "10 ideas to fire up your Abs at home"
+      },
+      {
+        "url": "https://youtube.com/shorts/lrolFBYflLA?si=56mhRDmFDQTKMBob",
+        "title": "Six pack abs workout for all fitness levels"
+      },
+      {
+        "url": "https://youtube.com/shorts/xjN2Pn6OkJk?si=6kHXfDiZauTZortx",
+        "title": "Abs workout Short"
+      }
+    ],
+    "targets": [
+      {
+        "muscle": "Abs (rectus & deep core)",
+        "find": "abs workout rectus transverse abdominis beginner shorts",
+        "days": [
+          "Tue",
+          "Sat"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/1828MgejVTI",
+            "title": "Full home abs workout (6 moves, no equipment)"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/Bvhz7Rfnrr4",
+            "title": "Cable crunch (3-day plan)"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/Aoipu_fl3HA",
+            "title": "Dead bug"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/v25dawSzRTM",
+            "title": "Plank"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/eLCBC6fjtQU",
+            "title": "Dragon flag for abs (advanced)"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/SSPqp5VueEo",
+            "title": "Ranking abs exercises (1 = best)"
+          }
+        ]
+      },
+      {
+        "muscle": "Lower Abs",
+        "find": "lower abs workout shorts",
+        "days": [
+          "Tue",
+          "Thu"
+        ],
+        "videos": [
+          {
+            "url": "https://youtube.com/shorts/VWK9kgM2hBE?si=YiBeXbSJ2r8hoy-Z",
+            "title": "Best exercise for the Lower Abs"
+          }
+        ]
+      },
+      {
+        "muscle": "Obliques & side core",
+        "find": "obliques side core workout anti rotation shorts",
+        "days": [
+          "Sat"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/V2cUr7zG4hw",
+            "title": "Side plank"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/K2VljzCC16g",
+            "title": "Plank + side plank (3-day plan demo)"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/6q2n6pxG7jE",
+            "title": "Pallof press"
+          }
+        ]
+      },
+      {
+        "muscle": "Lower back",
+        "find": "lower back strengthening erector spinae safe shorts",
+        "days": [
+          "Mon",
+          "Sat"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/_1j_HWknGLg",
+            "title": "Bird dog"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/Fsve8fkMGcY",
+            "title": "Romanian deadlift (DB)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Arms",
+    "find": "arms workout biceps triceps forearms shorts",
+    "days": [
+      "Wed",
+      "Fri"
+    ],
+    "videos": [],
+    "targets": [
+      {
+        "muscle": "Forearms",
+        "find": "forearm workout wrist flexors extensors grip shorts",
+        "days": [
+          "Fri"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/6eAuMx5M0ho",
+            "title": "Forearm builder (all forearm muscles)"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/xY8c6LcLRao",
+            "title": "Wrist curl (3-day plan)"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/shqAI51IP74",
+            "title": "Reverse wrist curl (3-day plan)"
+          }
+        ]
+      },
+      {
+        "muscle": "Triceps",
+        "find": "triceps workout all three heads shorts",
+        "days": [
+          "Wed"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/NvZKjiZ8NYc",
+            "title": "Rope pushdown"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/b_r_LW4HEcM",
+            "title": "Overhead DB extension"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/NZAVsAk-Vgc",
+            "title": "Overhead extension (3-day plan demo)"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/eZSeVSev8KI",
+            "title": "Diamond push-up"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/MTR0RHCX_cw",
+            "title": "Ranking tricep exercises (1 = best)"
+          }
+        ]
+      },
+      {
+        "muscle": "Biceps",
+        "find": "biceps workout both heads brachialis dumbbells shorts",
+        "days": [
+          "Fri"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/sAq_ocpRh_I",
+            "title": "DB curl"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/zC3nLlEvin4",
+            "title": "Hammer curl"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/vSdq3MbvmlU",
+            "title": "Ranking bicep exercises (1 = best)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Chest & Shoulders",
+    "find": "chest shoulders workout shorts",
+    "days": [
+      "Tue",
+      "Wed"
+    ],
+    "videos": [],
+    "targets": [
+      {
+        "muscle": "Chest",
+        "find": "chest workout upper mid lower dumbbells shorts",
+        "days": [
+          "Wed"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/2yFmbGXtFw8",
+            "title": "Full chest workout for beginners at home (dumbbells only)"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/8fXfwG4ftaQ",
+            "title": "Incline DB press"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/Qu7-ceCvq7w",
+            "title": "Machine chest press"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/8laBBEpDgac",
+            "title": "Flat bench press"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/yrpiK8R4Vqo",
+            "title": "Cable chest fly"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/1nino-CA9EE",
+            "title": "Ranking chest exercises (1 = best)"
+          }
+        ]
+      },
+      {
+        "muscle": "Serratus anterior",
+        "find": "serratus anterior exercises push up plus wall slide shorts",
+        "days": [
+          "Wed"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/WSqc-58sBCw",
+            "title": "Serratus anterior strengthening exercises"
+          }
+        ]
+      },
+      {
+        "muscle": "Shoulders (delts)",
+        "find": "shoulder workout front side rear delts dumbbells shorts",
+        "days": [
+          "Tue",
+          "Wed"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/Myim1WH6Qec",
+            "title": "Lateral raise"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/bQPhGIJJ-jQ",
+            "title": "DB shoulder press"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/vGIY3D9digk",
+            "title": "Rear delt fly"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/FnHeJ3Z3d1w",
+            "title": "Front raise (optional)"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/wRlIuexTowA",
+            "title": "Arnold press (optional)"
+          }
+        ]
+      },
+      {
+        "muscle": "Rotator cuff & shoulder stabilisers",
+        "find": "rotator cuff exercises band shoulder health shorts",
+        "days": [
+          "Tue"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/MChHOiaCR7s",
+            "title": "Face pull (shoulder health)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Back & Neck",
+    "find": "back workout lats upper back traps shorts",
+    "days": [
+      "Tue",
+      "Fri"
+    ],
+    "videos": [],
+    "targets": [
+      {
+        "muscle": "Lats",
+        "find": "lat workout pulldown form shorts",
+        "days": [
+          "Fri"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/z-lxcsIN4T4",
+            "title": "Lat pulldown"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/Z1Je4hIcCz0",
+            "title": "Single-arm DB row"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/eKJUJ2eFPUY",
+            "title": "Straight-arm pulldown"
+          }
+        ]
+      },
+      {
+        "muscle": "Upper back (rhomboids & mid-traps)",
+        "find": "upper back rhomboids mid traps workout shorts",
+        "days": [
+          "Tue",
+          "Fri"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/PeMw-NWlNY8",
+            "title": "Seated cable row"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/tahGpBijHkY",
+            "title": "Chest-supported row"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/vGIY3D9digk",
+            "title": "Reverse / rear delt fly"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/MChHOiaCR7s",
+            "title": "Face pull"
+          }
+        ]
+      },
+      {
+        "muscle": "Upper traps",
+        "find": "trap workout dumbbell shrug form shorts",
+        "days": [
+          "Fri"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/rt17lmnaLSM",
+            "title": "Farmer's carry"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/cJRVVxmytaM",
+            "title": "Dumbbell shrug (optional)"
+          }
+        ]
+      },
+      {
+        "muscle": "Neck & deep neck flexors",
+        "find": "chin tuck deep neck flexor exercise posture shorts",
+        "days": [
+          "Tue"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/IWrjp_B4ZgI",
+            "title": "Chin tucks for forward head posture"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/SGbp8EpPvh8",
+            "title": "Chin tuck form cues (subtle, keep airway open)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Thighs, Glutes & Hips",
+    "find": "legs glutes hips workout shorts",
+    "days": [
+      "Mon",
+      "Tue",
+      "Thu",
+      "Sat"
+    ],
+    "videos": [],
+    "targets": [
+      {
+        "muscle": "Quads",
+        "find": "quad workout knee friendly shorts",
+        "days": [
+          "Mon"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/k0EQGAaYI48",
+            "title": "The muscle to strengthen for your knees"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/jA9tsYbA7Ms",
+            "title": "Leg press"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/MeIiIdhvXT4",
+            "title": "Goblet squat"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/W6o1A0bEnmU",
+            "title": "Back squat (optional / advanced)"
+          }
+        ]
+      },
+      {
+        "muscle": "Hamstrings",
+        "find": "hamstring workout RDL curl form shorts",
+        "days": [
+          "Mon"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/7PE3MlvGAts",
+            "title": "Seated hamstring curl"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/bgfHeL6eR9Q",
+            "title": "Hamstring curl (3-day plan demo)"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/Fsve8fkMGcY",
+            "title": "Romanian deadlift (DB)"
+          }
+        ]
+      },
+      {
+        "muscle": "Glutes",
+        "find": "glute max workout hip thrust bridge at home shorts",
+        "days": [
+          "Mon"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/hm_UVD6SUeA",
+            "title": "Hip thrust"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/X_IGw8U_e38",
+            "title": "Glute bridge"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/hG_fz1s9M10",
+            "title": "Glute bridge variations"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/svzEf5AVEA4",
+            "title": "Glute bridge form fixes (no more bad bridges)"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/iahCy86m-Ps",
+            "title": "Glute workout at home"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/ruAfITJBa9A",
+            "title": "At-home glute workout (no gym)"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/S1_eZIIZlIc",
+            "title": "Hyperextensions for glute focus"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/Fsve8fkMGcY",
+            "title": "Romanian deadlift (DB)"
+          }
+        ]
+      },
+      {
+        "muscle": "Glute medius (side hips)",
+        "find": "glute medius exercises runners hip stability shorts",
+        "days": [
+          "Mon",
+          "Thu"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/watch?v=AWVxYHAkEwE",
+            "title": "15 min side glute workout (no equipment)"
+          }
+        ]
+      },
+      {
+        "muscle": "Hip rotators (deep glutes)",
+        "find": "hip external rotators strengthening piriformis 90 90 shorts",
+        "days": [
+          "Thu"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/EayTGEq1nEQ",
+            "title": "Clamshell"
+          }
+        ]
+      },
+      {
+        "muscle": "Adductors (inner thigh)",
+        "find": "adductor strengthening exercises inner thigh shorts",
+        "days": [
+          "Mon"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/njuekVcLXKA",
+            "title": "3 moves to loosen tight inner thighs"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/ayj48fw3GQM",
+            "title": "Copenhagen side plank progressions (variation)"
+          }
+        ]
+      },
+      {
+        "muscle": "Hip flexors",
+        "find": "hip flexor strengthening and stretching runners shorts",
+        "days": [
+          "Tue",
+          "Sat"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/RO57Szu8hx4",
+            "title": "Hip flexor march (runners)"
+          },
+          {
+            "url": "https://www.youtube.com/watch?v=X7eo5mzI8xg",
+            "title": "Half-kneeling hip flexor stretch"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/7lGIfjasuNo",
+            "title": "Hip flexor stretch"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/bfJabpwvP-g",
+            "title": "Half-kneeling hip flexor stretch"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/Aoipu_fl3HA",
+            "title": "Dead bug (hip flexor control)"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/5YLmdfxXEfs",
+            "title": "Standing hip & waist trio"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Calves, Shins & Feet",
+    "find": "calves shins ankles runners workout shorts",
+    "days": [
+      "Thu"
+    ],
+    "videos": [],
+    "targets": [
+      {
+        "muscle": "Calves",
+        "find": "calf workout gastrocnemius soleus shorts",
+        "days": [
+          "Thu"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/8sT7Ne3Kzwc",
+            "title": "Standing calf raise"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/JbyjNymZOt0",
+            "title": "Seated calf raise"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/g3a-VzkmFYg",
+            "title": "Single-leg calf raise"
+          }
+        ]
+      },
+      {
+        "muscle": "Shins (tibialis anterior)",
+        "find": "tibialis anterior raise shin splints shorts",
+        "days": [
+          "Thu"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/h57xceuiO40",
+            "title": "Tibialis raise"
+          }
+        ]
+      },
+      {
+        "muscle": "Ankle & foot stabilisers",
+        "find": "ankle stability peroneals short foot exercise runners shorts",
+        "days": [
+          "Thu"
+        ],
+        "videos": [
+          {
+            "url": "https://www.youtube.com/shorts/HwJUXz6jnkg",
+            "title": "Single-leg balance"
+          },
+          {
+            "url": "https://www.youtube.com/shorts/g3a-VzkmFYg",
+            "title": "Single-leg calf raise"
+          }
+        ]
+      }
+    ]
+  }
+];
   const ALL_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
   const state = { query: "", day: "All" };
 
   function videoId(url) {
@@ -283,6 +867,12 @@
     return id ? `https://img.youtube.com/vi/${encodeURIComponent(id)}/mqdefault.jpg` : "";
   }
 
+  function ytSearchUrl(find) {
+    const q = String(find || "").trim();
+    if (!q) return "";
+    return `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
+  }
+
   function escapeHtml(s) {
     return String(s)
       .replace(/&/g, "&amp;")
@@ -300,12 +890,7 @@
   }
 
   function targetHay(t) {
-    return normalize([t.muscle, videoHay(t.videos), (t.days || []).join(" ")].join(" "));
-  }
-
-  function groupHay(g) {
-    const kids = (g.targets || []).map(targetHay).join(" ");
-    return normalize([g.name || "", videoHay(g.videos), (g.days || []).join(" "), kids].join(" "));
+    return normalize([t.muscle, t.find, videoHay(t.videos), (t.days || []).join(" ")].join(" "));
   }
 
   function dayHit(days) {
@@ -317,34 +902,23 @@
     return !q || text.includes(q);
   }
 
-  /** Which targets in a group survive the current filters */
   function visibleTargets(g) {
     const q = normalize(state.query);
-    const groupNameHit = q && normalize(g.name || "").includes(q);
-    const groupVideoHit = q && normalize(videoHay(g.videos)).includes(q);
-
+    const groupHit = q && normalize([g.name || "", g.find || "", videoHay(g.videos)].join(" ")).includes(q);
     return (g.targets || []).filter((t) => {
       if (!dayHit(t.days)) return false;
       if (!q) return true;
-      // If query matches the group itself, keep day-matching children
-      if (groupNameHit || groupVideoHit) return true;
+      if (groupHit) return true;
       return targetHay(t).includes(q);
     });
   }
 
-  /** Show group if its own days/videos match, or any child remains */
   function groupVisible(g) {
     const kids = visibleTargets(g);
-    const selfDay = dayHit(g.days);
-    const selfQuery = queryHit(normalize([g.name || "", videoHay(g.videos)].join(" ")));
-    const hasSelfContent = (g.videos && g.videos.length) || g.name;
-
     if (kids.length) return true;
-    // Group-only row (no matching kids): show if group itself matches filters
-    if (hasSelfContent && selfDay && selfQuery) return true;
-    // Day filter on group with kids that don't match day — hide
-    if (state.day !== "All" && !selfDay && !kids.length) return false;
-    return false;
+    const selfDay = dayHit(g.days);
+    const selfQuery = queryHit(normalize([g.name || "", g.find || "", videoHay(g.videos)].join(" ")));
+    return !!(g.name && selfDay && selfQuery && ((g.videos && g.videos.length) || !g.targets?.length));
   }
 
   function allDaysUsed() {
@@ -368,105 +942,86 @@
     }, 0);
   }
 
+  function nameButton(label, find, className) {
+    const safe = escapeHtml(label);
+    const q = escapeHtml(find || "");
+    if (!find) return `<span class="${className}">${safe}</span>`;
+    return `<button type="button" class="yt-name ${className}" data-find="${q}" title="Search YouTube: ${q}">${safe}</button>`;
+  }
+
+  function findMoreLink(find) {
+    if (!find) return "";
+    const href = escapeHtml(ytSearchUrl(find));
+    return `<a class="find-link" href="${href}" target="_blank" rel="noopener noreferrer">Find more on YouTube →</a>`;
+  }
+
   function renderVideos(videos, extraClass) {
-    if (!videos || !videos.length) {
-      return '<span class="empty-videos">No Shorts yet</span>';
-    }
-    const cls = extraClass ? ` yt-card ${extraClass}` : " yt-card";
+    if (!videos || !videos.length) return '<span class="empty-videos">No Shorts yet</span>';
+    const cls = extraClass ? `yt-card ${extraClass}` : "yt-card";
     return (
       '<div class="videos">' +
-      videos
-        .map((v) => {
-          const id = videoId(v.url);
-          const thumb = thumbUrl(id);
-          const label = escapeHtml(v.title || "Watch Short");
-          const href = escapeHtml(v.url);
-          const img = thumb ? `<img src="${thumb}" alt="" loading="lazy" />` : "";
-          return (
-            `<a class="${cls.trim()}" href="${href}" target="_blank" rel="noopener noreferrer">` +
-            `<span class="thumb">${img}` +
-            `<span class="play"><svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span>` +
-            `</span><span class="label">${label}</span></a>`
-          );
-        })
-        .join("") +
+      videos.map((v) => {
+        const id = videoId(v.url);
+        const thumb = thumbUrl(id);
+        const label = escapeHtml(v.title || "Watch Short");
+        const href = escapeHtml(v.url);
+        const img = thumb ? `<img src="${thumb}" alt="" loading="lazy" />` : "";
+        return (
+          `<a class="${cls}" href="${href}" target="_blank" rel="noopener noreferrer">` +
+          `<span class="thumb">${img}<span class="play"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg></span></span>` +
+          `<span class="label">${label}</span></a>`
+        );
+      }).join("") +
       "</div>"
     );
   }
 
   function renderDays(days) {
     if (!days || !days.length) return '<span class="empty-videos">TBD</span>';
-    return days
-      .map((d) => {
-        const on = state.day === d ? " active-filter" : "";
-        return `<button type="button" class="day-chip${on}" data-day="${escapeHtml(d)}" title="Show ${escapeHtml(d)} only">${escapeHtml(d)}</button>`;
-      })
-      .join("");
+    return days.map((d) => {
+      const on = state.day === d ? " active-filter" : "";
+      return `<button type="button" class="day-chip${on}" data-day="${escapeHtml(d)}" title="Show ${escapeHtml(d)} only">${escapeHtml(d)}</button>`;
+    }).join("");
   }
 
   function renderGroup(g, gi) {
-    const named = !!(g.name && String(g.name).trim());
     const kids = g.targets || [];
-    const showNest = named && kids.length > 0;
-
     const head =
       `<div class="group-head">` +
-      `<div>` +
-      `<h2 class="group-title">${escapeHtml(named ? g.name : "Ungrouped")}</h2>` +
-      (named
-        ? `<p class="group-meta">${kids.length} specific target${kids.length === 1 ? "" : "s"}</p>`
-        : "") +
-      `</div>` +
-      `<div>${named || (g.videos && g.videos.length) ? renderVideos(g.videos, "group-vid") : '<span class="empty-videos">—</span>'}</div>` +
+      `<div>${nameButton(g.name, g.find, "group-title")}<p class="group-meta">${kids.length} target${kids.length === 1 ? "" : "s"}</p>${findMoreLink(g.find)}</div>` +
+      `<div>${renderVideos(g.videos, "group-vid")}</div>` +
       `<div class="group-days">${renderDays(g.days)}</div>` +
       `</div>`;
 
-    let body = "";
-    if (kids.length) {
-      body =
-        `<table class="targets">` +
-        `<thead><tr>` +
-        `<th class="col-muscle">Specific muscle</th>` +
-        `<th>YouTube Shorts</th>` +
-        `<th class="col-days">Training days</th>` +
-        `</tr></thead><tbody>` +
-        kids
-          .map((t, ti) => {
-            const nameCell = showNest
-              ? `<div class="muscle-nest"><span class="nest-line" aria-hidden="true"></span><div class="muscle-name">${escapeHtml(t.muscle)}</div></div>`
-              : `<div class="muscle-name">${escapeHtml(t.muscle)}</div>`;
-            return (
-              `<tr data-gi="${gi}" data-ti="${ti}">` +
-              `<td>${nameCell}</td>` +
-              `<td>${renderVideos(t.videos)}</td>` +
-              `<td>${renderDays(t.days)}</td>` +
-              `</tr>`
-            );
-          })
-          .join("") +
-        `</tbody></table>`;
-    }
+    const body =
+      `<table class="targets"><thead><tr>` +
+      `<th class="col-muscle">Specific muscle</th><th>YouTube Shorts</th><th class="col-days">Training days</th>` +
+      `</tr></thead><tbody>` +
+      kids.map((t, ti) => {
+        const nameCell =
+          `<div class="muscle-nest"><span class="nest-line" aria-hidden="true"></span>` +
+          `<div>${nameButton(t.muscle, t.find, "muscle-name")}${findMoreLink(t.find)}</div></div>`;
+        return (
+          `<tr data-gi="${gi}" data-ti="${ti}">` +
+          `<td>${nameCell}</td>` +
+          `<td>${renderVideos(t.videos)}</td>` +
+          `<td>${renderDays(t.days)}</td></tr>`
+        );
+      }).join("") +
+      `</tbody></table>`;
 
-    return (
-      `<section class="group${named ? "" : " ungrouped"}" data-gi="${gi}">` +
-      (named || (g.videos && g.videos.length) ? head : "") +
-      body +
-      `</section>`
-    );
+    return `<section class="group" data-gi="${gi}">${head}${body}</section>`;
   }
 
   function buildDayButtons() {
-    const el = document.getElementById("day-filters");
     const used = allDaysUsed();
-    const buttons = ["All", ...ALL_DAYS]
-      .map((d) => {
-        const on = state.day === d ? " on" : "";
-        const has = d === "All" || used.has(d);
-        const hint = d !== "All" && !has ? ' title="No targets on this day yet"' : "";
-        return `<button type="button" class="day-btn${on}" data-day="${d}"${hint}>${d}</button>`;
-      })
-      .join("");
-    el.innerHTML = '<span class="label">Day</span>' + buttons;
+    const buttons = ["All", ...ALL_DAYS].map((d) => {
+      const on = state.day === d ? " on" : "";
+      const has = d === "All" || used.has(d);
+      const hint = d !== "All" && !has ? ' title="No targets on this day yet"' : "";
+      return `<button type="button" class="day-btn${on}" data-day="${d}"${hint}>${d}</button>`;
+    }).join("");
+    document.getElementById("day-filters").innerHTML = '<span class="label">Day</span>' + buttons;
   }
 
   function syncUrl() {
@@ -479,11 +1034,10 @@
 
   function readUrl() {
     const params = new URLSearchParams(location.search);
-    const q = params.get("q") || "";
+    state.query = params.get("q") || "";
     const day = params.get("day") || "All";
-    state.query = q;
     state.day = ALL_DAYS.includes(day) || day === "All" ? day : "All";
-    document.getElementById("search").value = q;
+    document.getElementById("search").value = state.query;
   }
 
   function applyFilters() {
@@ -497,14 +1051,12 @@
       const kids = visibleTargets(g);
       const kidSet = new Set(kids);
 
-      let childVisible = 0;
       section.querySelectorAll("tbody tr").forEach((tr) => {
         const ti = Number(tr.dataset.ti);
         const t = g.targets[ti];
         const ok = kidSet.has(t);
         tr.hidden = !ok;
         if (ok) {
-          childVisible += 1;
           visibleTargetsN += 1;
           visibleVideosN += t.videos?.length || 0;
           tr.querySelector("td:last-child").innerHTML = renderDays(t.days);
@@ -515,26 +1067,19 @@
       section.hidden = !show;
       if (show) {
         visibleGroupsN += 1;
-        // Count group-level videos when group is shown and matches day
-        if (dayHit(g.days) && queryHit(normalize([g.name || "", videoHay(g.videos)].join(" ")))) {
-          visibleVideosN += g.videos?.length || 0;
-        }
+        if (dayHit(g.days)) visibleVideosN += g.videos?.length || 0;
         const daysEl = section.querySelector(".group-days");
         if (daysEl) daysEl.innerHTML = renderDays(g.days);
       }
-
-      // If group shown only via children, still ok; if no children and no self — already hidden
-      void childVisible;
     });
 
     const totalT = countAllTargets();
     const totalV = countAllVideos();
     const filtered = !!(state.query || state.day !== "All");
     const dayLabel = state.day === "All" ? "" : ` · ${state.day}`;
-
     document.getElementById("count").textContent = filtered
       ? `Showing ${visibleGroupsN} group${visibleGroupsN === 1 ? "" : "s"} · ${visibleTargetsN} target${visibleTargetsN === 1 ? "" : "s"} · ${visibleVideosN} Short${visibleVideosN === 1 ? "" : "s"}${dayLabel}`
-      : `${GROUPS.length} group${GROUPS.length === 1 ? "" : "s"} · ${totalT} target${totalT === 1 ? "" : "s"} · ${totalV} Short${totalV === 1 ? "" : "s"}`;
+      : `${GROUPS.length} groups · ${totalT} targets · ${totalV} Shorts`;
 
     document.getElementById("reset-filters").classList.toggle("visible", filtered);
     document.getElementById("clear-search").classList.toggle("visible", !!state.query);
@@ -549,7 +1094,6 @@
       state.day !== "All" && !state.query
         ? `Nothing scheduled for ${state.day} yet.`
         : "Try another search or day.";
-
     syncUrl();
   }
 
@@ -569,6 +1113,11 @@
     applyFilters();
   }
 
+  function openFind(find) {
+    const url = ytSearchUrl(find);
+    if (url) window.open(url, "_blank", "noopener,noreferrer");
+  }
+
   readUrl();
   buildDayButtons();
   renderList();
@@ -578,26 +1127,26 @@
     state.query = e.target.value;
     applyFilters();
   });
-
   document.getElementById("clear-search").addEventListener("click", () => {
     state.query = "";
     document.getElementById("search").value = "";
     document.getElementById("search").focus();
     applyFilters();
   });
-
   document.getElementById("day-filters").addEventListener("click", (e) => {
     const btn = e.target.closest(".day-btn");
     if (btn) setDay(btn.dataset.day);
   });
-
   document.getElementById("list").addEventListener("click", (e) => {
+    const findBtn = e.target.closest(".yt-name");
+    if (findBtn) {
+      openFind(findBtn.dataset.find);
+      return;
+    }
     const chip = e.target.closest(".day-chip");
     if (chip) setDay(chip.dataset.day);
   });
-
   document.getElementById("reset-filters").addEventListener("click", resetFilters);
-
   document.addEventListener("keydown", (e) => {
     if (e.key === "/" && document.activeElement?.tagName !== "INPUT") {
       e.preventDefault();
