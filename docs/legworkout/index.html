@@ -13,6 +13,25 @@
   .top { background:#0f172a; color:#fff; padding:28px 16px 24px; }
   .top .wrap { max-width:1080px; margin:0 auto; }
   .top a { color:#a7f3d0; text-decoration:none; font-size:.8rem; font-weight:600; }
+  .top a:hover { color:#fff; }
+  .top-nav { display:flex; flex-wrap:wrap; gap:.5rem .75rem; align-items:center; margin:0 0 .35rem; }
+  .top-nav .sep { color:#475569; }
+  .top-dd { position:relative; }
+  .top-dd > summary {
+    list-style:none; cursor:pointer; color:#a7f3d0; font-size:.8rem; font-weight:600;
+  }
+  .top-dd > summary::-webkit-details-marker { display:none; }
+  .top-dd > summary::after { content:" ▾"; opacity:.7; font-size:.7rem; }
+  .top-dd > summary:hover { color:#fff; }
+  .top-dd.is-active > summary { color:#fff; }
+  .top-dd-menu {
+    position:absolute; top:calc(100% + 6px); left:0; z-index:40;
+    min-width:11rem; padding:.35rem; background:#1e293b; border:1px solid #475569;
+    border-radius:10px; box-shadow:0 10px 24px rgba(0,0,0,.35);
+  }
+  .top-dd-menu a { display:block; padding:.4rem .65rem; border-radius:6px; }
+  .top-dd-menu a:hover { background:#334155; color:#fff; }
+  .top-dd-menu a[aria-current="page"] { background:#059669; color:#fff; }
   .top h1 { border-top:none; padding-top:0; margin:.5rem 0 .25rem; font-size:1.9rem; font-weight:900; letter-spacing:-.02em; }
   .top .sub { color:#cbd5e1; margin:0; }
   .top .date { color:#94a3b8; font-size:.8rem; margin-top:.5rem; }
@@ -49,12 +68,26 @@
 </head>
 <body>
 <header class="top"><div class="wrap">
-  <p style="display:flex;flex-wrap:wrap;gap:.65rem 1rem;align-items:center;margin:0 0 .35rem">
+  <p class="top-nav">
     <a href="../../index.html">← Health site home</a>
-    <a href="../muscle-targets/">Muscle Targets</a>
+    <span class="sep" aria-hidden="true">|</span>
+    <details class="top-dd">
+      <summary>Library</summary>
+      <div class="top-dd-menu">
+        <a href="../../library/">Exercise Library</a>
+        <a href="../muscle-targets/">Muscle Targets</a>
+      </div>
+    </details>
+    <span class="sep" aria-hidden="true">|</span>
+    <details class="top-dd is-active">
+      <summary>Encyclopedia</summary>
+      <div class="top-dd-menu">
+        <a href="../legworkout/" aria-current="page">Leg Encyclopedia</a>
+        <a href="../chestworkout/">Chest Encyclopedia</a>
+      </div>
+    </details>
+    <span class="sep" aria-hidden="true">|</span>
     <a href="../../dual-muscle-plan/">Dual-Muscle Plan</a>
-    <a href="../../library/">Exercise Library</a>
-    <a href="../chestworkout/">Chest Encyclopedia</a>
   </p>
   <h1>Complete Lower-Body Training Encyclopedia</h1>
   <p class="sub">Anatomy, exercise library, machines, biomechanics,

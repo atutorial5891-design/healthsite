@@ -20,6 +20,24 @@
   .top .wrap { max-width:1080px; margin:0 auto; }
   .top a { color:#a7f3d0; text-decoration:none; font-size:.8rem; font-weight:600; }
   .top a:hover { color:#fff; }
+  .top-nav { display:flex; flex-wrap:wrap; gap:.5rem .75rem; align-items:center; margin:0 0 .35rem; }
+  .top-nav .sep { color:#475569; }
+  .top-dd { position:relative; }
+  .top-dd > summary {
+    list-style:none; cursor:pointer; color:#a7f3d0; font-size:.8rem; font-weight:600;
+  }
+  .top-dd > summary::-webkit-details-marker { display:none; }
+  .top-dd > summary::after { content:" ▾"; opacity:.7; font-size:.7rem; }
+  .top-dd > summary:hover { color:#fff; }
+  .top-dd.is-active > summary { color:#fff; }
+  .top-dd-menu {
+    position:absolute; top:calc(100% + 6px); left:0; z-index:40;
+    min-width:11rem; padding:.35rem; background:#1e293b; border:1px solid #475569;
+    border-radius:10px; box-shadow:0 10px 24px rgba(0,0,0,.35);
+  }
+  .top-dd-menu a { display:block; padding:.4rem .65rem; border-radius:6px; }
+  .top-dd-menu a:hover { background:#334155; color:#fff; }
+  .top-dd-menu a[aria-current="page"] { background:#059669; color:#fff; }
   .top h1 { margin:.5rem 0 .25rem; font-size:1.9rem; font-weight:900; letter-spacing:-.02em; }
   .top .sub { color:#cbd5e1; margin:0; }
   .wrap-main { max-width:1080px; margin:0 auto; padding:20px 16px 60px; }
@@ -168,12 +186,26 @@
 </head>
 <body>
 <header class="top"><div class="wrap">
-  <p style="display:flex;flex-wrap:wrap;gap:.65rem 1rem;align-items:center;margin:0 0 .35rem">
+  <p class="top-nav">
     <a href="../../index.html">← Health site home</a>
-    <a href="../legworkout/">Leg Encyclopedia</a>
-    <a href="../chestworkout/">Chest Encyclopedia</a>
+    <span class="sep" aria-hidden="true">|</span>
+    <details class="top-dd is-active">
+      <summary>Library</summary>
+      <div class="top-dd-menu">
+        <a href="../../library/">Exercise Library</a>
+        <a href="../muscle-targets/" aria-current="page">Muscle Targets</a>
+      </div>
+    </details>
+    <span class="sep" aria-hidden="true">|</span>
+    <details class="top-dd">
+      <summary>Encyclopedia</summary>
+      <div class="top-dd-menu">
+        <a href="../legworkout/">Leg Encyclopedia</a>
+        <a href="../chestworkout/">Chest Encyclopedia</a>
+      </div>
+    </details>
+    <span class="sep" aria-hidden="true">|</span>
     <a href="../../dual-muscle-plan/">Dual-Muscle Plan</a>
-    <a href="../../library/">Exercise Library</a>
   </p>
   <h1>Muscle Targets</h1>
   <p class="sub">24 library muscles + Lower Abs · Shorts · plan days · tap a name to search YouTube</p>
@@ -240,6 +272,10 @@
       {
         "url": "https://youtube.com/shorts/xjN2Pn6OkJk?si=6kHXfDiZauTZortx",
         "title": "Abs workout Short"
+      },
+      {
+        "url": "https://youtube.com/shorts/Ct9Ml9N9lPU?si=ZydZa2CaZuNzi7CC",
+        "title": "Complete abs workout (upper + lower + obliques)"
       }
     ],
     "targets": [
@@ -262,6 +298,14 @@
           {
             "url": "https://www.youtube.com/shorts/Aoipu_fl3HA",
             "title": "Dead bug"
+          },
+          {
+            "url": "https://youtube.com/shorts/-8xqJ2xXs2A?si=y_LMIf_S0IUsbVVS",
+            "title": "Dead bug form (common mistake)"
+          },
+          {
+            "url": "https://youtube.com/shorts/XyAZUFwGEEA?si=x2ST--XOZHUIjt2E",
+            "title": "Dead bug form (step-by-step)"
           },
           {
             "url": "https://www.youtube.com/shorts/v25dawSzRTM",
@@ -388,6 +432,18 @@
           {
             "url": "https://www.youtube.com/shorts/MTR0RHCX_cw",
             "title": "Ranking tricep exercises (1 = best)"
+          },
+          {
+            "url": "https://youtube.com/shorts/W62fVa6Qhu4?si=UArC4m3MlmjpEaJP",
+            "title": "Full triceps workout (same sequence)"
+          },
+          {
+            "url": "https://youtube.com/shorts/CqP3Q3ur2UE?si=tN-BGJFZOjtEYLRu",
+            "title": "Complete triceps pump workout"
+          },
+          {
+            "url": "https://www.youtube.com/watch?v=OpRMRhr0Ycc",
+            "title": "Best & worst triceps exercises (ranked)"
           }
         ]
       },
@@ -453,6 +509,14 @@
           {
             "url": "https://www.youtube.com/shorts/1nino-CA9EE",
             "title": "Ranking chest exercises (1 = best)"
+          },
+          {
+            "url": "https://youtube.com/shorts/aponH0bHqtg?si=K-5XKyEdczCMmAzI",
+            "title": "Chest variations (elbows, grip & pullover)"
+          },
+          {
+            "url": "https://youtube.com/shorts/qkmHQn7W9to?si=HKoeUmQrLeghitXI",
+            "title": "Chest workout (most effective)"
           }
         ]
       },
@@ -496,6 +560,10 @@
           {
             "url": "https://www.youtube.com/shorts/wRlIuexTowA",
             "title": "Arnold press (optional)"
+          },
+          {
+            "url": "https://youtube.com/shorts/dybxZJaWxCY?si=dJOnhpwvwwvYp8x2",
+            "title": "Shoulder workout Short"
           }
         ]
       },
@@ -612,6 +680,7 @@
     "days": [
       "Mon",
       "Tue",
+      "Wed",
       "Thu",
       "Sat"
     ],
@@ -667,7 +736,8 @@
         "muscle": "Glutes",
         "find": "glute max workout hip thrust bridge at home shorts",
         "days": [
-          "Mon"
+          "Mon",
+          "Wed"
         ],
         "videos": [
           {
@@ -701,6 +771,18 @@
           {
             "url": "https://www.youtube.com/shorts/Fsve8fkMGcY",
             "title": "Romanian deadlift (DB)"
+          },
+          {
+            "url": "https://youtube.com/shorts/wEnxQmNwans?si=Jc2HIq1_KsSfWoX7",
+            "title": "Step-ups for glute gains"
+          },
+          {
+            "url": "https://youtube.com/shorts/FLCLuHf3_Wk?si=JQEfKhTWkTFPw58X",
+            "title": "How to perform step-ups for glutes"
+          },
+          {
+            "url": "https://youtube.com/shorts/BOQ9UqRqdr4?si=k56367Mfaf5_hVR9",
+            "title": "Step-up form tips (max glute activation)"
           }
         ]
       },
