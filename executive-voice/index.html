@@ -173,6 +173,71 @@
       </div>
     </section>
 
+    <!-- ── MISSION MAP (new) ── -->
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">
+      <div class="flex items-start justify-between gap-3 flex-wrap mb-4">
+        <div>
+          <h2 class="font-black text-lg sm:text-xl text-slate-900">Mission map — what success looks like</h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-0.5">Read this once. Then open today’s tab and practice.</p>
+        </div>
+        <span class="text-xs font-bold bg-indigo-100 text-indigo-800 px-3 py-1.5 rounded-full">Tech voice → Executive voice</span>
+      </div>
+      <div class="grid md:grid-cols-2 gap-3 mb-4">
+        <div class="rounded-xl border border-rose-200 bg-rose-50 p-4">
+          <p class="text-xs font-bold uppercase tracking-wide text-rose-700 mb-2">Before (common IT pattern)</p>
+          <ul class="text-sm text-slate-700 space-y-1.5">
+            <li>• Speaks too fast when excited or nervous</li>
+            <li>• Explains tools/servers instead of business impact</li>
+            <li>• Goes blank, then fills with “um / uh / like”</li>
+            <li>• Trails off without a clear recommendation</li>
+          </ul>
+          <p class="text-xs text-rose-800 mt-3 italic">“So basically the latency spiked because the query plan… um… and the cache… yeah.”</p>
+        </div>
+        <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+          <p class="text-xs font-bold uppercase tracking-wide text-emerald-700 mb-2">After (mission outcome)</p>
+          <ul class="text-sm text-slate-700 space-y-1.5">
+            <li>• Calm 120–130 WPM pace with open vowels</li>
+            <li>• Translates tech into revenue / risk / efficiency language</li>
+            <li>• Uses silence instead of fillers</li>
+            <li>• Ends with a clear ask using PREP or SCQA</li>
+          </ul>
+          <p class="text-xs text-emerald-900 mt-3 italic">“This latency issue risks customer trust. I recommend a 2-week stability focus before the next release.”</p>
+        </div>
+      </div>
+      <div class="grid sm:grid-cols-3 gap-3">
+        <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+          <p class="text-xs font-bold text-slate-500 mb-1">First-time setup (5 min)</p>
+          <ul class="text-sm text-slate-700 space-y-1">
+            <li>1. Install a metronome app</li>
+            <li>2. Find phone timer + voice recorder + voice-to-text</li>
+            <li>3. Bookmark Cambridge Dictionary</li>
+            <li>4. Keep one clean pen ready</li>
+            <li>5. Record a 60-second baseline (see Mission tab)</li>
+          </ul>
+        </div>
+        <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+          <p class="text-xs font-bold text-slate-500 mb-1">Golden rules</p>
+          <ul class="text-sm text-slate-700 space-y-1">
+            <li>• Practice alone first — no audience needed</li>
+            <li>• Do today’s day type only (don’t mix all drills)</li>
+            <li>• Never skip Month-1 pacing for “advanced” drills</li>
+            <li>• Transfer one skill into a real meeting every day</li>
+            <li>• Missed a day? Do a 10-min mini session next day — don’t double-stack</li>
+          </ul>
+        </div>
+        <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+          <p class="text-xs font-bold text-slate-500 mb-1">Where to click next</p>
+          <ul class="text-sm text-slate-700 space-y-1">
+            <li>• <button type="button" class="text-indigo-700 font-semibold hover:underline" onclick="jumpDay('mission')">Mission</button> — baseline + checkpoints</li>
+            <li>• Today’s day tab — beginner box first, then drills</li>
+            <li>• <button type="button" class="text-indigo-700 font-semibold hover:underline" onclick="jumpDay('meetings')">Meetings</button> — live scripts for standups &amp; reviews</li>
+            <li>• 90-Day Plan — month emphasis</li>
+            <li>• Toolkit — tools, mistakes, troubleshooting</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <!-- ── WEEKLY SPLIT ── -->
     <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">
       <div class="flex items-start justify-between gap-3 flex-wrap mb-4">
@@ -234,12 +299,84 @@
       <div id="today-banner" class="mb-3 hidden bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-xl px-4 py-2.5 text-sm font-semibold"></div>
 
       <div id="day-tab-bar" class="flex gap-2 overflow-x-auto pb-1 mb-4">
+        <button type="button" data-day="mission" onclick="showDay('mission', this)" class="day-tab flex-shrink-0 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold border border-slate-200 bg-white text-slate-700">Mission</button>
         <button type="button" data-day="mon" onclick="showDay('mon', this)" class="day-tab active-day flex-shrink-0 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold border border-slate-200 bg-white text-slate-700">Mon / Thu <span class="today-pill">Today</span></button>
         <button type="button" data-day="tue" onclick="showDay('tue', this)" class="day-tab flex-shrink-0 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold border border-slate-200 bg-white text-slate-700">Tue / Fri <span class="today-pill">Today</span></button>
         <button type="button" data-day="wed" onclick="showDay('wed', this)" class="day-tab flex-shrink-0 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold border border-slate-200 bg-white text-slate-700">Wed / Sat <span class="today-pill">Today</span></button>
         <button type="button" data-day="sun" onclick="showDay('sun', this)" class="day-tab flex-shrink-0 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold border border-slate-200 bg-white text-slate-700">Sunday <span class="today-pill">Today</span></button>
+        <button type="button" data-day="meetings" onclick="showDay('meetings', this)" class="day-tab flex-shrink-0 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold border border-slate-200 bg-white text-slate-700">Meetings</button>
         <button type="button" data-day="timeline" onclick="showDay('timeline', this)" class="day-tab flex-shrink-0 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold border border-slate-200 bg-white text-slate-700">90-Day Plan</button>
         <button type="button" data-day="toolkit" onclick="showDay('toolkit', this)" class="day-tab flex-shrink-0 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold border border-slate-200 bg-white text-slate-700">Toolkit</button>
+      </div>
+
+      <!-- ════ MISSION ════ -->
+      <div id="day-mission" class="day-panel space-y-4">
+        <div class="bg-slate-900 text-white rounded-2xl p-5 sm:p-6">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-sky-300 mb-1">Mission control</p>
+          <h3 class="font-black text-xl mb-2">Baseline, checkpoints, and how to measure progress</h3>
+          <p class="text-sm text-slate-300 max-w-3xl">This page tells you whether the mission is working. Do the baseline once on Day 0. Re-test on Day 30, 60, and 90.</p>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">
+          <h4 class="font-black text-lg text-slate-900 mb-2">Day 0 baseline (do this before or on your first practice day)</h4>
+          <p class="text-sm text-slate-600 mb-4">Record a 60-second phone audio answering: <em>“Explain one recent technical issue and what you recommend.”</em> Do not practice first. Save the file as <code class="bg-slate-100 px-1 rounded text-xs">baseline-day0</code>.</p>
+          <div class="overflow-x-auto mb-4">
+            <table class="w-full text-sm min-w-[560px]">
+              <thead>
+                <tr class="text-left text-[10px] uppercase tracking-wide text-slate-400 border-b border-slate-100">
+                  <th class="pb-2 pr-3">Listen for</th>
+                  <th class="pb-2 pr-3">Score yourself 1–5</th>
+                  <th class="pb-2">What “5” sounds like</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-50 text-xs sm:text-sm">
+                <tr><td class="py-2.5 pr-3 font-semibold">Pace</td><td class="pr-3 text-slate-600">Too fast = 1 · Calm = 5</td><td class="text-slate-600">Feels like 120–130 WPM; easy to follow</td></tr>
+                <tr><td class="py-2.5 pr-3 font-semibold">Clarity</td><td class="pr-3 text-slate-600">Mumbled = 1 · Crisp = 5</td><td class="text-slate-600">Every word is understandable first listen</td></tr>
+                <tr><td class="py-2.5 pr-3 font-semibold">Business language</td><td class="pr-3 text-slate-600">Only tech = 1 · Value-led = 5</td><td class="text-slate-600">Mentions risk / revenue / customer / efficiency</td></tr>
+                <tr><td class="py-2.5 pr-3 font-semibold">Structure</td><td class="pr-3 text-slate-600">Rambling = 1 · PREP-like = 5</td><td class="text-slate-600">Clear point + reason + example + close</td></tr>
+                <tr><td class="py-2.5 pr-3 font-semibold">Fillers</td><td class="pr-3 text-slate-600">Many um/uh = 1 · Zero = 5</td><td class="text-slate-600">Silence instead of fillers</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <label class="check-item flex items-center gap-3 bg-slate-50 rounded-xl px-4 py-3 border border-slate-100 cursor-pointer">
+              <input type="checkbox" class="w-4 h-4 accent-emerald-600" data-kpi="mission-baseline" onchange="saveKpi(this)" />
+              <span class="text-sm font-medium text-slate-700 flex-1">Baseline 60s recording saved + scored</span>
+              <span class="check-badge text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">KPI</span>
+            </label>
+            <div class="bg-amber-50 border border-amber-100 rounded-xl p-3 text-sm text-amber-950">
+              <strong>Quick WPM check:</strong> read a 120-word paragraph in 60 seconds = ~120 WPM. If you finish early, you are still rushing.
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">
+          <h4 class="font-black text-lg text-slate-900 mb-3">Checkpoint schedule</h4>
+          <div class="space-y-3 text-sm">
+            <div class="border-l-4 border-sky-500 pl-4">
+              <p class="font-bold text-slate-900">Day 30</p>
+              <p class="text-slate-600">Re-record the same prompt. Pace should feel slower. Standup answers start with a 1-second pause. Compare to baseline.</p>
+            </div>
+            <div class="border-l-4 border-amber-500 pl-4">
+              <p class="font-bold text-slate-900">Day 60</p>
+              <p class="text-slate-600">Same prompt must include 3+ business-value terms. Fillers under 3 per 10 minutes on real calls.</p>
+            </div>
+            <div class="border-l-4 border-indigo-500 pl-4">
+              <p class="font-bold text-slate-900">Day 90</p>
+              <p class="text-slate-600">Cold PREP in 60 seconds. Zero fillers in a 2-minute lab recording. You have led at least one visible sync using SCQA.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">
+          <h4 class="font-black text-lg text-slate-900 mb-2">Practice journal (optional but powerful)</h4>
+          <p class="text-sm text-slate-500 mb-3">After today’s session, write one line: what went well + one transfer into a meeting. Saved only on this device.</p>
+          <textarea id="practice-journal" rows="4" class="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-400" placeholder="Example: Metronome held 2 min. In standup I paused before answering the status question."></textarea>
+          <div class="flex items-center gap-2 mt-2">
+            <button type="button" onclick="saveJournal()" class="text-xs font-bold bg-slate-900 text-white px-3 py-1.5 rounded-full">Save today’s note</button>
+            <span id="journal-status" class="text-xs text-slate-400"></span>
+          </div>
+        </div>
       </div>
 
       <!-- ════ MON / THU ════ -->
@@ -261,6 +398,32 @@
             <span class="text-[10px] sm:text-xs font-bold bg-white border border-sky-200 text-sky-800 px-2.5 py-1 rounded-full">Vowel openness</span>
             <span class="text-[10px] sm:text-xs font-bold bg-white border border-sky-200 text-sky-800 px-2.5 py-1 rounded-full">Jaw release</span>
             <span class="text-[10px] sm:text-xs font-bold bg-white border border-sky-200 text-sky-800 px-2.5 py-1 rounded-full">Order: Breath → Metronome (8–10m) → Pen (8–10m)</span>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border-2 border-sky-300 shadow-sm p-5 sm:p-6">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-sky-600 mb-1">For beginners · start here</p>
+          <h4 class="font-black text-lg text-slate-900 mb-2">What should I do today? (Mon / Thu)</h4>
+          <p class="text-sm text-slate-600 mb-4">Today is only about speaking <strong>slowly and clearly</strong>. Do not worry about fancy words or meeting frameworks. Your only job: stop rushing.</p>
+          <div class="grid md:grid-cols-2 gap-3 mb-4">
+            <div class="bg-sky-50 rounded-xl p-4 border border-sky-100">
+              <p class="text-xs font-bold text-sky-800 mb-2">Do these 3 things in order</p>
+              <ol class="text-sm text-slate-700 space-y-2 list-decimal pl-4">
+                <li>Sit quietly and breathe for 60 seconds (belly rises, chest stays calm).</li>
+                <li>Open a metronome → set <strong>120</strong> → read any page aloud with the click for 2 minutes.</li>
+                <li>Put a clean pen behind your front side teeth → read aloud 2 minutes → remove pen → read the same lines again.</li>
+              </ol>
+            </div>
+            <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+              <p class="text-xs font-bold text-slate-500 mb-2">Simple example (metronome)</p>
+              <p class="text-sm text-slate-700 mb-2">Click… <em>“The”</em> · click… <em>“pro”</em> · click… <em>“ject”</em> · click… <em>“is”</em> · click… <em>“de”</em> · click… <em>“layed”</em>.</p>
+              <p class="text-xs text-slate-500 mb-3">One syllable per click. If you race ahead of the click, stop and restart.</p>
+              <p class="text-xs font-bold text-slate-500 mb-2">Simple example (pen drill)</p>
+              <p class="text-sm text-slate-700">With the pen in: read “We need better monitoring.” Slowly force every word to be understandable. After removing the pen, the same sentence should feel lighter and clearer.</p>
+            </div>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-sm text-emerald-900">
+            <strong>Done for today when:</strong> you finished both drills once, and you plan one meeting answer where you pause 1 second before speaking.
           </div>
         </div>
 
@@ -383,6 +546,33 @@
             <span class="text-[10px] sm:text-xs font-bold bg-white border border-amber-200 text-amber-900 px-2.5 py-1 rounded-full">Syllabic stress</span>
             <span class="text-[10px] sm:text-xs font-bold bg-white border border-amber-200 text-amber-900 px-2.5 py-1 rounded-full">Dictation &gt; 95%</span>
             <span class="text-[10px] sm:text-xs font-bold bg-white border border-amber-200 text-amber-900 px-2.5 py-1 rounded-full">Order: Breath → Value sprints (10–12m) → Phonetics (8–10m)</span>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border-2 border-amber-300 shadow-sm p-5 sm:p-6">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-amber-700 mb-1">For beginners · start here</p>
+          <h4 class="font-black text-lg text-slate-900 mb-2">What should I do today? (Tue / Fri)</h4>
+          <p class="text-sm text-slate-600 mb-4">Today is about <strong>finding the right words fast</strong> and saying them clearly. Think of it as vocabulary practice + pronunciation practice.</p>
+          <div class="grid md:grid-cols-2 gap-3 mb-4">
+            <div class="bg-amber-50 rounded-xl p-4 border border-amber-100">
+              <p class="text-xs font-bold text-amber-800 mb-2">Do these 3 things in order</p>
+              <ol class="text-sm text-slate-700 space-y-2 list-decimal pl-4">
+                <li>Breathe for 60 seconds to settle.</li>
+                <li>Pick one tech phrase → start a 45-second timer → speak business benefits out loud (not technical details).</li>
+                <li>Pick 3 hard words → check pronunciation on Cambridge → speak each into phone voice-to-text until it spells them correctly.</li>
+              </ol>
+            </div>
+            <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+              <p class="text-xs font-bold text-slate-500 mb-2">Simple example (value sprint)</p>
+              <p class="text-sm text-slate-700 mb-1"><strong>Tech phrase:</strong> “System downtime”</p>
+              <p class="text-sm text-slate-700 mb-2">Say in 45 seconds: “This protects <em>revenue</em>, reduces <em>customer trust</em> damage, avoids <em>SLA penalties</em>, improves <em>business continuity</em>, and lowers <em>support cost</em>.”</p>
+              <p class="text-xs text-slate-500 mb-3">You are listing business impact words — not explaining servers.</p>
+              <p class="text-xs font-bold text-slate-500 mb-2">Simple example (phonetics)</p>
+              <p class="text-sm text-slate-700">Word: <em>infrastructure</em>. Look up IPA on Cambridge. Speak it into Notes dictation. If it writes “infra structure” or something else wrong, adjust and retry until it writes the correct word.</p>
+            </div>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-sm text-emerald-900">
+            <strong>Done for today when:</strong> you completed at least 3 value sprints + 3 words that voice-to-text got right on the first try.
           </div>
         </div>
 
@@ -560,6 +750,36 @@
           </div>
         </div>
 
+        <div class="bg-white rounded-2xl border-2 border-indigo-300 shadow-sm p-5 sm:p-6">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-indigo-600 mb-1">For beginners · start here</p>
+          <h4 class="font-black text-lg text-slate-900 mb-2">What should I do today? (Wed / Sat)</h4>
+          <p class="text-sm text-slate-600 mb-4">Today is about <strong>speaking in a clear structure</strong> and removing “um / uh / like.” You practice answering like a manager: Point → Reason → Example → Point.</p>
+          <div class="grid md:grid-cols-2 gap-3 mb-4">
+            <div class="bg-indigo-50 rounded-xl p-4 border border-indigo-100">
+              <p class="text-xs font-bold text-indigo-800 mb-2">Do these 3 things in order</p>
+              <ol class="text-sm text-slate-700 space-y-2 list-decimal pl-4">
+                <li>Breathe for 60 seconds.</li>
+                <li>Pick a topic → speak for 60 seconds using PREP (or SCQA). Do this 3 times.</li>
+                <li>Record yourself talking about your day for 2 minutes. Whenever you feel an “um” coming, close your lips, stay silent, then continue.</li>
+              </ol>
+            </div>
+            <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+              <p class="text-xs font-bold text-slate-500 mb-2">Simple PREP example (topic: “Should we hire?”)</p>
+              <p class="text-sm text-slate-700 space-y-1">
+                <span class="block"><strong>P:</strong> Yes, we should hire one backend engineer.</span>
+                <span class="block"><strong>R:</strong> Current load is delaying customer features.</span>
+                <span class="block"><strong>E:</strong> Last sprint, 2 of 5 stories slipped due to capacity.</span>
+                <span class="block"><strong>P:</strong> So I recommend opening the requisition this week.</span>
+              </p>
+              <p class="text-xs font-bold text-slate-500 mt-3 mb-2">Simple filler example</p>
+              <p class="text-sm text-slate-700">Instead of: “So um… we should uh… fix this…” → pause silently → then say: “We should fix this before Friday.”</p>
+            </div>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-sm text-emerald-900">
+            <strong>Done for today when:</strong> you did 3 structured 60-second talks + one 2-minute recording with as few fillers as possible (target zero).
+          </div>
+        </div>
+
         <article class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6 hover-lift">
           <div class="flex items-start justify-between gap-3 flex-wrap mb-4">
             <div>
@@ -717,6 +937,32 @@
           </div>
         </div>
 
+        <div class="bg-white rounded-2xl border-2 border-emerald-300 shadow-sm p-5 sm:p-6">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-700 mb-1">For beginners · start here</p>
+          <h4 class="font-black text-lg text-slate-900 mb-2">What should I do today? (Sunday)</h4>
+          <p class="text-sm text-slate-600 mb-4">Sunday is a <strong>rest-and-calm day</strong> for speaking. No hard drills. You only train calm breathing so you do not rush when nervous in meetings.</p>
+          <div class="grid md:grid-cols-2 gap-3 mb-4">
+            <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+              <p class="text-xs font-bold text-emerald-800 mb-2">Do these 3 things in order</p>
+              <ol class="text-sm text-slate-700 space-y-2 list-decimal pl-4">
+                <li>Sit or lie down. One hand on belly, one on chest.</li>
+                <li>Do 8–10 slow breaths: inhale 4 counts (belly up) → hold 2 → exhale 6.</li>
+                <li>Ask yourself one mock meeting question, take one calm breath, then answer in one short sentence.</li>
+              </ol>
+            </div>
+            <div class="bg-slate-50 rounded-xl p-4 border border-slate-100">
+              <p class="text-xs font-bold text-slate-500 mb-2">Simple breathing example</p>
+              <p class="text-sm text-slate-700 mb-2">Inhale: “1-2-3-4” (belly rises) → Hold: “1-2” → Exhale: “1-2-3-4-5-6” (slow). Repeat.</p>
+              <p class="text-xs font-bold text-slate-500 mb-2">Simple mock-question example</p>
+              <p class="text-sm text-slate-700 mb-1"><strong>Question:</strong> “Are we ready for Friday’s release?”</p>
+              <p class="text-sm text-slate-700"><strong>You:</strong> (one breath) “Not yet — we need one more test cycle, then we can confirm.”</p>
+            </div>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-sm text-emerald-900">
+            <strong>Done for today when:</strong> you finished 8–10 calm breaths + one mock answer after a single breath. Then stop — no metronome, no pen drill today.
+          </div>
+        </div>
+
         <article class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6">
           <h4 class="font-black text-lg text-slate-900 mb-3">Diaphragmatic Anchoring Protocol</h4>
           <ol class="protocol-list space-y-3 text-sm text-slate-700 mb-5">
@@ -756,6 +1002,100 @@
             <li>✓ 8–10 diaphragmatic cycles completed without chest-dominant breathing</li>
             <li>✓ One mock high-stakes question answered after a single breath</li>
             <li>✓ Light week review: which KPI failed most often Mon–Sat? Plan one fix</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ════ MEETINGS ════ -->
+      <div id="day-meetings" class="day-panel space-y-4">
+        <div class="bg-violet-50 border border-violet-100 rounded-2xl p-5 sm:p-6">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-violet-700 mb-1">Live transfer playbook</p>
+          <h3 class="font-black text-xl text-slate-900">Meetings — what to say in the real world</h3>
+          <p class="text-sm text-slate-600 mt-1 max-w-2xl">Lab drills only work if you reuse them in standups, status calls, and architecture reviews. Copy these patterns. Keep them short.</p>
+        </div>
+
+        <div class="bg-white rounded-2xl border-2 border-violet-300 shadow-sm p-5 sm:p-6">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-violet-700 mb-1">For beginners · start here</p>
+          <h4 class="font-black text-lg text-slate-900 mb-2">How to use this tab</h4>
+          <p class="text-sm text-slate-600 mb-3">Before a meeting, pick <strong>one</strong> script below. In the meeting: breathe once → use the script → stop. Do not explain every technical detail unless asked.</p>
+          <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-sm text-emerald-900">
+            <strong>Daily transfer rule:</strong> every practice day must include one real meeting use of pause / value language / PREP / silence.
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <article class="bg-white rounded-2xl border border-slate-200 p-5">
+            <h4 class="font-bold text-slate-900 mb-2">1) Daily standup update</h4>
+            <p class="text-xs text-slate-500 mb-2">Pattern: Done → Doing → Blocker → Ask</p>
+            <div class="bg-slate-50 rounded-xl p-3 text-sm text-slate-700 space-y-1.5">
+              <p><strong>Example:</strong></p>
+              <p>“Yesterday I finished the auth fix. Today I’m validating edge cases. One blocker: waiting on staging access. Ask: can we unblock that by noon?”</p>
+            </div>
+            <p class="text-xs text-violet-800 mt-2 font-semibold">Transfer skill: 1-second pause before you start.</p>
+          </article>
+
+          <article class="bg-white rounded-2xl border border-slate-200 p-5">
+            <h4 class="font-bold text-slate-900 mb-2">2) Status to a manager (non-technical)</h4>
+            <p class="text-xs text-slate-500 mb-2">Pattern: Business impact → Current state → Next action</p>
+            <div class="bg-slate-50 rounded-xl p-3 text-sm text-slate-700 space-y-1.5">
+              <p><strong>Instead of:</strong> “The queue is lagging and the consumer offset is behind…”</p>
+              <p><strong>Say:</strong> “This delay risks customer-facing timeouts. We’re at 70% recovery. Next action: finish the patch by 4 PM and retest.”</p>
+            </div>
+            <p class="text-xs text-violet-800 mt-2 font-semibold">Transfer skill: Tech → Value language.</p>
+          </article>
+
+          <article class="bg-white rounded-2xl border border-slate-200 p-5">
+            <h4 class="font-bold text-slate-900 mb-2">3) Architecture / design review (SCQA)</h4>
+            <p class="text-xs text-slate-500 mb-2">Pattern: Situation → Complication → Question → Answer</p>
+            <div class="bg-slate-50 rounded-xl p-3 text-sm text-slate-700 space-y-1">
+              <p><strong>S:</strong> We currently deploy as one service.</p>
+              <p><strong>C:</strong> Release risk and rollback time are rising.</p>
+              <p><strong>Q:</strong> Do we keep one deploy unit or split the critical path?</p>
+              <p><strong>A:</strong> Split the payment path this quarter to protect revenue continuity.</p>
+            </div>
+            <p class="text-xs text-violet-800 mt-2 font-semibold">Transfer skill: SCQA without notes.</p>
+          </article>
+
+          <article class="bg-white rounded-2xl border border-slate-200 p-5">
+            <h4 class="font-bold text-slate-900 mb-2">4) Recommendation ask (PREP)</h4>
+            <p class="text-xs text-slate-500 mb-2">Pattern: Point → Reason → Example → Point</p>
+            <div class="bg-slate-50 rounded-xl p-3 text-sm text-slate-700 space-y-1">
+              <p><strong>P:</strong> We should freeze new features for one sprint.</p>
+              <p><strong>R:</strong> Defect escape is hurting customer trust.</p>
+              <p><strong>E:</strong> Two severity-1 issues landed in the last release.</p>
+              <p><strong>P:</strong> I recommend a stability sprint starting Monday.</p>
+            </div>
+            <p class="text-xs text-violet-800 mt-2 font-semibold">Transfer skill: end with a clear ask.</p>
+          </article>
+
+          <article class="bg-white rounded-2xl border border-slate-200 p-5">
+            <h4 class="font-bold text-slate-900 mb-2">5) When you don’t know yet</h4>
+            <p class="text-xs text-slate-500 mb-2">High-status alternative to rambling</p>
+            <div class="bg-slate-50 rounded-xl p-3 text-sm text-slate-700 space-y-1.5">
+              <p><strong>Instead of:</strong> “Um… maybe… I think… not sure…”</p>
+              <p><strong>Say:</strong> “I don’t have a confirmed answer yet. I’ll check X and come back by 3 PM with a recommendation.”</p>
+            </div>
+            <p class="text-xs text-violet-800 mt-2 font-semibold">Transfer skill: silence + commitment, not filler.</p>
+          </article>
+
+          <article class="bg-white rounded-2xl border border-slate-200 p-5">
+            <h4 class="font-bold text-slate-900 mb-2">6) Incident / outage update</h4>
+            <p class="text-xs text-slate-500 mb-2">Pattern: Impact → What we know → What we’re doing → ETA</p>
+            <div class="bg-slate-50 rounded-xl p-3 text-sm text-slate-700 space-y-1.5">
+              <p><strong>Example:</strong></p>
+              <p>“Customer checkout is degraded. Root cause is still under investigation. We’re applying a temporary rate limit now. Next update in 15 minutes.”</p>
+            </div>
+            <p class="text-xs text-violet-800 mt-2 font-semibold">Transfer skill: calm pace under adrenaline.</p>
+          </article>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 p-5">
+          <h4 class="font-bold text-slate-900 mb-2 text-sm">Meeting-day mini checklist</h4>
+          <ul class="text-sm text-slate-600 space-y-1.5">
+            <li>✓ Choose one pattern before the call</li>
+            <li>✓ Take one belly breath before your first sentence</li>
+            <li>✓ Prefer silence over “um”</li>
+            <li>✓ Close with a recommendation or a timed follow-up</li>
           </ul>
         </div>
       </div>
@@ -957,6 +1297,49 @@
           </div>
         </div>
 
+        <div class="bg-white rounded-2xl border border-slate-200 p-5">
+          <h4 class="font-bold text-slate-900 mb-3">Common mistakes (avoid these)</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm min-w-[560px]">
+              <thead>
+                <tr class="text-left text-[10px] uppercase tracking-wide text-slate-400 border-b border-slate-100">
+                  <th class="pb-2 pr-3">Mistake</th>
+                  <th class="pb-2 pr-3">Why it hurts the mission</th>
+                  <th class="pb-2">Fix</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-50 text-xs sm:text-sm">
+                <tr><td class="py-2.5 pr-3 font-semibold">Doing all drills every day</td><td class="pr-3 text-slate-600">No recovery / no focus</td><td class="text-slate-600">Only today’s day type</td></tr>
+                <tr><td class="py-2.5 pr-3 font-semibold">Skipping Month-1 pacing</td><td class="pr-3 text-slate-600">Vocabulary sits on a rushed mouth</td><td class="text-slate-600">Earn crisp pace first</td></tr>
+                <tr><td class="py-2.5 pr-3 font-semibold">Explaining tech in value sprints</td><td class="pr-3 text-slate-600">Keeps you in engineer mode</td><td class="text-slate-600">Only business-impact words</td></tr>
+                <tr><td class="py-2.5 pr-3 font-semibold">Restarting every time you stumble</td><td class="pr-3 text-slate-600">Trains fear, not recovery</td><td class="text-slate-600">Use silence, then continue</td></tr>
+                <tr><td class="py-2.5 pr-3 font-semibold">Lab only, no meeting transfer</td><td class="pr-3 text-slate-600">Skill never leaves the room</td><td class="text-slate-600">Use Meetings tab daily</td></tr>
+                <tr><td class="py-2.5 pr-3 font-semibold">Doubling up after a miss</td><td class="pr-3 text-slate-600">Creates burnout + rushing</td><td class="text-slate-600">10-min mini catch-up only</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="bg-white rounded-2xl border border-slate-200 p-5">
+            <h4 class="font-bold text-slate-900 mb-2">Missed-day protocol</h4>
+            <ul class="text-sm text-slate-600 space-y-2">
+              <li><strong class="text-slate-900">Missed 1 day:</strong> next day do a 10-minute mini of that day type, then do today’s full session if energy allows — or just today’s.</li>
+              <li><strong class="text-slate-900">Missed 2–3 days:</strong> restart with Mon/Thu pacing for one session before returning to schedule.</li>
+              <li><strong class="text-slate-900">Travel / heavy meeting day:</strong> do only the beginner box for that day (5–10 min). Still counts.</li>
+            </ul>
+          </div>
+          <div class="bg-white rounded-2xl border border-slate-200 p-5">
+            <h4 class="font-bold text-slate-900 mb-2">How to measure WPM simply</h4>
+            <ol class="text-sm text-slate-600 space-y-2 list-decimal pl-4">
+              <li>Copy a 120-word paragraph into Notes.</li>
+              <li>Start a 60-second timer and read aloud at your practice pace.</li>
+              <li>Finish exactly at 60s ≈ 120 WPM. Finish early = still too fast.</li>
+              <li>Target band for this lab: finish around 55–60 seconds for 120 words (≈120–130 WPM).</li>
+            </ol>
+          </div>
+        </div>
+
         <div class="bg-slate-900 text-white rounded-2xl p-5 sm:p-6">
           <h4 class="font-black text-lg mb-2">North-star outcome</h4>
           <p class="text-sm text-slate-300 leading-relaxed">By Day 90 you should sound like an executive who still understands systems deeply — paced, articulate, vocabulary that lands in business terms, structured on the first take, and calm under adrenaline. The gym builds the body; this lab builds the voice that leads rooms.</p>
@@ -980,10 +1363,15 @@
       document.querySelectorAll('.day-tab').forEach(b => b.classList.remove('active-day'));
       const panel = document.getElementById('day-' + name);
       if (panel) panel.classList.add('active');
-      if (btn) btn.classList.add('active-day');
+      const activeBtn = btn || document.querySelector('.day-tab[data-day="' + name + '"]');
+      if (activeBtn) activeBtn.classList.add('active-day');
       if (panel) {
         window.scrollTo({ top: Math.max(0, panel.getBoundingClientRect().top + window.scrollY - 120), behavior: 'smooth' });
       }
+    }
+
+    function jumpDay(name) {
+      showDay(name);
     }
 
     function todayKey() {
@@ -998,28 +1386,65 @@
     }
 
     const KPI_KEY = 'executive-voice-kpis-v2';
+    const PERMA_KPI_KEY = 'executive-voice-perma-kpis';
+    const JOURNAL_KEY = 'executive-voice-journal';
 
     function loadKpis() {
       try {
         const saved = JSON.parse(localStorage.getItem(KPI_KEY) || '{}');
+        const perma = JSON.parse(localStorage.getItem(PERMA_KPI_KEY) || '{}');
         const today = isoDateLocal();
         document.querySelectorAll('input[data-kpi]').forEach(el => {
-          el.checked = !!(saved[today] && saved[today][el.dataset.kpi]);
+          if (el.dataset.kpi === 'mission-baseline') {
+            el.checked = !!perma[el.dataset.kpi];
+          } else {
+            el.checked = !!(saved[today] && saved[today][el.dataset.kpi]);
+          }
         });
       } catch (_) {}
     }
 
     function saveKpi(el) {
       try {
+        if (el.dataset.kpi === 'mission-baseline') {
+          const perma = JSON.parse(localStorage.getItem(PERMA_KPI_KEY) || '{}');
+          perma[el.dataset.kpi] = !!el.checked;
+          localStorage.setItem(PERMA_KPI_KEY, JSON.stringify(perma));
+          return;
+        }
         const saved = JSON.parse(localStorage.getItem(KPI_KEY) || '{}');
         const today = isoDateLocal();
         if (!saved[today]) saved[today] = {};
         saved[today][el.dataset.kpi] = !!el.checked;
-        // Keep only last 14 days of history
         const keys = Object.keys(saved).sort();
         while (keys.length > 14) delete saved[keys.shift()];
         localStorage.setItem(KPI_KEY, JSON.stringify(saved));
       } catch (_) {}
+    }
+
+    function loadJournal() {
+      try {
+        const all = JSON.parse(localStorage.getItem(JOURNAL_KEY) || '{}');
+        const box = document.getElementById('practice-journal');
+        if (box) box.value = all[isoDateLocal()] || '';
+      } catch (_) {}
+    }
+
+    function saveJournal() {
+      try {
+        const box = document.getElementById('practice-journal');
+        const status = document.getElementById('journal-status');
+        if (!box) return;
+        const all = JSON.parse(localStorage.getItem(JOURNAL_KEY) || '{}');
+        all[isoDateLocal()] = box.value;
+        const keys = Object.keys(all).sort();
+        while (keys.length > 30) delete all[keys.shift()];
+        localStorage.setItem(JOURNAL_KEY, JSON.stringify(all));
+        if (status) status.textContent = 'Saved for ' + isoDateLocal();
+      } catch (_) {
+        const status = document.getElementById('journal-status');
+        if (status) status.textContent = 'Could not save';
+      }
     }
 
     (function boot() {
@@ -1030,11 +1455,13 @@
       const banner = document.getElementById('today-banner');
       if (banner && DAY_LABELS[key]) {
         banner.classList.remove('hidden');
-        banner.textContent = 'Today’s recommended circuit: ' + DAY_LABELS[key];
+        banner.innerHTML = 'Today’s recommended circuit: ' + DAY_LABELS[key] +
+          ' · First time? Open <button type="button" class="underline font-bold" onclick="jumpDay(\'mission\')">Mission</button> for baseline setup.';
       }
       const btn = document.querySelector('.day-tab[data-day="' + key + '"]');
       if (btn) showDay(key, btn);
       loadKpis();
+      loadJournal();
     })();
   </script>
 </body>
