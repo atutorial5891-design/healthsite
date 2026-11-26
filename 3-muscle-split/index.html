@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>3-Muscle Split — Manas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap');
+    body { font-family: 'DM Sans', system-ui, sans-serif; }
+
+    .nav-dd { position: relative; flex-shrink: 0; }
+    .nav-dd > summary {
+      list-style: none; cursor: pointer;
+      padding: 0.25rem 0.625rem; border-radius: 9999px; font-weight: 600;
+      color: #cbd5e1; transition: color .15s, background .15s;
+    }
+    .nav-dd > summary::-webkit-details-marker { display: none; }
+    .nav-dd > summary::after { content: "▾"; margin-left: 0.3rem; font-size: 0.65rem; opacity: 0.7; }
+    .nav-dd > summary:hover { color: #fff; background: #334155; }
+    .nav-dd[open] > summary { color: #fff; background: #334155; }
+    .nav-dd.is-active > summary { background: #059669; color: #fff; }
+    .nav-dd-menu {
+      position: absolute; top: calc(100% + 6px); left: 0; z-index: 60;
+      min-width: 11.5rem; padding: 0.35rem;
+      background: #1e293b; border: 1px solid #475569; border-radius: 0.75rem;
+      box-shadow: 0 12px 28px rgba(0,0,0,.4);
+    }
+    .nav-dd-menu a {
+      display: block; padding: 0.45rem 0.7rem; border-radius: 0.5rem;
+      color: #cbd5e1; font-weight: 600; text-decoration: none;
+    }
+    .nav-dd-menu a:hover { background: #334155; color: #fff; }
+    .nav-dd-menu a[aria-current="page"] { background: #059669; color: #fff; }
+
+    .hover-lift { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+    .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.10); }
+
+    .day-row {
+      display: grid; grid-template-columns: 2.5rem 5.5rem 1fr;
+      gap: 0.65rem; align-items: baseline;
+      padding: 0.55rem 0; border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .day-row:last-child { border-bottom: none; }
+    .day-name { font-weight: 800; color: #fbbf24; letter-spacing: 0.01em; }
+    .day-muscles { font-weight: 800; color: #fff; letter-spacing: -0.01em; }
+    .day-extra { color: #6ee7b7; font-weight: 700; white-space: nowrap; }
+    .day-row.is-rest .day-name { color: #94a3b8; }
+    .day-row.is-rest .day-muscles { color: #cbd5e1; font-weight: 700; }
+
+    .chip {
+      display: inline-flex; align-items: center;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.02em;
+      padding: 0.2rem 0.55rem; border-radius: 9999px;
+      background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;
+    }
+
+    .cat-chip {
+      display: inline-flex; align-items: center; gap: 0.3rem; white-space: nowrap;
+      font-size: 0.75rem; font-weight: 700; padding: 0.4rem 0.75rem; border-radius: 9999px;
+      border: 1px solid #e2e8f0; background: #fff; color: #475569; cursor: pointer;
+      transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+    }
+    .cat-chip:hover { border-color: #10b981; }
+    .cat-chip.on { background: #0f172a; border-color: #0f172a; color: #fff; }
+    .chip-row { display: flex; gap: 0.4rem; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+    .chip-row::-webkit-scrollbar { display: none; }
+
+    .yt-thumb {
+      position: relative; overflow: hidden;
+      aspect-ratio: 9 / 16; background: #0f172a;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .yt-thumb.is-landscape { aspect-ratio: 16 / 9; }
+    .yt-thumb:focus-visible { outline: 2px solid #059669; outline-offset: 2px; }
+    .yt-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s ease; }
+    .video-card:hover .yt-thumb img { transform: scale(1.04); }
+    .yt-play {
+      position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+      background: rgba(15, 23, 42, 0.35); transition: background 0.2s; pointer-events: none;
+    }
+    .video-card:hover .yt-play { background: rgba(15, 23, 42, 0.5); }
+    .yt-play-btn {
+      width: 44px; height: 44px; border-radius: 9999px;
+      background: #dc2626; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 24px rgba(220, 38, 38, 0.45);
+    }
+    .yt-play-btn svg { width: 18px; height: 18px; margin-left: 2px; }
+
+    .featured-thumb {
+      position: relative; overflow: hidden;
+      aspect-ratio: 16 / 9; background: #0f172a;
+      border-radius: 1rem; -webkit-tap-highlight-color: transparent;
+    }
+    .featured-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .featured-thumb:focus-visible { outline: 2px solid #059669; outline-offset: 2px; }
+
+    .yt-modal { position: fixed; inset: 0; z-index: 9999; pointer-events: none; touch-action: manipulation; }
+    .yt-modal[hidden] { display: none !important; }
+    .yt-modal-backdrop { display: none; position: absolute; inset: 0; background: rgba(15, 23, 42, 0.55); pointer-events: auto; }
+    .yt-modal-dialog {
+      pointer-events: auto; position: absolute;
+      top: max(0.65rem, env(safe-area-inset-top)); left: 0.65rem;
+      width: min(52vw, 220px); display: flex; flex-direction: column;
+      background: #0b1220; border-radius: 14px; overflow: hidden;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.14);
+    }
+    @media (min-width: 640px) { .yt-modal-dialog { width: 260px; top: 1rem; left: 1rem; } }
+    .yt-modal-chrome {
+      position: relative; z-index: 20; display: flex; align-items: center; gap: 0.35rem;
+      padding: 0.4rem; background: #0f172a; border-bottom: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;
+    }
+    .yt-modal-chrome #yt-modal-title {
+      flex: 1; min-width: 0; color: #e2e8f0; font-size: 0.68rem; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;
+    }
+    .yt-modal-btn {
+      flex-shrink: 0; width: 40px; height: 40px; border: none; border-radius: 10px;
+      background: rgba(255,255,255,0.12); color: #fff; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+    }
+    .yt-modal-btn svg { width: 16px; height: 16px; pointer-events: none; }
+    .yt-modal-btn-close { background: #dc2626; }
+    .yt-modal-frame-wrap {
+      position: relative; z-index: 1; width: 100%; aspect-ratio: 9 / 16; max-height: 32vh; background: #000;
+    }
+    .yt-modal-frame-wrap.is-landscape { aspect-ratio: 16 / 9; max-height: 28vh; }
+    .yt-modal-frame-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .yt-modal.is-maximized { pointer-events: auto; }
+    .yt-modal.is-maximized .yt-modal-backdrop { display: block; }
+    .yt-modal.is-maximized .yt-modal-dialog {
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: min(92vw, 380px); max-height: calc(100dvh - 1.5rem);
+    }
+    .yt-modal.is-maximized .yt-modal-dialog.is-landscape-dialog { width: min(94vw, 640px); }
+    .yt-modal.is-maximized .yt-modal-frame-wrap { max-height: min(68vh, 560px); }
+    .yt-modal.is-maximized .yt-modal-frame-wrap.is-landscape { max-height: min(56vh, 420px); }
+    .yt-modal.is-maximized .yt-modal-btn { width: 44px; height: 44px; }
+    body.yt-modal-maximized { overflow: hidden; overscroll-behavior: none; }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen overflow-x-hidden">
+
+  <header class="bg-slate-900 border-b border-slate-700 px-4 sm:px-6 py-3.5 flex items-center justify-between sticky top-0 z-30 shadow-lg">
+    <div class="flex items-center gap-2.5 min-w-0">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-rose-600 flex items-center justify-center text-white text-lg shadow-md flex-shrink-0">💪</div>
+      <div class="min-w-0">
+        <h1 class="font-black text-white text-sm sm:text-base leading-tight tracking-tight truncate">3-Muscle Split</h1>
+        <p class="text-[10px] sm:text-xs text-slate-400 truncate">Push · Pull · Legs+Shoulders · + small-muscle 4th slot</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <a href="../library/" class="text-xs font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full px-3 py-1.5 transition-all hidden sm:inline-flex">Library</a>
+      <a href="../index.html" class="text-xs sm:text-sm font-semibold text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full px-3 sm:px-4 py-1.5 transition-all">← Dashboard</a>
+    </div>
+  </header>
+
+  <nav aria-label="Site pages" class="bg-slate-800 border-b border-slate-700 px-4 sm:px-6 py-2 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs">
+    <span class="text-[10px] font-bold uppercase tracking-wide text-slate-500 flex-shrink-0">Home</span>
+    <a href="../index.html" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">🏠 Dashboard</a>
+    <span class="text-slate-600 flex-shrink-0" aria-hidden="true">|</span>
+    <span class="text-[10px] font-bold uppercase tracking-wide text-slate-500 flex-shrink-0">Train</span>
+    <a href="../3-muscle-split/" aria-current="page" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors bg-emerald-600 text-white">💪 3-Muscle Split</a>
+    <a href="../fat-loss/" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">🔥 Belly Fat Videos</a>
+    <span class="text-slate-600 flex-shrink-0" aria-hidden="true">|</span>
+    <span class="text-[10px] font-bold uppercase tracking-wide text-slate-500 flex-shrink-0">Develop</span>
+    <a href="../executive-voice/" class="px-2.5 py-1 rounded-full font-semibold flex-shrink-0 transition-colors text-slate-300 hover:text-white hover:bg-slate-700">🎙️ Executive Voice Lab</a>
+    <span class="text-slate-600 flex-shrink-0" aria-hidden="true">|</span>
+    <span class="text-[10px] font-bold uppercase tracking-wide text-slate-500 flex-shrink-0">Library</span>
+    <details class="nav-dd">
+      <summary>📚 Library</summary>
+      <div class="nav-dd-menu">
+        <a href="../library/">📚 Exercise Library</a>
+        <a href="../docs/muscle-targets/">🎯 Muscle Targets</a>
+      </div>
+    </details>
+    <span class="text-slate-600 flex-shrink-0" aria-hidden="true">|</span>
+    <span class="text-[10px] font-bold uppercase tracking-wide text-slate-500 flex-shrink-0">Encyclopedia</span>
+    <details class="nav-dd">
+      <summary>📖 Encyclopedia</summary>
+      <div class="nav-dd-menu">
+        <a href="../docs/legworkout/">🦵 Leg Encyclopedia</a>
+        <a href="../docs/chestworkout/">🫁 Chest Encyclopedia</a>
+      </div>
+    </details>
+  </nav>
+
+  <main class="max-w-5xl mx-auto p-4 sm:p-6 space-y-5">
+
+    <!-- HERO: day-wise schedule in bold -->
+    <section class="relative overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 shadow-lg">
+      <div class="absolute inset-0 bg-gradient-to-br from-rose-900/40 via-slate-900 to-emerald-900/30 pointer-events-none" aria-hidden="true"></div>
+      <div class="absolute -right-16 -top-16 w-56 h-56 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" aria-hidden="true"></div>
+      <div class="relative p-5 sm:p-7">
+        <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-rose-400 mb-2">Workout Split</p>
+        <h2 class="font-black text-2xl sm:text-3xl text-white tracking-tight mb-1">3 main muscles + 1 small muscle · every day</h2>
+        <p class="text-sm text-slate-400 mb-5 max-w-2xl">Same three pairings twice a week. Abs and forearms rotate as the third slot. The <span class="text-emerald-300 font-semibold">4th slot</span> (Face &amp; Neck, Wrist &amp; Hand, Feet &amp; Ankle) is placed so it never overlaps a muscle already worked that day. Videos below come from the <a href="../library/" class="text-emerald-400 font-semibold hover:underline">Exercise Library</a>.</p>
+
+        <div class="max-w-2xl" id="schedule" aria-label="Weekly muscle schedule">
+          <div class="day-row">
+            <span aria-hidden="true">🔥</span>
+            <span class="day-name">Monday</span>
+            <span class="day-muscles">Chest + Triceps + Abs <span class="day-extra">+ Wrist &amp; Hand</span></span>
+          </div>
+          <div class="day-row">
+            <span aria-hidden="true">💪</span>
+            <span class="day-name">Tuesday</span>
+            <span class="day-muscles">Back + Biceps + Forearms <span class="day-extra">+ Feet &amp; Ankle</span></span>
+          </div>
+          <div class="day-row">
+            <span aria-hidden="true">🦵</span>
+            <span class="day-name">Wednesday</span>
+            <span class="day-muscles">Legs + Shoulders + Abs <span class="day-extra">+ Wrist &amp; Hand</span></span>
+          </div>
+          <div class="day-row">
+            <span aria-hidden="true">⚡</span>
+            <span class="day-name">Thursday</span>
+            <span class="day-muscles">Chest + Triceps + Forearms <span class="day-extra">+ Face &amp; Neck</span></span>
+          </div>
+          <div class="day-row">
+            <span aria-hidden="true">🏆</span>
+            <span class="day-name">Friday</span>
+            <span class="day-muscles">Back + Biceps + Abs <span class="day-extra">+ Feet &amp; Ankle</span></span>
+          </div>
+          <div class="day-row">
+            <span aria-hidden="true">🏋️</span>
+            <span class="day-name">Saturday</span>
+            <span class="day-muscles">Legs + Shoulders + Forearms <span class="day-extra">+ Face &amp; Neck</span></span>
+          </div>
+          <div class="day-row is-rest">
+            <span aria-hidden="true">😴</span>
+            <span class="day-name">Sunday</span>
+            <span class="day-muscles">Rest &amp; Recovery</span>
+          </div>
+        </div>
+
+        <div class="mt-5 grid sm:grid-cols-3 gap-2.5">
+          <div class="rounded-xl bg-white/5 border border-white/10 px-3.5 py-3">
+            <div class="text-[10px] font-bold uppercase tracking-wide text-amber-400 mb-1">A · Mon / Thu</div>
+            <div class="text-sm font-black text-white">Chest · Triceps</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">+ Abs or Forearms</div>
+            <div class="text-[11px] text-emerald-300 mt-0.5">+ Wrist &amp; Hand (Mon) · Face &amp; Neck (Thu)</div>
+          </div>
+          <div class="rounded-xl bg-white/5 border border-white/10 px-3.5 py-3">
+            <div class="text-[10px] font-bold uppercase tracking-wide text-sky-400 mb-1">B · Tue / Fri</div>
+            <div class="text-sm font-black text-white">Back · Biceps</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">+ Forearms or Abs</div>
+            <div class="text-[11px] text-emerald-300 mt-0.5">+ Feet &amp; Ankle (both days)</div>
+          </div>
+          <div class="rounded-xl bg-white/5 border border-white/10 px-3.5 py-3">
+            <div class="text-[10px] font-bold uppercase tracking-wide text-emerald-400 mb-1">C · Wed / Sat</div>
+            <div class="text-sm font-black text-white">Legs · Shoulders</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">+ Abs or Forearms</div>
+            <div class="text-[11px] text-emerald-300 mt-0.5">+ Wrist &amp; Hand (Wed) · Face &amp; Neck (Sat)</div>
+          </div>
+        </div>
+
+        <div class="mt-4 rounded-xl bg-white/5 border border-emerald-500/30 px-4 py-3">
+          <div class="text-[10px] font-bold uppercase tracking-wide text-emerald-300 mb-2">Why the 4th slot sits where it does</div>
+          <ul class="text-[12px] text-slate-300 space-y-1.5 leading-snug">
+            <li><strong class="text-white">🤲 Wrist &amp; Hand · Mon / Wed</strong> — never on a Forearm day (Tue, Thu, Sat), and not on Back + Biceps days where heavy pulling already drains grip.</li>
+            <li><strong class="text-white">🦶 Feet &amp; Ankle · Tue / Fri</strong> — never on a Leg day (Wed, Sat), so calves and ankles get a full day to recover after squats and calf raises.</li>
+            <li><strong class="text-white">🙂 Face &amp; Neck · Thu / Sat</strong> — never on a Back day (Tue, Fri), because rows and face pulls already load the traps and neck.</li>
+            <li class="text-slate-400">Each pair is at least 48 h apart, and every gym day gets exactly one small muscle.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured main video from library -->
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5" id="featured-section">
+      <div class="flex items-start justify-between gap-3 flex-wrap mb-3">
+        <div>
+          <p class="text-[10px] font-bold uppercase tracking-widest text-emerald-700 mb-1">From the library</p>
+          <h3 class="font-black text-lg sm:text-xl text-slate-900">Main demo video</h3>
+          <p class="text-sm text-slate-500 mt-1 max-w-xl">Start here — ranking Short from the Exercise Library muscle-focus list. Then open the category grids below for every demo.</p>
+        </div>
+        <a href="../library/" class="text-xs font-semibold text-emerald-700 hover:underline">Open full library →</a>
+      </div>
+      <div id="featured-video"></div>
+    </section>
+
+    <!-- Category filter + video lists -->
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 space-y-4">
+      <div>
+        <h3 class="font-black text-lg text-slate-900">Videos by muscle category</h3>
+        <p class="text-sm text-slate-500 mt-1">Pulled from the library muscle-focus cards. Tap a chip to filter · Play here uses the same corner player.</p>
+      </div>
+      <div class="chip-row" id="cat-filters" role="tablist" aria-label="Muscle categories"></div>
+      <p class="text-xs text-slate-500" id="cat-count"></p>
+      <div id="muscle-sections" class="space-y-6"></div>
+    </section>
+
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 text-xs text-slate-600 space-y-2">
+      <h3 class="font-bold text-slate-900 text-sm">How to run this split</h3>
+      <ul class="list-disc pl-4 space-y-1.5">
+        <li>Each gym day has <strong>two primary muscles</strong> plus Abs or Forearms as the third.</li>
+        <li>Pick 2–3 exercises per primary muscle from that category’s video list (or the matching cards in the <a href="../library/" class="text-emerald-700 font-semibold hover:underline">Exercise Library</a>).</li>
+        <li>Keep 1–2 Abs or Forearm finishers short — quality over volume after the main lifts.</li>
+        <li>The <strong>4th slot</strong> is a 5–8 minute block: 2–3 light moves, bodyweight or a band. Do it last, or as a warm-up for Wrist &amp; Hand and Feet &amp; Ankle.</li>
+        <li><strong>Face &amp; Neck</strong> stays very light: chin tucks and gentle isometric holds. Never load the neck with weight, and stop if you feel dizzy or get pain or tingling.</li>
+        <li>Sunday is full rest. If joints feel beat up mid-week, drop the 4th and third muscles and keep the two primaries.</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <div id="yt-modal" class="yt-modal" hidden role="dialog" aria-modal="true" aria-labelledby="yt-modal-title">
+    <div class="yt-modal-backdrop" aria-hidden="true"></div>
+    <div class="yt-modal-dialog" id="yt-modal-dialog">
+      <div class="yt-modal-chrome">
+        <button type="button" class="yt-modal-btn yt-modal-btn-close" id="yt-modal-close" title="Close" aria-label="Close video">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <span id="yt-modal-title">Workout video</span>
+        <button type="button" class="yt-modal-btn" id="yt-modal-max" title="Expand" aria-label="Expand player">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M9 3H3v6M15 3h6v6M9 21H3v-6M21 15v6h-6"/><path d="M3 3l7 7M21 3l-7 7M3 21l7-7M21 21l-7-7"/></svg>
+        </button>
+      </div>
+      <div class="yt-modal-frame-wrap" id="yt-modal-frame-wrap">
+        <iframe id="yt-modal-iframe" title="Workout video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen playsinline></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  /**
+   * Videos sourced from library/index.html muscle-focus cards.
+   * Featured = ranking Short used as the page’s main demo.
+   */
+  const FEATURED = {
+    url: 'https://www.youtube.com/shorts/1nino-CA9EE',
+    title: 'Ranking chest exercises (1 = best)',
+    by: 'disciplinewithpriyansh',
+    note: 'Library tier-list Short — how to pick presses and flies for Chest + Triceps days.',
+    category: 'Chest'
+  };
+
+  const CATEGORIES = [
+    {
+      id: 'chest',
+      name: 'Chest',
+      icon: '🫁',
+      days: 'Mon · Thu',
+      cue: 'Incline + flat + fly. Shoulder blades pinned, elbows ~45°.',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/2yFmbGXtFw8', title: 'Full chest workout for beginners at home (dumbbells only)', by: '' },
+        { url: 'https://www.youtube.com/shorts/8fXfwG4ftaQ', title: 'Incline DB press', by: '' },
+        { url: 'https://www.youtube.com/shorts/-QRu-lMwh4k', title: 'Incline chest press machine', by: '' },
+        { url: 'https://www.youtube.com/shorts/Qu7-ceCvq7w', title: 'Machine chest press', by: 'DeltaBolic' },
+        { url: 'https://www.youtube.com/shorts/8laBBEpDgac', title: 'Flat bench press', by: '' },
+        { url: 'https://www.youtube.com/shorts/a9vQ_hwIksU', title: 'Pec deck chest fly', by: 'DeltaBolic' },
+        { url: 'https://www.youtube.com/shorts/yrpiK8R4Vqo', title: 'Cable chest fly', by: '' },
+        { url: 'https://www.youtube.com/shorts/A-2re9hs990', title: 'Push-up', by: 'Nick Tumminello' },
+        { url: 'https://www.youtube.com/shorts/WSqc-58sBCw', title: 'Serratus anterior strengthening', by: '' },
+        { url: 'https://www.youtube.com/shorts/1nino-CA9EE', title: 'Ranking chest exercises (1 = best)', by: 'disciplinewithpriyansh' },
+      ]
+    },
+    {
+      id: 'triceps',
+      name: 'Triceps',
+      icon: '🦾',
+      days: 'Mon · Thu',
+      cue: 'Overhead for the long head · pushdown / kickback for lateral & medial.',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/NvZKjiZ8NYc', title: 'Rope pushdown', by: '' },
+        { url: 'https://www.youtube.com/shorts/b_r_LW4HEcM', title: 'Overhead DB extension', by: 'DeltaBolic' },
+        { url: 'https://www.youtube.com/shorts/NZAVsAk-Vgc', title: 'Overhead extension (3-day plan demo)', by: '' },
+        { url: 'https://www.youtube.com/shorts/NTk0Igxqcsk', title: 'Overhead cable triceps extension', by: 'DeltaBolic' },
+        { url: 'https://www.youtube.com/shorts/eZSeVSev8KI', title: 'Diamond push-up', by: '' },
+        { url: 'https://www.youtube.com/shorts/MTR0RHCX_cw', title: 'Ranking tricep exercises (1 = best)', by: 'disciplinewithpriyansh' },
+      ]
+    },
+    {
+      id: 'back',
+      name: 'Back',
+      icon: '🔙',
+      days: 'Tue · Fri',
+      cue: 'Vertical pull (lats) + horizontal row (rhomboids / mid-traps).',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/z-lxcsIN4T4', title: 'Lat pulldown', by: '' },
+        { url: 'https://youtube.com/shorts/mhqVNuXa84E?si=ntUFIRNHtifewTCr', title: 'Rope lat pulldown', by: '' },
+        { url: 'https://www.youtube.com/shorts/Z1Je4hIcCz0', title: 'Single-arm DB row', by: 'Life Fitness' },
+        { url: 'https://www.youtube.com/shorts/eKJUJ2eFPUY', title: 'Straight-arm pulldown', by: '' },
+        { url: 'https://www.youtube.com/shorts/PeMw-NWlNY8', title: 'Seated cable row', by: '' },
+        { url: 'https://www.youtube.com/shorts/tahGpBijHkY', title: 'Chest-supported row', by: '' },
+        { url: 'https://www.youtube.com/shorts/vGIY3D9digk', title: 'Reverse / rear delt fly', by: '' },
+        { url: 'https://www.youtube.com/shorts/MChHOiaCR7s', title: 'Face pull', by: '' },
+        { url: 'https://www.youtube.com/shorts/nmY4MTSFln8', title: 'Band lat pulldown (no machine)', by: 'Digg Deep Fitness' },
+        { url: 'https://www.youtube.com/shorts/cJRVVxmytaM', title: 'Dumbbell shrug (upper traps, optional)', by: '' },
+      ]
+    },
+    {
+      id: 'biceps',
+      name: 'Biceps',
+      icon: '💪',
+      days: 'Tue · Fri',
+      cue: 'Curl variations: supinated, hammer, incline — both heads + brachialis.',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/sAq_ocpRh_I', title: 'DB curl', by: '' },
+        { url: 'https://www.youtube.com/shorts/zC3nLlEvin4', title: 'Hammer curl', by: '' },
+        { url: 'https://youtube.com/shorts/A3ej5yPbMxY', title: '6 biceps curl variations — complete biceps workout', by: '' },
+        { url: 'https://youtube.com/shorts/wucliyDYWkU', title: '6 biceps grip variations — build bigger & thicker arms', by: '' },
+        { url: 'https://www.youtube.com/shorts/vSdq3MbvmlU', title: 'Ranking bicep exercises (1 = best)', by: 'disciplinewithpriyansh' },
+      ]
+    },
+    {
+      id: 'legs',
+      name: 'Legs',
+      icon: '🦵',
+      days: 'Wed · Sat',
+      cue: 'Quads · hamstrings · glutes · calves — pain-free depth only.',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/jA9tsYbA7Ms', title: 'Leg press', by: '' },
+        { url: 'https://www.youtube.com/shorts/MeIiIdhvXT4', title: 'Goblet squat', by: '' },
+        { url: 'https://www.youtube.com/shorts/W6o1A0bEnmU', title: 'Back squat (optional / advanced)', by: '' },
+        { url: 'https://www.youtube.com/shorts/7PE3MlvGAts', title: 'Seated hamstring curl', by: 'Hayden Steele' },
+        { url: 'https://www.youtube.com/shorts/Fsve8fkMGcY', title: 'Romanian deadlift (DB)', by: '' },
+        { url: 'https://www.youtube.com/shorts/hm_UVD6SUeA', title: 'Hip thrust', by: '' },
+        { url: 'https://www.youtube.com/shorts/X_IGw8U_e38', title: 'Glute bridge', by: 'WeShape' },
+        { url: 'https://www.youtube.com/shorts/8sT7Ne3Kzwc', title: 'Standing calf raise', by: '' },
+        { url: 'https://youtube.com/shorts/gSrQfW7Ke38', title: '6 lower body exercises — complete legs & glutes', by: '' },
+        { url: 'https://youtube.com/shorts/5Becsx2X-KA?si=NKBItIqHf8XcsuHC', title: 'Additional leg day workout', by: '' },
+        { url: 'https://youtube.com/shorts/00NzYPKPKd0?si=9NeLbyz6YR1mPqQO', title: 'Additional leg day workout', by: '' },
+        { url: 'https://youtube.com/shorts/hOkexz3wmpw?si=L28j6KlZ6sta3U28', title: 'Additional leg day workout', by: '' },
+        { url: 'https://www.youtube.com/shorts/k0EQGAaYI48', title: 'Quads · The muscle to strengthen for your knees', by: 'WeShape' },
+        { url: 'https://www.youtube.com/shorts/5e7YnJP5u3U', title: 'Quads · Box squat', by: 'GoTherex' },
+        { url: 'https://www.youtube.com/shorts/ztNBgrGy6FQ', title: 'Quads · Leg extension', by: '' },
+        { url: 'https://www.youtube.com/shorts/L8fvypPrzzs', title: 'Quads · Walking lunges', by: '' },
+        { url: 'https://www.youtube.com/shorts/Cow3ESXmrTU', title: 'Glutes · Bulgarian split squat (advanced)', by: '' },
+        { url: 'https://www.youtube.com/shorts/Znmlh8_ToGo', title: 'Glutes · Low step-up', by: 'Be Mobile Physiotherapy' },
+        { url: 'https://www.youtube.com/shorts/-10WIm3-6_k', title: 'Hamstrings · Single-leg RDL (supported)', by: 'The Diabetes Resistance' },
+        { url: 'https://www.youtube.com/shorts/bgfHeL6eR9Q', title: 'Hamstrings · Hamstring curl demo', by: '' },
+        { url: 'https://www.youtube.com/shorts/Z6Aq5upUp4A', title: 'Side hips · Hip abduction machine', by: '' },
+        { url: 'https://www.youtube.com/shorts/mZ23K1ulW2A', title: 'Side hips · Band lateral walk', by: '' },
+        { url: 'https://www.youtube.com/shorts/EayTGEq1nEQ', title: 'Side hips · Clamshell', by: 'Brookbush Institute' },
+        { url: 'https://www.youtube.com/watch?v=AWVxYHAkEwE', title: 'Side hips · 15 min side glute workout', by: 'Workout With Roxanne' },
+        { url: 'https://www.youtube.com/watch?v=CjAVezAggkI', title: 'Inner thigh · Hip adduction machine', by: '' },
+        { url: 'https://www.youtube.com/shorts/kbTj61pYcPM', title: 'Inner thigh · Copenhagen plank (short lever)', by: 'Waughfit' },
+        { url: 'https://www.youtube.com/shorts/njuekVcLXKA', title: 'Inner thigh · 3 moves to loosen tight inner thighs', by: 'Jason and Lauren' },
+        { url: 'https://www.youtube.com/shorts/RO57Szu8hx4', title: 'Hip flexors · March', by: '' },
+        { url: 'https://www.youtube.com/watch?v=X7eo5mzI8xg', title: 'Hip flexors · Half-kneeling stretch', by: '' },
+        { url: 'https://www.youtube.com/shorts/5YLmdfxXEfs', title: 'Hip flexors · Standing hip & waist trio', by: '' },
+        { url: 'https://www.youtube.com/shorts/JbyjNymZOt0', title: 'Calves · Seated calf raise', by: '' },
+        { url: 'https://www.youtube.com/shorts/g3a-VzkmFYg', title: 'Calves · Single-leg calf raise', by: '' },
+      ]
+    },
+    {
+      id: 'shoulders',
+      name: 'Shoulders',
+      icon: '🏋️',
+      days: 'Wed · Sat',
+      cue: 'Light weight, slow reps — front, side and rear delts.',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/Myim1WH6Qec', title: 'Lateral raise', by: '' },
+        { url: 'https://www.youtube.com/shorts/bQPhGIJJ-jQ', title: 'DB shoulder press', by: '' },
+        { url: 'https://www.youtube.com/shorts/vGIY3D9digk', title: 'Rear delt fly', by: '' },
+        { url: 'https://www.youtube.com/shorts/FnHeJ3Z3d1w', title: 'Front raise (optional)', by: '' },
+        { url: 'https://www.youtube.com/shorts/wRlIuexTowA', title: 'Arnold press (optional)', by: '' },
+        { url: 'https://youtube.com/shorts/dybxZJaWxCY?si=dJOnhpwvwwvYp8x2', title: 'Shoulder workout Short', by: '' },
+      ]
+    },
+    {
+      id: 'abs',
+      name: 'Abs',
+      icon: '🔥',
+      days: 'Mon · Wed · Fri',
+      cue: 'Ribs down, belly braced. Quality beats quantity.',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/1828MgejVTI', title: 'Full home abs workout (6 moves, no equipment)', by: 'FitBurst' },
+        { url: 'https://youtube.com/shorts/-2q5rscqJqI?si=UNG2uVLvK3Ssp2Hz', title: 'Abs workout Short', by: '' },
+        { url: 'https://youtube.com/shorts/n8LYfwKqRjk?si=S9db0xNwYPObsInE', title: 'Abs workout Short', by: '' },
+        { url: 'https://youtube.com/shorts/deKfgYQm_hU?si=Zez218LdYHJcVaul', title: 'Abs workout Short', by: '' },
+        { url: 'https://www.youtube.com/shorts/Bvhz7Rfnrr4', title: 'Cable crunch (3-day plan)', by: '' },
+        { url: 'https://www.youtube.com/shorts/Aoipu_fl3HA', title: 'Dead bug', by: '' },
+        { url: 'https://www.youtube.com/shorts/v25dawSzRTM', title: 'Plank', by: 'Jeremy Ethier' },
+        { url: 'https://www.youtube.com/shorts/eLCBC6fjtQU', title: 'Dragon flag for abs (advanced)', by: 'Jeff Nippard' },
+        { url: 'https://www.youtube.com/shorts/SSPqp5VueEo', title: 'Ranking abs exercises (1 = best)', by: 'disciplinewithpriyansh' },
+        { url: 'https://www.youtube.com/shorts/K2VljzCC16g', title: 'Obliques · Plank + side plank', by: '' },
+        { url: 'https://www.youtube.com/shorts/V2cUr7zG4hw', title: 'Obliques · Side plank', by: '' },
+        { url: 'https://www.youtube.com/shorts/6q2n6pxG7jE', title: 'Obliques · Pallof press', by: '' },
+        { url: 'https://www.youtube.com/shorts/_1j_HWknGLg', title: 'Lower back · Bird dog', by: '' },
+      ]
+    },
+    {
+      id: 'forearms',
+      name: 'Forearms',
+      icon: '✊',
+      days: 'Tue · Thu · Sat',
+      cue: 'Control each rep — wrist flexors, extensors, grip. No swinging.',
+      videos: [
+        { url: 'https://www.youtube.com/shorts/6eAuMx5M0ho', title: 'Forearm builder (all forearm muscles)', by: '' },
+        { url: 'https://www.youtube.com/shorts/xY8c6LcLRao', title: 'Wrist curl (3-day plan)', by: '' },
+        { url: 'https://www.youtube.com/shorts/shqAI51IP74', title: 'Reverse wrist curl (3-day plan)', by: '' },
+        { url: 'https://www.youtube.com/shorts/rt17lmnaLSM', title: "Farmer's carry (grip)", by: '' },
+      ]
+    },
+    {
+      id: 'face-neck',
+      name: 'Face & Neck',
+      icon: '🙂',
+      days: 'Thu · Sat',
+      cue: 'Neck: chin tucks + light isometric holds. Face: gentle cheek & jaw holds. Very light effort — kept off Back days so traps and neck are fresh. Stop at any jaw clicking or neck pain.',
+      find: 'face and neck exercises chin tuck jaw posture shorts',
+      library: [['Neck & deep neck flexors', 'neck-deep-neck-flexors'], ['Face & jaw', 'face-jaw']],
+      videos: [
+        { url: 'https://www.youtube.com/shorts/IWrjp_B4ZgI', title: 'Neck · Chin tucks for forward head posture', by: 'Dr. Kevin Wafer' },
+        { url: 'https://www.youtube.com/shorts/SGbp8EpPvh8', title: 'Neck · Chin tuck form cues (keep airway open)', by: '' },
+        { url: 'https://www.youtube.com/watch?v=CwvIV3ZDdfc', title: 'Neck · Isometrics, all 6 directions (~10% effort)', by: '' },
+        { url: 'https://www.youtube.com/shorts/h-wZJXNfGBc', title: 'Face · Face yoga for the jawline', by: 'House Of Beauty India' },
+        { url: 'https://www.youtube.com/shorts/NrPHObVkWSI', title: 'Face · 3 face exercises (cheek puff, tongue work)', by: '' },
+        { url: 'https://www.youtube.com/shorts/WAcBOG1SjNM', title: 'Face · Tongue bracket for cheeks & jowls', by: '' },
+      ]
+    },
+    {
+      id: 'wrist-hand',
+      name: 'Wrist & Hand',
+      icon: '🤲',
+      days: 'Mon · Wed',
+      cue: 'Wrist stretches and mobility first, then rubber-band finger work. Light effort, no pain. Kept off Forearm and Pull days so grip recovers.',
+      find: 'wrist and hand strength mobility finger exercises shorts',
+      library: [['Wrist & hand (fingers, grip)', 'wrist-hand-fingers-grip']],
+      videos: [
+        { url: 'https://www.youtube.com/shorts/KatdwLsrbDs', title: 'Wrist · Flexion stretch', by: '' },
+        { url: 'https://www.youtube.com/shorts/r6EyweeScMA', title: 'Wrist · Extension mobilisation (push-up wrist pain)', by: '' },
+        { url: 'https://www.youtube.com/shorts/ITVGNDiBur0', title: 'Wrist · Stretches for sore wrists', by: 'Hybrid Calisthenics' },
+        { url: 'https://www.youtube.com/shorts/DhZjs6j9rAk', title: 'Hand · Finger flexor strengthening (band)', by: '' },
+        { url: 'https://www.youtube.com/shorts/onPmqET85Lc', title: 'Hand · Finger / wrist extensors (rubber bands)', by: '' },
+      ]
+    },
+    {
+      id: 'feet-ankle',
+      name: 'Feet & Ankle',
+      icon: '🦶',
+      days: 'Tue · Fri',
+      cue: 'Feet: short-foot, toe yoga, towel curls. Ankle: band eversion, single-leg balance, tibialis raise. Kept off Leg days so calves and ankles recover.',
+      find: 'feet and ankle strengthening short foot ankle stability shorts',
+      library: [['Ankle & foot stabilisers', 'ankle-foot-stabilisers'], ['Shins (tibialis anterior)', 'shins-tibialis-anterior']],
+      videos: [
+        { url: 'https://www.youtube.com/shorts/JqVpCTyVxc0', title: 'Feet · Short-foot exercise (arch strength)', by: '' },
+        { url: 'https://www.youtube.com/shorts/LVPwpFw7ZKk', title: 'Feet · Arch lift, toe spread, toe yoga', by: '' },
+        { url: 'https://www.youtube.com/shorts/QhsYrSjt3V0', title: 'Feet · Towel toe curls', by: '' },
+        { url: 'https://www.youtube.com/shorts/wxoG5DRj_wU', title: 'Ankle · Banded eversion (peroneals)', by: '' },
+        { url: 'https://www.youtube.com/shorts/bg__BCXOkWQ', title: 'Ankle · 4-way band strengthening', by: '' },
+        { url: 'https://www.youtube.com/shorts/HwJUXz6jnkg', title: 'Ankle · Single-leg balance', by: '' },
+        { url: 'https://www.youtube.com/shorts/h57xceuiO40', title: 'Shin · Tibialis raise', by: 'Clench Fitness' },
+      ]
+    }
+  ];
+
+  const PLAY_SVG = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+
+  let activeCat = 'all';
+  let ytModalMode = 'pip';
+  let lastFocusEl = null;
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function getVideoId(url) {
+    const patterns = [
+      /youtu\.be\/([^?&#]+)/,
+      /youtube\.com\/shorts\/([^?&#]+)/,
+      /[?&]v=([^&#]+)/,
+      /youtube\.com\/embed\/([^?&#]+)/
+    ];
+    for (const p of patterns) {
+      const m = url.match(p);
+      if (m) return m[1];
+    }
+    return null;
+  }
+
+  function thumbUrl(id) {
+    return 'https://img.youtube.com/vi/' + encodeURIComponent(id) + '/mqdefault.jpg';
+  }
+
+  function isShort(url) {
+    return /\/shorts\//i.test(url);
+  }
+
+  function setYtModalMode(mode) {
+    const modal = document.getElementById('yt-modal');
+    if (!modal) return;
+    ytModalMode = mode;
+    modal.classList.toggle('is-maximized', mode === 'maximized');
+    document.body.classList.toggle('yt-modal-maximized', mode === 'maximized');
+    const maxBtn = document.getElementById('yt-modal-max');
+    if (maxBtn) {
+      const expanded = mode === 'maximized';
+      maxBtn.setAttribute('aria-label', expanded ? 'Shrink to corner' : 'Expand player');
+      maxBtn.title = expanded ? 'Shrink' : 'Expand';
+    }
+  }
+
+  function openVideo(name, url) {
+    if (!url) return;
+    const id = getVideoId(url);
+    if (!id) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    const modal = document.getElementById('yt-modal');
+    const dialog = document.getElementById('yt-modal-dialog');
+    const frameWrap = document.getElementById('yt-modal-frame-wrap');
+    const iframe = document.getElementById('yt-modal-iframe');
+    const title = document.getElementById('yt-modal-title');
+    const closeBtn = document.getElementById('yt-modal-close');
+    if (!modal || !iframe) return;
+
+    lastFocusEl = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    const landscape = !isShort(url);
+    if (frameWrap) frameWrap.classList.toggle('is-landscape', landscape);
+    if (dialog) dialog.classList.toggle('is-landscape-dialog', landscape);
+
+    if (title) title.textContent = name;
+    iframe.title = name;
+    iframe.src = 'https://www.youtube.com/embed/' + encodeURIComponent(id) + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+    modal.hidden = false;
+    setYtModalMode('pip');
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function closeVideo(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    const modal = document.getElementById('yt-modal');
+    const iframe = document.getElementById('yt-modal-iframe');
+    if (!modal || modal.hidden) return;
+    modal.hidden = true;
+    if (iframe) {
+      iframe.src = '';
+      iframe.title = 'Workout video';
+    }
+    modal.classList.remove('is-maximized');
+    document.body.classList.remove('yt-modal-maximized');
+    ytModalMode = 'pip';
+    if (lastFocusEl && typeof lastFocusEl.focus === 'function') {
+      try { lastFocusEl.focus(); } catch (_) {}
+    }
+    lastFocusEl = null;
+  }
+
+  function toggleYtMaximize(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    setYtModalMode(ytModalMode === 'maximized' ? 'pip' : 'maximized');
+  }
+
+  function renderFeatured() {
+    const host = document.getElementById('featured-video');
+    if (!host) return;
+    const id = getVideoId(FEATURED.url);
+    const safeTitle = escapeHtml(FEATURED.title);
+    host.innerHTML = `
+      <article class="grid sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-4 items-stretch">
+        <button type="button" class="featured-thumb w-full text-left border-0 p-0 cursor-pointer" data-play-featured aria-label="Play ${safeTitle}">
+          <img src="${thumbUrl(id)}" alt="" loading="lazy" onerror="this.style.opacity='0.3'" />
+          <div class="yt-play"><span class="yt-play-btn">${PLAY_SVG}</span></div>
+        </button>
+        <div class="flex flex-col justify-center gap-2.5">
+          <div class="flex flex-wrap gap-1.5">
+            <span class="chip">${escapeHtml(FEATURED.category)}</span>
+            <span class="chip">Library ranking</span>
+            ${FEATURED.by ? `<span class="chip">${escapeHtml(FEATURED.by)}</span>` : ''}
+          </div>
+          <h4 class="font-bold text-slate-900 text-base leading-snug">${safeTitle}</h4>
+          <p class="text-sm text-slate-500 leading-relaxed">${escapeHtml(FEATURED.note)}</p>
+          <div class="flex gap-2 mt-1">
+            <button type="button" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl py-2.5 transition-colors" data-play-featured>
+              ▶ Play here
+            </button>
+            <a href="${escapeHtml(FEATURED.url)}" target="_blank" rel="noopener noreferrer" class="flex-shrink-0 px-3 py-2.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
+              YouTube ↗
+            </a>
+          </div>
+        </div>
+      </article>`;
+    host.querySelectorAll('[data-play-featured]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        openVideo(FEATURED.title, FEATURED.url);
+      });
+    });
+  }
+
+  function renderFilters() {
+    const row = document.getElementById('cat-filters');
+    if (!row) return;
+    const chips = [{ id: 'all', label: 'All' }].concat(
+      CATEGORIES.map(c => ({ id: c.id, label: c.icon + ' ' + c.name }))
+    );
+    row.innerHTML = chips.map(c => `
+      <button type="button" class="cat-chip${activeCat === c.id ? ' on' : ''}" data-cat="${c.id}" role="tab" aria-selected="${activeCat === c.id}">
+        ${escapeHtml(c.label)}
+      </button>`).join('');
+    row.querySelectorAll('[data-cat]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeCat = btn.getAttribute('data-cat') || 'all';
+        renderFilters();
+        renderSections();
+      });
+    });
+  }
+
+  function videoCard(v) {
+    const id = getVideoId(v.url);
+    const landscape = !isShort(v.url);
+    const safeTitle = escapeHtml(v.title);
+    const by = v.by ? `<p class="text-[11px] text-slate-400">${escapeHtml(v.by)}</p>` : '';
+    return `
+      <article class="video-card bg-slate-50 rounded-xl border border-slate-200 overflow-hidden hover-lift flex flex-col">
+        <button type="button" class="yt-thumb ${landscape ? 'is-landscape' : ''} w-full text-left border-0 p-0 cursor-pointer" data-url="${escapeHtml(v.url)}" data-title="${safeTitle}" aria-label="Play ${safeTitle}">
+          <img src="${id ? thumbUrl(id) : ''}" alt="" loading="lazy" onerror="this.style.opacity='0.3'" />
+          <div class="yt-play"><span class="yt-play-btn">${PLAY_SVG}</span></div>
+        </button>
+        <div class="p-3 flex flex-col flex-1 gap-1.5">
+          <h5 class="font-bold text-slate-900 text-xs leading-snug">${safeTitle}</h5>
+          ${by}
+          <div class="flex gap-1.5 mt-auto pt-1">
+            <button type="button" class="flex-1 bg-slate-900 hover:bg-slate-700 text-white text-[11px] font-bold rounded-lg py-2 transition-colors" data-url="${escapeHtml(v.url)}" data-title="${safeTitle}">▶ Play</button>
+            <a href="${escapeHtml(v.url)}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-2 text-[11px] font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg transition-colors">↗</a>
+          </div>
+        </div>
+      </article>`;
+  }
+
+  function renderSections() {
+    const host = document.getElementById('muscle-sections');
+    const countEl = document.getElementById('cat-count');
+    if (!host) return;
+    const list = activeCat === 'all' ? CATEGORIES : CATEGORIES.filter(c => c.id === activeCat);
+    const totalVids = list.reduce((n, c) => n + c.videos.length, 0);
+    if (countEl) {
+      countEl.textContent = list.length + ' categor' + (list.length === 1 ? 'y' : 'ies') + ' · ' + totalVids + ' videos';
+    }
+    host.innerHTML = list.map(cat => `
+      <div id="cat-${cat.id}" class="scroll-mt-24">
+        <div class="flex items-start justify-between gap-3 flex-wrap mb-3">
+          <div>
+            <h4 class="font-black text-slate-900 text-base">${cat.icon} ${escapeHtml(cat.name)}</h4>
+            <p class="text-xs text-slate-500 mt-0.5">${escapeHtml(cat.cue)}</p>
+          </div>
+          <span class="chip">${escapeHtml(cat.days)}</span>
+        </div>
+        ${cat.videos.length ? `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          ${cat.videos.map(videoCard).join('')}
+        </div>` : `<p class="text-xs text-slate-500 bg-slate-50 border border-dashed border-slate-300 rounded-xl px-3 py-4">No library demos yet for this muscle.</p>`}
+        <div class="flex flex-wrap gap-x-4 gap-y-1 mt-2">
+          ${(cat.library || []).map(([label, slug]) => `<a href="../library/#ex-${slug}" class="text-xs font-semibold text-slate-600 hover:text-emerald-700 hover:underline">📚 ${escapeHtml(label)} in library →</a>`).join('')}
+          ${cat.find ? `<a href="https://www.youtube.com/results?search_query=${encodeURIComponent(cat.find)}" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-emerald-700 hover:underline">Find more ${escapeHtml(cat.name)} demos on YouTube ↗</a>` : ''}
+        </div>
+      </div>`).join('');
+
+    host.querySelectorAll('[data-url]').forEach(el => {
+      if (el.tagName === 'A') return;
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        openVideo(el.getAttribute('data-title') || 'Video', el.getAttribute('data-url'));
+      });
+    });
+  }
+
+  function wireModal() {
+    const closeBtn = document.getElementById('yt-modal-close');
+    const maxBtn = document.getElementById('yt-modal-max');
+    const backdrop = document.querySelector('#yt-modal .yt-modal-backdrop');
+    if (closeBtn) closeBtn.addEventListener('click', closeVideo);
+    if (maxBtn) maxBtn.addEventListener('click', toggleYtMaximize);
+    if (backdrop) {
+      backdrop.addEventListener('click', function () {
+        if (ytModalMode === 'maximized') setYtModalMode('pip');
+      });
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const modal = document.getElementById('yt-modal');
+      if (!modal || modal.hidden) return;
+      if (ytModalMode === 'maximized') setYtModalMode('pip');
+      else closeVideo();
+    });
+  }
+
+  function applyDeepLink() {
+    const params = new URLSearchParams(location.search);
+    const cat = params.get('cat');
+    if (cat && CATEGORIES.some(c => c.id === cat)) {
+      activeCat = cat;
+    }
+  }
+
+  applyDeepLink();
+  renderFeatured();
+  renderFilters();
+  renderSections();
+  wireModal();
+  </script>
+</body>
+</html>
